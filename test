@@ -1,4 +1,0 @@
-#! /usr/bin/python
-
-
-a = 'id,user_id,project,timestamp,task_x,task_y,task_z,decision,yes_count,maybe_count,bad_imagery_count'
