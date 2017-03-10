@@ -52,5 +52,7 @@ for row in reader:
             f.write(item)
             n += 1
 f.close()
+feature.Destroy()
+source.Destroy()
 print ("Total urban tile: %s \n Total rural tiles: %s" % (m, n))
 
