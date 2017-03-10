@@ -2,6 +2,7 @@
 
 import sys
 import csv
+sys.path.append("../lib")
 import MapSwipe
 from osgeo import ogr
 
