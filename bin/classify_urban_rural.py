@@ -7,7 +7,7 @@ import MapSwipe
 from osgeo import ogr
 
 in_file = "../data/project_922.csv"
-out_file = "../../zhou/malawi/urban.csv"
+out_file = "../../../zhou/malawi/urban.csv"
 shp_file = "../data/shp/malawi_urban.shp"
 
 driver = ogr.GetDriverByName("ESRI Shapefile")
