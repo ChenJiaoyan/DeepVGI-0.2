@@ -23,7 +23,8 @@ f.write('task_x' + ',' + 'task_y' + ',' + 'classification' + '\n')
 
 csvfile = open(in_file)
 reader = csv.DictReader(csvfile)
-m, n = 0
+m = 0
+n = 0
 for row in reader:
     task_x = float(row['task_x'])
     task_y = float(row['task_y'])
