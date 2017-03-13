@@ -42,16 +42,16 @@ for row in reader:
     pt_rb = ogr.Geometry(ogr.wkbPoint)
     pt_rb.AddPoint(lon_right, lat_bottom)
     for poly in all_geoms:
-        if pt_lt.Distance(poly) < 0.0 or pt_lb.Distance(poly) < 0.0 or \
-                        pt_rt.Distance(poly) < 0.0 or pt_rb.Distance(poly) < 0.0:
-            item = str(task_x) + ',' + str(task_y) + ',' + 'urban' + '\n'
-            f.write(item)
-            m += 1
-            break
-        else:
+        if pt_lt.Distance(poly) >= 0.0 and pt_lb.Distance(poly) >= 0.0 and \
+                        pt_rt.Distance(poly) >= 0.0 and pt_rb.Distance(poly) >= 0.0:
             item = str(task_x) + ',' + str(task_y) + ',' + 'rural' + '\n'
             f.write(item)
             n += 1
+            #break
+        else:
+            item = str(task_x) + ',' + str(task_y) + ',' + 'urban' + '\n'
+            f.write(item)
+            m += 1
 f.close()
 feature.Destroy()
 source.Destroy()
