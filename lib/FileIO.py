@@ -1,5 +1,13 @@
 #! /usr/bin/python
 
+import csv
+
+
+def csv_reader(file_name):
+    cf = open(file_name)
+    reader = csv.DictReader(cf)
+    return reader
+
 
 def read_lines(file_name, start_line):
     f = open(file_name)

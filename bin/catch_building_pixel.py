@@ -1,5 +1,10 @@
 #! /usr/bin/python
 
+# (1) read and show task_x-task_y.jpeg in building_samples.csv
+# (2) confirm the image with buildings labeled by OSM
+# (3) manually label a building (pixel_x, pixel_y) for each OSM-None-Labeled image
+# (4) overwrite building_samples.csv with the labeled_by_OSM,task_x,task_y,pixel_x,pixel_y
+
 import sys
 
 sys.path.append("../lib")
