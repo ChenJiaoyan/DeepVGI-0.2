@@ -47,6 +47,7 @@ for row in reader:
             item = str(task_x) + ',' + str(task_y) + ',' + 'urban' + '\n'
             f.write(item)
             m += 1
+            break
         else:
             item = str(task_x) + ',' + str(task_y) + ',' + 'rural' + '\n'
             f.write(item)
