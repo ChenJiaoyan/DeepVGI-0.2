@@ -22,9 +22,9 @@ for feature1 in layer1:
     geometry = feature1.GetGeometryRef()
     all_922.append(geometry.Clone())
 
-    task_x = float(feature1.GetField("task_x"))
-    task_y = float(feature1.GetField("task_y"))
-    xy = str(task_x) + ',' + str(task_y)
+    task_x = feature1.GetField("task_x")
+    task_y = feature1.GetField("task_y")
+    xy = task_x + ',' + task_y
     item.append(xy)
 matrix = np.array((all_922, item))
 
