@@ -7,7 +7,7 @@ import csv
 import tensorflow as tf
 
 from skimage import io
-#from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split
 from sklearn.model_selection import KFold
 from sklearn.metrics import accuracy_score
 
