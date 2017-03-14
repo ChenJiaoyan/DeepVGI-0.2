@@ -5,9 +5,9 @@ import csv
 import numpy as np
 from osgeo import ogr
 
-in_file = "shp/project_922.shp"
-out_file = "malawi_urban.csv"
-shp_file = "malawi_urban.shp"
+in_file = "../data/shp/project_922.shp"
+out_file = "../data/malawi_urban.csv"
+shp_file = "../data/shp/malawi_urban.shp"
 
 driver = ogr.GetDriverByName("ESRI Shapefile")
 source1 = driver.Open(in_file, 0)
