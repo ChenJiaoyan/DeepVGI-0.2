@@ -35,7 +35,7 @@ for feature2 in layer2:
 # layer_defn = layer.GetLayerDefn()
 f = open(out_file, 'w')
 f.write('task_x' + ',' + 'task_y' + ',' + 'classification' + '\n')
-m = 0;
+m = 0
 n = 0
 for urban in all_urban:
     for i in range(len(all_922)):
