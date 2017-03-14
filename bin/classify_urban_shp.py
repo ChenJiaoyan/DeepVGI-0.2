@@ -32,7 +32,6 @@ for feature2 in layer2:
     geometry = feature2.GetGeometryRef()
     all_urban.append(geometry.Clone())
 
-# layer_defn = layer.GetLayerDefn()
 f = open(out_file, 'w')
 f.write('task_x' + ',' + 'task_y' + ',' + 'classification' + '\n')
 m = 0
