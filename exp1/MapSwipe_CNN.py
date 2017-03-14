@@ -115,19 +115,19 @@ class Model(object):
                                  Model.BAND_N])  # -1 means "figure this part out for me".
 
         # First Layer
-        W_conv1 = self.__weight_variable([12, 12, Model.BAND_N, 32])
+        W_conv1 = self.__weight_variable([8, 8, Model.BAND_N, 32])
         b_conv1 = self.__bias_variable([32])
         h_conv1 = tf.nn.relu(self.__conv2d(x_image, W_conv1) + b_conv1)
         h_pool1 = self.__max_pool_4x4(h_conv1)
 
         # Second Layer
-        W_conv2 = self.__weight_variable([12, 12, 32, 64])
+        W_conv2 = self.__weight_variable([8, 8, 32, 64])
         b_conv2 = self.__bias_variable([64])
         h_conv2 = tf.nn.relu(self.__conv2d(h_pool1, W_conv2) + b_conv2)
         h_pool2 = self.__max_pool_4x4(h_conv2)
 
         # Third Layer
-        W_fc1 = self.__weight_variable([32 * 32 * 64, 1024])
+        W_fc1 = self.__weight_variable([16 * 16 * 64, 1024])
         b_fc1 = self.__bias_variable([1024])
         h_pool2_flat = tf.reshape(h_pool2, [-1, 32 * 32 * 64])
         h_fc1 = tf.nn.relu(tf.matmul(h_pool2_flat, W_fc1) + b_fc1)
