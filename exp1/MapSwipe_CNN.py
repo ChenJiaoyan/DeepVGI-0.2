@@ -31,7 +31,7 @@ class Model(object):
             reader = csv.DictReader(csvfile)
             for r in reader:
                 image = str(r['task_x']) + '_' + str(r['task_y']) + '_18.jpeg'
-                if r['bad_imagery_count'] == 0 and r['yes_count'] > 1:
+                if r['bad_imagery_count'] == 0 and r['yes_count'] > 0:
                     p_image.append(image)
                 if r['bad_imagery_count'] > 0:
                     b_image.append(image)
@@ -152,15 +152,15 @@ class Model(object):
         accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 
         # Train and Evaluate
-        #X_train, X_test, y_train, y_test = train_test_split(\
-        #       self.X,self.y,test_size=0.3, random_state=0)
-        #Y_train,Y_test = np.eye(2)[y_train.astype(int)],np.eye(2)[y_test.astype(int)]
+        X_train, X_test, y_train, y_test = train_test_split(\
+               self.X,self.y,test_size=0.2, random_state=0)
+        Y_train,Y_test = np.eye(2)[y_train.astype(int)],np.eye(2)[y_test.astype(int)]
 
         # K folde CV
-        kf = KFold(n_splits=5)
-        train, test = kf.split(self.X)
-        X_train, X_test, y_train, y_test = self.X[train], self.X[test], self.y[train], self.y[test]
-        Y_train, Y_test = np.eye(2)[y_train.astype(int)], np.eye(2)[y_test.astype(int)]
+        #kf = KFold(n_splits=5)
+        #train, test = kf.split(self.X)
+        #X_train, X_test, y_train, y_test = self.X[train], self.X[test], self.y[train], self.y[test]
+        #Y_train, Y_test = np.eye(2)[y_train.astype(int)], np.eye(2)[y_test.astype(int)]
 
         sess = tf.Session()
         print '     training ...'
