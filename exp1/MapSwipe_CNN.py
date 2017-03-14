@@ -13,7 +13,7 @@ from sklearn.metrics import accuracy_score
 
 class Model(object):
 
-    IMG_DIR = './data/img_examples'
+    IMG_DIR = '../data/img_examples'
     BAND_N = 3
     TAG = 'mapswipe' # 'mapswipe' or 'osm'
     IMAGE_L = 256
