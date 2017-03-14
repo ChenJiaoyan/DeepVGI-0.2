@@ -1,5 +1,10 @@
 #! /usr/bin/python
 
+# (1) read and show task_x-task_y.jpeg in building_samples.csv
+# (2) confirm the image with buildings labeled by OSM
+# (3) manually label a building (pixel_x, pixel_y) for each OSM-None-Labeled image
+# (4) overwrite building_samples.csv with the labeled_by_OSM,task_x,task_y,pixel_x,pixel_y
+
 import sys
 
 sys.path.append("../lib")
@@ -11,12 +16,12 @@ from skimage import io
 import matplotlib.pyplot as plt
 
 L = 50
-lines = FileIO.read_lines('../data/building_samples.csv', 1)
+lines = FileIO.read_lines('../data/building_samples.csv', 0)
 scp_pre = 'scp -i ~/.ssh/spatialdata_keypair.pem ubuntu@129.206.7.141:/home/ubuntu/DeepVGI-0.2/data/image_project_922/'
 scp_suf = '../data/img_examples/'
 img_name = ''
 item = ''
-results = []
+results = ['labeled_by_OSM,task_x,task_y,pixel_x,pixel_y\n']
 
 
 def on_click(click):
