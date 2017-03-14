@@ -13,7 +13,7 @@ from sklearn.metrics import accuracy_score
 
 class Model(object):
 
-    IMG_DIR = './img_examples'
+    IMG_DIR = './data/img_examples'
     BAND_N = 3
     TAG = 'mapswipe' # 'mapswipe' or 'osm'
     IMAGE_L = 256
@@ -25,13 +25,13 @@ class Model(object):
 
     def __positive_image_mapswipe(self):
         p_image,b_image,m_image = [],[],[]
-        msfile = 'project_922.csv'
+        msfile = '../data/project_922.csv'
         # open csv and read columns
         with open(msfile) as csvfile:
             reader = csv.DictReader(csvfile)
             for r in reader:
                 image = str(r['task_x']) + '_' + str(r['task_y']) + '_18.jpeg'
-                if r['bad_imagery_count'] == 0 and r['yes_count'] > 0:
+                if r['bad_imagery_count'] == 0 and r['yes_count'] > 1:
                     p_image.append(image)
                 if r['bad_imagery_count'] > 0:
                     b_image.append(image)
