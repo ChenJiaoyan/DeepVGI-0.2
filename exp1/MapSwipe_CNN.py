@@ -155,7 +155,7 @@ class Model(object):
         # Y_train,Y_test = np.eye(2)[y_train.astype(int)],np.eye(2)[y_test.astype(int)]
 
         # K folde CV
-        kf = KFold(n_splits=5)
+        kf = KFold(n_splits=2)
         for train_index, test_index in kf.split(self.X):
             # print("TRAIN:", train_index, "TEST:", test_index)
             X_train, X_test = self.X[train_index], self.X[test_index]
