@@ -24,7 +24,7 @@ for feature1 in layer1:
 
     task_x = feature1.GetField("task_x")
     task_y = feature1.GetField("task_y")
-    xy = task_x + ',' + task_y
+    xy = str(task_x) + ',' + str(task_y)
     item.append(xy)
 matrix = np.array((all_922, item))
 

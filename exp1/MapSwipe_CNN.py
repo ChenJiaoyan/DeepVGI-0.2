@@ -7,13 +7,13 @@ import csv
 import tensorflow as tf
 
 from skimage import io
-#from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split
 from sklearn.model_selection import KFold
 from sklearn.metrics import accuracy_score
 
 class Model(object):
 
-    IMG_DIR = './img_examples'
+    IMG_DIR = '../data/img_examples'
     BAND_N = 3
     TAG = 'mapswipe' # 'mapswipe' or 'osm'
     IMAGE_L = 256
@@ -25,7 +25,7 @@ class Model(object):
 
     def __positive_image_mapswipe(self):
         p_image,b_image,m_image = [],[],[]
-        msfile = 'project_922.csv'
+        msfile = '../data/project_922.csv'
         # open csv and read columns
         with open(msfile) as csvfile:
             reader = csv.DictReader(csvfile)
@@ -153,13 +153,15 @@ class Model(object):
 
         # Train and Evaluate
         #X_train, X_test, y_train, y_test = train_test_split(\
-        #       self.X,self.y,test_size=0.3, random_state=0)
+        #      self.X,self.y,test_size=0.2, random_state=0)
         #Y_train,Y_test = np.eye(2)[y_train.astype(int)],np.eye(2)[y_test.astype(int)]
 
         # K folde CV
         kf = KFold(n_splits=5)
-        train, test = kf.split(self.X)
-        X_train, X_test, y_train, y_test = self.X[train], self.X[test], self.y[train], self.y[test]
+        for train_index, test_index in kf.split(self.X):
+            print("TRAIN:", train_index, "TEST:", test_index)
+            X_train, X_test = self.X[train_index], self.X[test_index]
+            y_train, y_test = self.y[train_index], self.y[test_index]
         Y_train, Y_test = np.eye(2)[y_train.astype(int)], np.eye(2)[y_test.astype(int)]
 
         sess = tf.Session()
