@@ -152,15 +152,17 @@ class Model(object):
         accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 
         # Train and Evaluate
-        X_train, X_test, y_train, y_test = train_test_split(\
-               self.X,self.y,test_size=0.2, random_state=0)
-        Y_train,Y_test = np.eye(2)[y_train.astype(int)],np.eye(2)[y_test.astype(int)]
+        #X_train, X_test, y_train, y_test = train_test_split(\
+        #      self.X,self.y,test_size=0.2, random_state=0)
+        #Y_train,Y_test = np.eye(2)[y_train.astype(int)],np.eye(2)[y_test.astype(int)]
 
         # K folde CV
-        #kf = KFold(n_splits=5)
-        #train, test = kf.split(self.X)
-        #X_train, X_test, y_train, y_test = self.X[train], self.X[test], self.y[train], self.y[test]
-        #Y_train, Y_test = np.eye(2)[y_train.astype(int)], np.eye(2)[y_test.astype(int)]
+        kf = KFold(n_splits=5)
+        for train_index, test_index in kf.split(self.X):
+            print("TRAIN:", train_index, "TEST:", test_index)
+            X_train, X_test = self.X[train_index], self.X[test_index]
+            y_train, y_test = self.y[train_index], self.y[test_index]
+        Y_train, Y_test = np.eye(2)[y_train.astype(int)], np.eye(2)[y_test.astype(int)]
 
         sess = tf.Session()
         print '     training ...'
