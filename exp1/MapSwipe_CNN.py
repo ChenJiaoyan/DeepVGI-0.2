@@ -129,7 +129,7 @@ class Model(object):
         # Third Layer
         W_fc1 = self.__weight_variable([61 * 61 * 64, 1024])
         b_fc1 = self.__bias_variable([1024])
-        h_pool2_flat = tf.reshape(h_pool2, [-1, 32 * 32 * 64])
+        h_pool2_flat = tf.reshape(h_pool2, [-1, 61 * 61 * 64])
         h_fc1 = tf.nn.relu(tf.matmul(h_pool2_flat, W_fc1) + b_fc1)
 
         # Dropout
