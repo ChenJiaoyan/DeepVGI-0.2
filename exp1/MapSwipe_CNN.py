@@ -30,11 +30,11 @@ class Model(object):
             reader = csv.DictReader(csvfile)
             for r in reader:
                 image = str(r['task_x']) + '_' + str(r['task_y']) + '_18.jpeg'
-                if r['bad_imagery_count'] == 0 and r['yes_count'] > 0:
+                if int(r['bad_imagery_count']) == 0 and int(r['yes_count']) > 0:
                     p_image.append(image)
-                if r['bad_imagery_count'] > 0:
+                if int(r['bad_imagery_count']) > 0:
                     b_image.append(image)
-                if r['maybe_count'] > 0:
+                if int(r['maybe_count']) > 0:
                     m_image.append(image)
         return p_image, b_image, m_image
 
