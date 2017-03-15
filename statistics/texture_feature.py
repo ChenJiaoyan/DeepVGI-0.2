@@ -1,5 +1,7 @@
 #! /usr/bin/python
 
+# present glcm texture feature
+
 import sys
 
 sys.path.append("../lib")
@@ -9,26 +11,28 @@ import random
 import numpy as np
 import matplotlib.pyplot as plt
 
-from skimage import io, color
+from skimage import io
 from skimage.feature import greycomatrix, greycoprops
 
-PATCH = 21
-n = 10
+PATCH = 16
+n = 20
 
 
 def glcm_xy(item):
     img_dir = '../data/img_examples/'
-    tmp = item.split(',')
+    tmp = item.strip().split(',')
     task_x, task_y = int(tmp[1]), int(tmp[2])
     pixel_x, pixel_y = int(tmp[3]), int(tmp[4])
     img_f = '%s%d-%d.jpeg' % (img_dir, task_x, task_y)
-    img = color.rgb2gray(io.imread(img_f))
+    img = io.imread(img_f)
+    img = img[:, :, 0]
     x1, x2 = pixel_x - PATCH / 2, pixel_x + PATCH / 2
     y1, y2 = pixel_y - PATCH / 2, pixel_y + PATCH / 2
-    glcm = greycomatrix(img[x1:x2, y1:y2], [5], [0], 256, symmetric=True, normed=True)
+    img_crop = img[x1:x2, y1:y2]
+    glcm = greycomatrix(img_crop, [5], [0], 256, symmetric=True, normed=True)
     x = greycoprops(glcm, 'dissimilarity')[0, 0]
     y = greycoprops(glcm, 'correlation')[0, 0]
-    print '%s  %f %f \n' % (item, x, y)
+    print '%s %d-%d.jpeg:  %f %f ' % (tmp[0], task_x, task_y, x, y)
     return x, y
 
 
