@@ -1,2 +1,3 @@
 # DeepVGI-0.2
-Learning from global knowledge of the crowds
+Volunteered Geographic Information for Deep Learning;
+Learning from global geographic knowledge of the crowds
