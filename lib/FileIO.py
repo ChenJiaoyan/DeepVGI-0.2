@@ -21,3 +21,14 @@ def save_lines(file_name, lines):
     f.writelines(lines)
     f.close()
     return len(lines)
+
+
+def get_urban_tasks():
+    urbans = []
+    for row in csv_reader("../data/malawi_urban.csv"):
+        task_x = row['task_x']
+        task_y = row['task_y']
+        c = row['classification']
+        if c == 'urban':
+            urbans.append(task_x + ',' + task_y)
+    return urbans
