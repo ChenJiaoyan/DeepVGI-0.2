@@ -29,7 +29,7 @@ class Model(object):
         with open(msfile) as csvfile:
             reader = csv.DictReader(csvfile)
             for r in reader:
-                image = str(r['task_x']) + '_' + str(r['task_y']) + '.jpeg'
+                image = str(r['task_x']) + '-' + str(r['task_y']) + '.jpeg'
                 if int(r['bad_imagery_count']) == 0 and int(r['yes_count']) > 0:
                     p_image.append(image)
                 if int(r['bad_imagery_count']) > 0:
