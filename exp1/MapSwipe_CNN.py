@@ -29,12 +29,12 @@ class Model(object):
         with open(msfile) as csvfile:
             reader = csv.DictReader(csvfile)
             for r in reader:
-                image = str(r['task_x']) + '_' + str(r['task_y']) + '_18.jpeg'
-                if r['bad_imagery_count'] == 0 and r['yes_count'] > 0:
+                image = str(r['task_x']) + '-' + str(r['task_y']) + '.jpeg'
+                if int(r['bad_imagery_count']) == 0 and int(r['yes_count']) > 0:
                     p_image.append(image)
-                if r['bad_imagery_count'] > 0:
+                if int(r['bad_imagery_count']) > 0:
                     b_image.append(image)
-                if r['maybe_count'] > 0:
+                if int(r['maybe_count']) > 0:
                     m_image.append(image)
         return p_image, b_image, m_image
 
@@ -127,9 +127,9 @@ class Model(object):
         h_pool2 = self.__max_pool_4x4(h_conv2)
 
         # Third Layer
-        W_fc1 = self.__weight_variable([32 * 32 * 64, 1024])
+        W_fc1 = self.__weight_variable([61 * 61 * 64, 1024])
         b_fc1 = self.__bias_variable([1024])
-        h_pool2_flat = tf.reshape(h_pool2, [-1, 32 * 32 * 64])
+        h_pool2_flat = tf.reshape(h_pool2, [-1, 61 * 61 * 64])
         h_fc1 = tf.nn.relu(tf.matmul(h_pool2_flat, W_fc1) + b_fc1)
 
         # Dropout
