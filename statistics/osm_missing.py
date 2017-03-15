@@ -1,5 +1,7 @@
 #! /usr/bin/python
 
+# Calculate the missing rate
+
 import sys
 import random
 
