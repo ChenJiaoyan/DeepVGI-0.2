@@ -50,6 +50,6 @@ class MSClient:
             tmp = line.strip().split(',')
             x, y = int(tmp[4]), int(tmp[5])
             yes_count, maybe_count, bad_img_count = int(tmp[8]), int(tmp[9]), int(tmp[10])
-            if bad_img_count == 0 and (yes_count >= 1 or (maybe_count + yes_count) >= 2):
+            if bad_img_count == 0 and (yes_count >= 2 or (maybe_count + yes_count) >= 3):
                 p_imgs.append([x, y])
         return p_imgs
