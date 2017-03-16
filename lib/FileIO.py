@@ -23,9 +23,9 @@ def save_lines(file_name, lines):
     return len(lines)
 
 
-def get_urban_tasks():
+def get_urban_tasks(urban_file='../data/malawi_urban.csv'):
     urbans = []
-    for row in csv_reader("../data/malawi_urban.csv"):
+    for row in csv_reader(urban_file):
         task_x = row['task_x']
         task_y = row['task_y']
         c = row['classification']
