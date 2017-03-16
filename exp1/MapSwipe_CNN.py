@@ -165,7 +165,7 @@ class Model(object):
         sess = tf.Session()
         print '     training ...'
         sess.run(tf.global_variables_initializer())
-        for i in range(2000):
+        for i in range(1000):
             ran = self.__get_batch(X_train.shape[0], i, 30)
             if i % 100 == 0:
                 train_accuracy = accuracy.eval(session=sess, feed_dict={ \
