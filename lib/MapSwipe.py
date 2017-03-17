@@ -53,3 +53,15 @@ class MSClient:
             if bad_img_count == 0 and (yes_count >= 2 or (maybe_count + yes_count) >= 3):
                 p_imgs.append([x, y])
         return p_imgs
+
+    def read_n_images(self):
+        ms_file = '../data/project_' + str(self.project_id) + '.csv'
+        lines = FileIO.read_lines(ms_file, 1)
+        n_imgs = []
+        for line in lines:
+            tmp = line.strip().split(',')
+            x, y = int(tmp[4]), int(tmp[5])
+            yes_count, maybe_count, bad_img_count = int(tmp[8]), int(tmp[9]), int(tmp[10])
+            if bad_img_count == 0 and yes_count == 0 and maybe_count == 0:
+                n_imgs.append([x, y])
+        return n_imgs
