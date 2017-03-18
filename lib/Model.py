@@ -81,6 +81,8 @@ class Model(object):
                                feed_dict={x_image: self.X_imgs[ran, :], y_: self.Y_labels[ran], keep_prob: 0.5})
             saver.save(sess, '../data/model/%s.ckpt' % self.name)
         print '#################  end learning  ####################'
+        print 'model saved in %s.meta and %s.ckpt' % (self.name, self.name)
+
 
     def predict(self):
         saver = tf.train.import_meta_graph('../data/%s.meta' % self.name)
@@ -114,7 +116,8 @@ class Model(object):
         print '#################  end evaluation  ####################'
 
 
-    def __get_batch(self, l, i, n):
+    @staticmethod
+    def __get_batch(l, i, n):
         if l % n == 0:
             m = l / n
             bottom, top = i % m * n, i % m * n + n
@@ -127,16 +130,20 @@ class Model(object):
                 top = bottom + n
         return range(bottom, top)
 
-    def __weight_variable(self, shape):
+    @staticmethod
+    def __weight_variable(shape):
         initial = tf.truncated_normal(shape, stddev=0.1)
         return tf.Variable(initial)
 
-    def __bias_variable(self, shape):
+    @staticmethod
+    def __bias_variable(shape):
         initial = tf.constant(0.1, shape=shape)
         return tf.Variable(initial)
 
-    def __conv2d(self, x, W):
+    @staticmethod
+    def __conv2d(x, W):
         return tf.nn.conv2d(x, W, strides=[1, 1, 1, 1], padding='SAME')
 
-    def __max_pool_2x2(self, x):
+    @staticmethod
+    def __max_pool_2x2(x):
         return tf.nn.max_pool(x, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME')
