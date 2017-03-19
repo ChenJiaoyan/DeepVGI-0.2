@@ -5,21 +5,31 @@ import tensorflow as tf
 
 class Model(object):
     epoch_num = 2000
+    class_num = 2
 
     def __init__(self, imgs, labels, name='CNN_Default'):
         self.X_imgs = imgs
         self.Y_labels = labels
         self.X_shape = imgs.shape
-        self.class_num = labels.shape[1]
         self.name = name
 
-    def __init__(self, imgs, name='CNN_Default'):
+    def __init__(self, name='CNN_Default'):
+        self.name = name
+
+    def set_evaluation_input(self, imgs, labels):
+        self.X_imgs = imgs
+        self.Y_labels = labels
+        self.X_shape = imgs.shape
+
+    def set_prediction_input(self, imgs):
         self.X_imgs = imgs
         self.X_shape = imgs.shape
-        self.name = name
 
     def set_epoch_num(self, epoch_num):
         self.epoch_num = epoch_num
+
+    def set_class_num(self, class_num):
+        self.class_num = class_num
 
     def train_cnn(self):
         ## input
