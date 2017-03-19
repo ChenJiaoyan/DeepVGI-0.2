@@ -1,14 +1,27 @@
 <component name="ProjectDictionaryState">
   <dictionary name="John">
     <words>
+      <w>ckpt</w>
+      <w>concated</w>
+      <w>conv</w>
+      <w>defn</w>
       <w>glcm</w>
       <w>hexencode</w>
       <w>imgs</w>
       <w>keypair</w>
+      <w>logit</w>
+      <w>logits</w>
+      <w>msfile</w>
+      <w>onehot</w>
+      <w>outdriver</w>
+      <w>outlayer</w>
+      <w>outshp</w>
       <w>projet</w>
       <w>shapefile</w>
       <w>spatialdata</w>
       <w>urbans</w>
+      <w>vari</w>
+      <w>xentropy</w>
     </words>
   </dictionary>
 </component>
