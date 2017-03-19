@@ -22,6 +22,7 @@ for i in range(0, inLayerDefn.GetFieldCount()):
     outlayer.CreateField(fieldDefn)
 outLayerDefn = outlayer.GetLayerDefn()
 
+num = 0
 for i in range(0, layer.GetFeatureCount()):
     if i % 2000 == 0:
         print 'i == %d' % i
@@ -30,11 +31,15 @@ for i in range(0, layer.GetFeatureCount()):
     maybe_count = feature.GetField("maybe")
     bad_img_count = feature.GetField("bad_image")
     if int(bad_img_count) == 0 and int(yes_count) == 0 and int(maybe_count) == 0:
+        num += 1
         outFeature = feature.Clone()
         for n in range(0, outLayerDefn.GetFieldCount()):
             outFeature.SetField(outLayerDefn.GetFieldDefn(n).GetNameRef(), feature.GetField(n))
         outlayer.CreateFeature(outFeature)
         outFeature.Destroy()
+
+print 'feature count: ' % layer.GetFeatureCount()
+print 'negative feature count: ' % num
 
 source.Destroy()
 outsource.Destroy()
