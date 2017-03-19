@@ -38,8 +38,8 @@ for i in range(0, layer.GetFeatureCount()):
         outlayer.CreateFeature(outFeature)
         outFeature.Destroy()
 
-print 'feature count: ' % layer.GetFeatureCount()
-print 'negative feature count: ' % num
+print 'feature count: %d' % layer.GetFeatureCount()
+print 'negative feature count: %d' % num
 
 source.Destroy()
 outsource.Destroy()
