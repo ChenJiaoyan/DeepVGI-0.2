@@ -55,12 +55,17 @@ for i in range(n1):
         n_crop = crop(n_lines[i * n1 + j])
         n_img[i * PATCH:(i + 1) * PATCH, j * PATCH:(j + 1) * PATCH] = n_crop
 
+
 rgb = ['r', 'g', 'b']
+
 for i, c in enumerate(rgb):
     y_hist = exposure.histogram(y_img[:, :, i])
     n_hist = exposure.histogram(n_img[:, :, i])
-    plt.plot(y_hist[1], y_hist[0] / float(y_img.shape[0] * y_img.shape[1]), c)
-    plt.plot(n_hist[1], n_hist[0] / float(n_img.shape[0] * n_img.shape[1]), c + '--')
+    #plt.plot(y_hist[1], y_hist[0] / float(y_img.shape[0] * y_img.shape[1]), c)
+    plt.plot(n_hist[1], n_hist[0] / float(n_img.shape[0] * n_img.shape[1]), c)
+    plt.xlim(0, 255)
+    plt.ylim(0, 0.03)
+    plt.title("RGB Color Histogram")
 
 plt.show()
 
