@@ -87,6 +87,7 @@ class Model(object):
         h_fc1_shape = tf.shape(h_fc1)
         h_pool2_shape = tf.shape(h_pool2)
         h_conv2_shape = tf.shape(h_conv2)
+        h_pool1_shape = tf.shape(h_pool1)
 
         saver = tf.train.Saver()
         saver.export_meta_graph('../data/model/%s.meta' % self.name)
@@ -108,6 +109,8 @@ class Model(object):
                                   feed_dict={x_image: self.X_imgs[ran], y_: self.Y_labels[ran], keep_prob: 0.5})
                 shape6 = sess.run(h_conv2_shape,
                                   feed_dict={x_image: self.X_imgs[ran], y_: self.Y_labels[ran], keep_prob: 0.5})
+                shape7 = sess.run(h_pool1_shape,
+                                  feed_dict={x_image: self.X_imgs[ran], y_: self.Y_labels[ran], keep_prob: 0.5})
                 print 'y_conv_shape: '
                 print shape1
                 print 'y_shape: '
@@ -120,6 +123,8 @@ class Model(object):
                 print shape5
                 print 'h_conv2_shape'
                 print shape6
+                print 'h_pool1_shape'
+                print shape7
                 if i % 100 == 0:
                     train_accuracy = accuracy.eval(session=sess,
                                                    feed_dict={x_image: self.X_imgs[ran], y_: self.Y_labels[ran],
