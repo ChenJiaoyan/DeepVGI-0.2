@@ -6,6 +6,7 @@ import tensorflow as tf
 class Model(object):
     epoch_num = 2000
     class_num = 2
+    batch_size = 50
 
     def __init__(self, imgs, labels, name='CNN_Default'):
         # X_imgs shape: img_number * Row * Col * RGB_bands
@@ -13,6 +14,10 @@ class Model(object):
         self.X_shape = imgs.shape
         self.Y_labels = labels
         self.name = name
+        self.sample_size = imgs.shape[0]
+        self.rows = imgs.shape[1]
+        self.cols = imgs.shape[2]
+        self.bands = imgs.shape[3]
 
     def set_evaluation_input(self, imgs, labels):
         self.X_imgs = imgs
@@ -29,15 +34,18 @@ class Model(object):
     def set_class_num(self, class_num):
         self.class_num = class_num
 
+    def set_batch_size(self, batch_size):
+        self.batch_size = batch_size
+
     def train_cnn(self):
         ## input
-        x_image = tf.placeholder(tf.float32, shape=[None, self.X_shape[1], self.X_shape[2], self.X_shape[3]])
+        x_image = tf.placeholder(tf.float32, shape=[None, self.rows, self.cols, self.bands])
         y_ = tf.placeholder(tf.float32, shape=[None, self.class_num])
         tf.add_to_collection("x_image", x_image)
         tf.add_to_collection("y_", y_)
 
         ## First Layer
-        W_conv1 = self.__weight_variable([4, 4, self.img_shape[3], 16])
+        W_conv1 = self.__weight_variable([4, 4, self.bands, 16])
         b_conv1 = self.__bias_variable([16])
         h_conv1 = tf.nn.relu(self.__conv2d(x_image, W_conv1) + b_conv1)
         h_pool1 = self.__max_pool_2x2(h_conv1)
@@ -79,7 +87,7 @@ class Model(object):
         with tf.Session() as sess:
             sess.run(tf.initialize_all_variables())
             for i in range(self.epoch_num):
-                ran = self.__get_batch(self.X_shape[0], i, 50)
+                ran = self.__get_batch(self.sample_size, i, self.batch_size)
                 if i % 100 == 0:
                     train_accuracy = accuracy.eval(session=sess,
                                                    feed_dict={x_image: self.X_imgs[ran], y_: self.Y_labels[ran],
