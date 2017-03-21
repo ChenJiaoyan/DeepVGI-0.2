@@ -92,8 +92,8 @@ class Model(object):
             sess.run(init_op)
             for i in range(self.epoch_num):
                 ran = self.__get_batch(self.sample_size, i, self.batch_size)
-                shape1 = y_conv_shape.run(session=sess, feed_dict={x_image: self.X_imgs[ran], y_: self.Y_labels[ran]})
-                shape2 = y_shape.run(session=sess, feed_dict={x_image: self.X_imgs[ran], y_: self.Y_labels[ran]})
+                shape1 = sess.run(y_conv_shape, feed_dict={x_image: self.X_imgs[ran], y_: self.Y_labels[ran]})
+                shape2 = sess.run(y_shape, feed_dict={x_image: self.X_imgs[ran], y_: self.Y_labels[ran]})
                 print 'y_conv_shape: '
                 print shape1
                 print 'y_shape: '
