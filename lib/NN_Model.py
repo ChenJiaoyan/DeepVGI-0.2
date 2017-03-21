@@ -73,13 +73,16 @@ class Model(object):
         y_conv = tf.matmul(h_fc1_drop, W_fc2) + b_fc2
         tf.add_to_collection("y_conv", y_conv)
 
-        ## Operation
         init_op = tf.global_variables_initializer()
         cross_entropy = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(y_conv, y_))
         train_step = tf.train.AdamOptimizer(1e-4).minimize(cross_entropy)
         correct_prediction = tf.equal(tf.argmax(y_conv, 1), tf.argmax(y_, 1))
         accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
         tf.add_to_collection("accuracy", accuracy)
+
+        ## Debug Ops
+        y_conv_shape = tf.shape(y_conv)
+        y_shape = tf.shape(y_)
 
         saver = tf.train.Saver()
         saver.export_meta_graph('../data/model/%s.meta' % self.name)
@@ -89,6 +92,12 @@ class Model(object):
             sess.run(init_op)
             for i in range(self.epoch_num):
                 ran = self.__get_batch(self.sample_size, i, self.batch_size)
+                shape1 = y_conv_shape.run(session=sess, feed_dict={x_image: self.X_imgs[ran], y_: self.Y_labels[ran]})
+                shape2 = y_shape.run(session=sess, feed_dict={x_image: self.X_imgs[ran], y_: self.Y_labels[ran]})
+                print 'y_conv_shape: '
+                print shape1
+                print 'y_shape: '
+                print shape2
                 if i % 100 == 0:
                     train_accuracy = accuracy.eval(session=sess,
                                                    feed_dict={x_image: self.X_imgs[ran], y_: self.Y_labels[ran],
