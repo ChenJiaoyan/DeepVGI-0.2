@@ -74,6 +74,7 @@ class Model(object):
         tf.add_to_collection("y_conv", y_conv)
 
         ## Operation
+        init_op = tf.global_variables_initializer()
         cross_entropy = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(y_conv, y_))
         train_step = tf.train.AdamOptimizer(1e-4).minimize(cross_entropy)
         correct_prediction = tf.equal(tf.argmax(y_conv, 1), tf.argmax(y_, 1))
@@ -85,7 +86,7 @@ class Model(object):
 
         print '#################  start learning  ####################'
         with tf.Session() as sess:
-            sess.run(tf.initialize_all_variables())
+            sess.run(init_op)
             for i in range(self.epoch_num):
                 ran = self.__get_batch(self.sample_size, i, self.batch_size)
                 if i % 100 == 0:
