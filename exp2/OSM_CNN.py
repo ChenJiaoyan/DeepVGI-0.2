@@ -36,7 +36,7 @@ def read_sample():
     imgs = os.listdir(img_dir)
     osm_imgs, none_osm_imgs = [], []
     for img in imgs:
-        i1, i2 = img.index('-'), img.index(',')
+        i1, i2 = img.index('-'), img.index('.')
         task_x, task_y = img[0:i1], img[(i1 + 1):i2]
         k = '%s-%s' % (task_x, task_y)
         if task_w.has_key(k):
