@@ -10,11 +10,8 @@ class Model(object):
     def __init__(self, imgs, labels, name='CNN_Default'):
         # X_imgs shape: img_number * Row * Col * RGB_bands
         self.X_imgs = imgs
-        self.Y_labels = labels
         self.X_shape = imgs.shape
-        self.name = name
-
-    def __init__(self, name='CNN_Default'):
+        self.Y_labels = labels
         self.name = name
 
     def set_evaluation_input(self, imgs, labels):

@@ -55,7 +55,7 @@ def read_sample():
 
     return np.concatenate((img_X1, img_X0)), label
 
-
+print '--------------- Read Samples ---------------'
 img_X, Y = read_sample()
 m = NN_Model.Model(img_X, Y, 'CNN_JY')
 m.train_cnn()
