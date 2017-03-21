@@ -48,13 +48,13 @@ class Model(object):
         W_conv1 = self.__weight_variable([4, 4, self.bands, 16])
         b_conv1 = self.__bias_variable([16])
         h_conv1 = tf.nn.relu(self.__conv2d(x_image, W_conv1) + b_conv1)
-        h_pool1 = self.__max_pool_2x2(h_conv1)
+        h_pool1 = self.__max_pool_4x4(h_conv1)
 
         ## Second Layer
         W_conv2 = self.__weight_variable([4, 4, 16, 32])
         b_conv2 = self.__bias_variable([32])
         h_conv2 = tf.nn.relu(self.__conv2d(h_pool1, W_conv2) + b_conv2)
-        h_pool2 = self.__max_pool_2x2(h_conv2)
+        h_pool2 = self.__max_pool_4x4(h_conv2)
 
         ## Third Layer
         W_fc1 = self.__weight_variable([16 * 16 * 32, 512])
@@ -192,3 +192,7 @@ class Model(object):
     @staticmethod
     def __max_pool_2x2(x):
         return tf.nn.max_pool(x, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME')
+
+    @staticmethod
+    def __max_pool_4x4(x):
+        return tf.nn.max_pool(x, ksize=[1, 4, 4, 1], strides=[1, 4, 4, 1], padding='SAME')
