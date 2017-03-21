@@ -11,7 +11,7 @@ sys.path.append("../lib")
 import NN_Model
 import FileIO
 
-n1, n0 = 2500, 2500
+n1, n0 = 50, 50
 
 
 def osm_building_weight():
