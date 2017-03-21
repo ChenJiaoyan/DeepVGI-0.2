@@ -92,8 +92,10 @@ class Model(object):
             sess.run(init_op)
             for i in range(self.epoch_num):
                 ran = self.__get_batch(self.sample_size, i, self.batch_size)
-                shape1 = sess.run(y_conv_shape, feed_dict={x_image: self.X_imgs[ran], y_: self.Y_labels[ran]})
-                shape2 = sess.run(y_shape, feed_dict={x_image: self.X_imgs[ran], y_: self.Y_labels[ran]})
+                shape1 = sess.run(y_conv_shape,
+                                  feed_dict={x_image: self.X_imgs[ran], y_: self.Y_labels[ran], keep_prob: 0.5})
+                shape2 = sess.run(y_shape,
+                                  feed_dict={x_image: self.X_imgs[ran], y_: self.Y_labels[ran], keep_prob: 0.5})
                 print 'y_conv_shape: '
                 print shape1
                 print 'y_shape: '
@@ -108,7 +110,6 @@ class Model(object):
             saver.save(sess, '../data/model/%s.ckpt' % self.name)
         print '#################  end learning  ####################'
         print 'model saved in %s.meta and %s.ckpt' % (self.name, self.name)
-
 
     def predict(self):
         saver = tf.train.import_meta_graph('../data/%s.meta' % self.name)
@@ -126,7 +127,6 @@ class Model(object):
             print prob_results
         print '#################  end predicting  ####################'
 
-
     def evaluate(self):
         saver = tf.train.import_meta_graph('../data/%s.meta' % self.name)
         accuracy = tf.get_collection("accuracy")[0]
@@ -140,7 +140,6 @@ class Model(object):
                                                          keep_prob: 1.0})
             print("testing accuracy %g \n" % acc)
         print '#################  end evaluation  ####################'
-
 
     @staticmethod
     def __get_batch(l, i, n):
