@@ -12,7 +12,7 @@ import FileIO
 
 import os
 import random
-from skimage import io
+from scipy import misc
 import matplotlib.pyplot as plt
 
 L = 50
@@ -46,7 +46,7 @@ for line in lines:
         if random.random() <= 0.1:
             x, y = int(line_split[3]), int(line_split[4])
             print '%d,%d' % (x, y)
-            img = io.imread('../data/img_examples/' + img_name)
+            img = misc.imread('../data/img_examples/' + img_name)
             row, col = y, x
             img[row, col] = [255, 0, 0]
             fig = plt.figure()
@@ -55,7 +55,7 @@ for line in lines:
             plt.show()
     else:
         print 'NOT OSM building'
-        img = io.imread('../data/img_examples/' + img_name)
+        img = misc.imread('../data/img_examples/' + img_name)
         fig = plt.figure()
         ax = fig.add_subplot(111)
         plt.imshow(img)
