@@ -80,15 +80,6 @@ class Model(object):
         accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
         tf.add_to_collection("accuracy", accuracy)
 
-        ## Debug Ops
-        y_conv_shape = tf.shape(y_conv)
-        y_shape = tf.shape(y_)
-        h_fc1_drop_shape = tf.shape(h_fc1_drop)
-        h_fc1_shape = tf.shape(h_fc1)
-        h_pool2_shape = tf.shape(h_pool2)
-        h_conv2_shape = tf.shape(h_conv2)
-        h_pool1_shape = tf.shape(h_pool1)
-
         saver = tf.train.Saver()
         saver.export_meta_graph('../data/model/%s.meta' % self.name)
 
@@ -97,34 +88,6 @@ class Model(object):
             sess.run(init_op)
             for i in range(self.epoch_num):
                 ran = self.__get_batch(self.sample_size, i, self.batch_size)
-                shape1 = sess.run(y_conv_shape,
-                                  feed_dict={x_image: self.X_imgs[ran], y_: self.Y_labels[ran], keep_prob: 0.5})
-                shape2 = sess.run(y_shape,
-                                  feed_dict={x_image: self.X_imgs[ran], y_: self.Y_labels[ran], keep_prob: 0.5})
-                shape3 = sess.run(h_fc1_drop_shape,
-                                  feed_dict={x_image: self.X_imgs[ran], y_: self.Y_labels[ran], keep_prob: 0.5})
-                shape4 = sess.run(h_fc1_shape,
-                                  feed_dict={x_image: self.X_imgs[ran], y_: self.Y_labels[ran], keep_prob: 0.5})
-                shape5 = sess.run(h_pool2_shape,
-                                  feed_dict={x_image: self.X_imgs[ran], y_: self.Y_labels[ran], keep_prob: 0.5})
-                shape6 = sess.run(h_conv2_shape,
-                                  feed_dict={x_image: self.X_imgs[ran], y_: self.Y_labels[ran], keep_prob: 0.5})
-                shape7 = sess.run(h_pool1_shape,
-                                  feed_dict={x_image: self.X_imgs[ran], y_: self.Y_labels[ran], keep_prob: 0.5})
-                print 'y_conv_shape: '
-                print shape1
-                print 'y_shape: '
-                print shape2
-                print 'h_fc1_drop_shape: '
-                print shape3
-                print 'h_fc1_shape: '
-                print shape4
-                print 'h_pool2_shape'
-                print shape5
-                print 'h_conv2_shape'
-                print shape6
-                print 'h_pool1_shape'
-                print shape7
                 if i % 100 == 0:
                     train_accuracy = accuracy.eval(session=sess,
                                                    feed_dict={x_image: self.X_imgs[ran], y_: self.Y_labels[ran],
