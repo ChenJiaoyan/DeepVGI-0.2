@@ -45,17 +45,20 @@ def read_sample():
             none_osm_imgs.append(img)
     osm_imgs = random.sample(osm_imgs, n1)
     none_osm_imgs = random.sample(none_osm_imgs, n0)
-
     for i, img in enumerate(osm_imgs):
-        x1 = misc.imread(os.path.join(img_dir, img))
-        img_X1[i] = x1
+        img_X1[i] = misc.imread(os.path.join(img_dir, img))
     for i, img in enumerate(none_osm_imgs):
-        x0 = misc.imread(os.path.join(img_dir, img))
-        img_X0[i] = x0
+        img_X0[i] = misc.imread(os.path.join(img_dir, img))
 
-    return np.concatenate((img_X1, img_X0)), label
+    j = range(n1 + n0)
+    random.shuffle(j)
+    X = np.concatenate((img_X1, img_X0))
+    return X[j], label[j]
+
+
 
 print '--------------- Read Samples ---------------'
 img_X, Y = read_sample()
 m = NN_Model.Model(img_X, Y, 'CNN_JY')
+m.set_batch_size(20)
 m.train_cnn()
