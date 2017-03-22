@@ -60,19 +60,19 @@ def read_sample(n1, n0):
 def deal_args(my_argv):
     n1, n0, b = 50, 50, 20
     try:
-        opts, args = getopt.getopt(my_argv, "hn1:n0:b:", ["p_sample_size=", "n_sample_size=", "batch_size="])
+        opts, args = getopt.getopt(my_argv, "hy:n:b:", ["p_sample_size=", "n_sample_size=", "batch_size="])
     except getopt.GetoptError:
-        print 'OSM_Evaluation.py -n1 <p_sample_size> -n0 <n_sample_size> -b <batch_size>'
+        print 'OSM_Evaluation.py -y <p_sample_size> -n <n_sample_size> -b <batch_size>'
         print 'use the default settings: n1=%d, n0=%d, b=%d' % (n1, n0, b)
     for opt, arg in opts:
         if opt == '-h':
             print 'OSM_Evaluation.py -n1 <p_sample_size> -n0 <n_sample_size> -b <batch_size>'
             sys.exit()
-        elif opt in ("-n1", "--p_sample_size"):
-            print 'n1 ' + arg
+        elif opt in ("-y", "--p_sample_size"):
+            print 'y ' + arg
             n1 = int(arg)
-        elif opt in ("-n0", "--n_sample_size"):
-            print 'n0 ' + arg
+        elif opt in ("-n", "--n_sample_size"):
+            print 'n ' + arg
             n0 = int(arg)
         elif opt in ("-b", "--batch_size"):
             print 'b ' + arg
