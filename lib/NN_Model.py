@@ -123,10 +123,12 @@ class Model(object):
         keep_prob = tf.get_collection("keep_prob")[0]
         y_conv = tf.get_collection("y_conv")[0]
         label_p = tf.argmax(y_conv, 1)
+        label_t = tf.argmax(y_, )
         acc_op = tf.get_collection("accuracy")[0]
-        auc_op = tf.contrib.metrics.streaming_auc(tf.nn.softmax(y_conv)[:, 1], tf.argmax(y_, 1), curve='ROC')
-        precision_op = tf.contrib.metrics.streaming_precision(label_p, tf.argmax(y_, 1))
-        recall_op = tf.contrib.metrics.streaming_recall(label_p, tf.argmax(y_, 1))
+        auc_op = tf.contrib.metrics.streaming_auc(tf.nn.softmax(y_conv)[:, 1], label_t, curve='ROC')
+        precision_op = tf.contrib.metrics.streaming_precision(label_p, label_t)
+        recall_op = tf.contrib.metrics.streaming_precision(label_p, label_t)
+
         print '#################  start evaluation  ####################'
         with tf.Session() as sess:
             saver.restore(sess, "../data/model/%s.ckpt" % self.name)
