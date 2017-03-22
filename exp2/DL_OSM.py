@@ -5,6 +5,7 @@ import os
 import sys
 import random
 import getopt
+import gc
 import numpy as np
 from scipy import misc
 
@@ -84,7 +85,7 @@ def read_train_sample(n1, n0, train_imgs):
 
 
 def deal_args(my_argv):
-    v, n1, n0, b, e, t, c, z = False, 200, 200, 30, 1000, 4, 0, 500
+    v, n1, n0, b, e, t, c, z = False, 200, 200, 30, 1000, 4, 0, 1000
     try:
         opts, args = getopt.getopt(my_argv, "vhy:n:b:e:t:c:z:",
                                    ["p_sample_size=", "n_sample_size=", "batch_size=", "epoch_num=", "thread_num=",
@@ -124,10 +125,6 @@ if __name__ == '__main__':
     client = MapSwipe.MSClient()
     train_imgs, test_imgs = client.imgs_cross_validation(cv_i, cv_n)
     img_X, Y = read_train_sample(tr_n1, tr_n0, train_imgs)
-    ms_p_imgs = client.read_p_images()
-    ms_n_imgs = client.read_n_images()
-    img_X2, Y2 = read_test_sample(te_n, test_imgs, ms_p_imgs, ms_n_imgs)
-
     m = NN_Model.Model(img_X, Y, 'CNN_JY')
 
     if not evaluate_only:
@@ -136,7 +133,12 @@ if __name__ == '__main__':
         m.set_epoch_num(tr_e)
         m.set_thread_num(tr_t)
         m.train_cnn()
+    del img_X, Y, train_imgs
+    gc.collect()
 
     print '--------------- Evaluation on MapSwipe Samples ---------------'
+    ms_p_imgs = client.read_p_images()
+    ms_n_imgs = client.read_n_images()
+    img_X2, Y2 = read_test_sample(te_n, test_imgs, ms_p_imgs, ms_n_imgs)
     m.set_evaluation_input(img_X2, Y2)
     m.evaluate()
