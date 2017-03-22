@@ -115,20 +115,6 @@ class Model(object):
         print '#################  end learning  ####################'
         print 'model saved in %s.meta and %s.ckpt' % (self.name, self.name)
 
-    def predict(self):
-        saver = tf.train.import_meta_graph('../data/model/%s.meta' % self.name)
-        y_conv = tf.get_collection("y_conv")[0]
-        x_image = tf.get_collection("x_image")[0]
-        keep_prob = tf.get_collection("keep_prob")[0]
-        label_p = tf.argmax(y_conv, 1)
-        print '#################  start predicting  ####################'
-        with tf.Session() as sess:
-            saver.restore(sess, "../data/model/%s.ckpt" % self.name)
-            label_pred, y_pred = sess.run([label_p, y_conv], feed_dict={x_image: self.X_imgs, keep_prob: 1.0})
-            print label_pred
-            print y_pred
-        print '#################  end predicting  ####################'
-
     def evaluate(self):
         saver = tf.train.import_meta_graph('../data/model/%s.meta' % self.name)
         x_image = tf.get_collection("x_image")[0]
