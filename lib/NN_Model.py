@@ -129,6 +129,7 @@ class Model(object):
             for i in range(int(math.ceil(self.sample_size / float(batch)))):
                 i1 = i * batch
                 i2 = (i + 1) * batch if (i + 1) * batch < self.sample_size else self.sample_size
+                print 'predict...  %d to %d \n' % (i1, i2)
                 label_pred[i1:i2], score[i1:i2] = sess.run([tf.argmax(y_conv, 1), tf.nn.softmax(y_conv)[:, 1]],
                                                            feed_dict={x_image: self.X_imgs[i1:i2],
                                                                       y_: self.Y_labels[i1:i2], keep_prob: 1.0})
