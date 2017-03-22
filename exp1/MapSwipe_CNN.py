@@ -168,10 +168,9 @@ class Model(object):
         sess = tf.Session()
         print '     training ...'
 
+        sess.run(tf.global_variables_initializer())
         merged_summary_op = tf.summary.merge_all()
         summary_writer = tf.train.SummaryWriter('/tmp/mnist_logs', sess.graph)
-
-        sess.run(tf.global_variables_initializer())
         for i in range(1000):
             ran = self.__get_batch(X_train.shape[0], i, 30)
             if i % 100 == 0:
