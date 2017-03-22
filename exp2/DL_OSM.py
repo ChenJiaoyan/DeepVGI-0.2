@@ -90,11 +90,11 @@ def deal_args(my_argv):
                                    ["p_sample_size=", "n_sample_size=", "batch_size=", "epoch_num=", "thread_num=",
                                     "cv_round=", 'test_size='])
     except getopt.GetoptError:
-        print 'OSM_Evaluation.py -v -y <p_sample_size> -n <n_sample_size> -b <batch_size> -e <epoch_num> -t <thread_num>, -c <cv_round>, -z <test_size>'
+        print 'DL_OSM.py -v -y <p_sample_size> -n <n_sample_size> -b <batch_size> -e <epoch_num> -t <thread_num>, -c <cv_round>, -z <test_size>'
         print 'default settings: v=%s, n1=%d, n0=%d, b=%d, e=%d, t=%d, c=%d, z=%d' % (v, n1, n0, b, e, t, c, z)
     for opt, arg in opts:
         if opt == '-h':
-            print 'OSM_Evaluation.py -v -y <p_sample_size> -n <n_sample_size> -b <batch_size> -e <epoch_num> -t <thread_num>, -c <cv_round>, -z <test_size>'
+            print 'DL_OSM.py -v -y <p_sample_size> -n <n_sample_size> -b <batch_size> -e <epoch_num> -t <thread_num>, -c <cv_round>, -z <test_size>'
             sys.exit()
         elif opt == '-v':
             v = True
