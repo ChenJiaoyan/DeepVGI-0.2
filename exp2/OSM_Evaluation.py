@@ -60,7 +60,7 @@ def read_sample(n1, n0):
 def deal_args(my_argv):
     n1, n0, b = 50, 50, 20
     try:
-        opts, args = getopt.getopt(my_argv, "hn1:n0:b", ["p_sample_size=", "n_sample_size=", "batch_size="])
+        opts, args = getopt.getopt(my_argv, "hn1:n0:b:", ["p_sample_size=", "n_sample_size=", "batch_size="])
     except getopt.GetoptError:
         print 'OSM_Evaluation.py -n1 <p_sample_size> -n0 <n_sample_size> -b <batch_size>'
         print 'use the default settings: n1=%d, n0=%d, b=%d' % (n1, n0, b)
