@@ -75,10 +75,9 @@ class Model(object):
         y_conv = tf.matmul(h_fc1_drop, W_fc2) + b_fc2
         tf.add_to_collection("y_conv", y_conv)
 
-        init_op = tf.global_variables_initializer()
         cross_entropy = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(y_conv, y_))
-        #       train_step = tf.train.AdamOptimizer(1e-4).minimize(cross_entropy)
-        train_step = tf.train.GradientDescentOptimizer(1e-4).minimize(cross_entropy)
+        train_step = tf.train.AdamOptimizer(1e-4).minimize(cross_entropy)
+        #train_step = tf.train.GradientDescentOptimizer(1e-4).minimize(cross_entropy)
         correct_prediction = tf.equal(tf.argmax(y_conv, 1), tf.argmax(y_, 1))
         accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
         tf.add_to_collection("accuracy", accuracy)
@@ -88,7 +87,8 @@ class Model(object):
 
         print '#################  start learning  ####################'
         with tf.Session() as sess:
-            sess.run(init_op)
+            sess.run(tf.global_variables_initializer())
+            sess.run(tf.local_variables_initializer())
             for i in range(self.epoch_num):
                 ran = self.__get_batch(self.sample_size, i, self.batch_size)
                 if i % 100 == 0:
@@ -103,7 +103,7 @@ class Model(object):
         print 'model saved in %s.meta and %s.ckpt' % (self.name, self.name)
 
     def predict(self):
-        saver = tf.train.import_meta_graph('../data/%s.meta' % self.name)
+        saver = tf.train.import_meta_graph('../data/model/%s.meta' % self.name)
         y_conv = tf.get_collection("y_conv")[0]
         x_image = tf.get_collection("x_image")[0]
         keep_prob = tf.get_collection("keep_prob")[0]
@@ -117,13 +117,14 @@ class Model(object):
         print '#################  end predicting  ####################'
 
     def evaluate(self):
-        saver = tf.train.import_meta_graph('../data/%s.meta' % self.name)
+        saver = tf.train.import_meta_graph('../data/model/%s.meta' % self.name)
         accuracy = tf.get_collection("accuracy")[0]
         x_image = tf.get_collection("x_image")[0]
         y_ = tf.get_collection("y_")[0]
         keep_prob = tf.get_collection("keep_prob")[0]
         y_conv = tf.get_collection("y_conv")[0]
         label_p = tf.argmax(y_conv, 1)
+        tf.contrib.metrics.streaming_auc()
         print '#################  start evaluation  ####################'
         with tf.Session() as sess:
             saver.restore(sess, "../data/model/%s.ckpt" % self.name)
