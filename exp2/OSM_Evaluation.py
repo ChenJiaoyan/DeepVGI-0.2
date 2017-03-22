@@ -31,6 +31,7 @@ def read_test_sample(n, test_imgs, ms_p_imgs, ms_n_imgs):
     img_dir = '../data/image_project_922/'
     random.shuffle(test_imgs)
     i = 0
+    te_p, te_n = 0, 0
     for img in test_imgs:
         if i >= n:
             break
@@ -40,9 +41,13 @@ def read_test_sample(n, test_imgs, ms_p_imgs, ms_n_imgs):
         if [int(task_x), int(task_y)] in ms_p_imgs:
             label[i, 1] = 1
             i += 1
+            te_p += 1
         elif [int(task_x), int(task_y)] in ms_n_imgs:
             label[i, 0] = 1
             i += 1
+            te_n += 1
+    print 'positive testing samples: %d \n ' % te_p
+    print 'negative testing samples: %d \n ' % te_n
     return img_X, label
 
 
@@ -79,7 +84,7 @@ def read_train_sample(n1, n0, train_imgs):
 
 
 def deal_args(my_argv):
-    v, n1, n0, b, e, t, c, z = False, 200, 200, 30, 1000, 4, 0,500
+    v, n1, n0, b, e, t, c, z = False, 200, 200, 30, 1000, 4, 0, 500
     try:
         opts, args = getopt.getopt(my_argv, "vhy:n:b:e:t:c:z:",
                                    ["p_sample_size=", "n_sample_size=", "batch_size=", "epoch_num=", "thread_num=",
@@ -123,10 +128,10 @@ if __name__ == '__main__':
     ms_n_imgs = client.read_n_images()
     img_X2, Y2 = read_test_sample(te_n, test_imgs, ms_p_imgs, ms_n_imgs)
 
-    print '--------------- Training on OSM Labels---------------'
     m = NN_Model.Model(img_X, Y, 'CNN_JY')
 
     if not evaluate_only:
+        print '--------------- Training on OSM Labels---------------'
         m.set_batch_size(tr_b)
         m.set_epoch_num(tr_e)
         m.set_thread_num(tr_t)
