@@ -91,13 +91,12 @@ class Model(object):
             sess.run(tf.local_variables_initializer())
             for i in range(self.epoch_num):
                 ran = self.__get_batch(self.sample_size, i, self.batch_size)
-                if i % 100 == 0:
-                    train_accuracy = accuracy.eval(session=sess,
-                                                   feed_dict={x_image: self.X_imgs, y_: self.Y_labels,
-                                                              keep_prob: 1.0})
-                    print("epoch %d, training accuracy %f \n" % (i, train_accuracy))
                 train_step.run(session=sess,
                                feed_dict={x_image: self.X_imgs[ran, :], y_: self.Y_labels[ran], keep_prob: 0.5})
+                if i % 100 == 0:
+                    train_accuracy = accuracy.eval(session=sess, feed_dict={x_image: self.X_imgs, y_: self.Y_labels,
+                                                                            keep_prob: 1.0})
+                    print("epoch %d, training accuracy %f \n" % (i, train_accuracy))
             saver.save(sess, '../data/model/%s.ckpt' % self.name)
         print '#################  end learning  ####################'
         print 'model saved in %s.meta and %s.ckpt' % (self.name, self.name)
@@ -127,7 +126,7 @@ class Model(object):
         with tf.Session() as sess:
             saver.restore(sess, "../data/model/%s.ckpt" % self.name)
             label_pred, score = sess.run([tf.argmax(y_conv, 1), tf.nn.softmax(y_conv)[:, 1]],
-                                     feed_dict={x_image: self.X_imgs, y_: self.Y_labels, keep_prob: 1.0})
+                                         feed_dict={x_image: self.X_imgs, y_: self.Y_labels, keep_prob: 1.0})
             label_true = np.argmax(self.Y_labels, 1)
             print 'metrics by sklearn \n'
             print 'Accuracy: %f \n' % metrics.accuracy_score(label_true, label_pred)
