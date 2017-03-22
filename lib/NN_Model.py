@@ -127,10 +127,12 @@ class Model(object):
         acc_op = tf.get_collection("accuracy")[0]
         auc_op = tf.contrib.metrics.streaming_auc(tf.nn.softmax(y_conv)[:, 1], label_t, curve='ROC')
         precision_op = tf.contrib.metrics.streaming_precision(label_p, label_t)
-        recall_op = tf.contrib.metrics.streaming_precision(label_p, label_t)
+        recall_op = tf.contrib.metrics.streaming_recall(label_p, label_t)
 
         print '#################  start evaluation  ####################'
         with tf.Session() as sess:
+            sess.run(tf.global_variables_initializer())
+            sess.run(tf.local_variables_initializer())
             saver.restore(sess, "../data/model/%s.ckpt" % self.name)
             acc, label_pred, auc, precision, recall = sess.run([acc_op, label_p, auc_op, precision_op, recall_op],
                                             feed_dict={x_image: self.X_imgs, y_: self.Y_labels, keep_prob: 1.0})
