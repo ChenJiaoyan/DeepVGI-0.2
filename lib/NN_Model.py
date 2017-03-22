@@ -91,13 +91,12 @@ class Model(object):
             sess.run(tf.local_variables_initializer())
             for i in range(self.epoch_num):
                 ran = self.__get_batch(self.sample_size, i, self.batch_size)
-                if i % 100 == 0:
-                    train_accuracy = accuracy.eval(session=sess,
-                                                   feed_dict={x_image: self.X_imgs[ran], y_: self.Y_labels[ran],
-                                                              keep_prob: 1.0})
-                    print("epoch %d, training accuracy %g \n" % (i, train_accuracy))
                 train_step.run(session=sess,
                                feed_dict={x_image: self.X_imgs[ran, :], y_: self.Y_labels[ran], keep_prob: 0.5})
+                if i % 100 == 0:
+                    train_accuracy = accuracy.eval(session=sess, feed_dict={x_image: self.X_imgs, y_: self.Y_labels,
+                                                                            keep_prob: 1.0})
+                    print("epoch %d, training accuracy %f \n" % (i, train_accuracy))
             saver.save(sess, '../data/model/%s.ckpt' % self.name)
         print '#################  end learning  ####################'
         print 'model saved in %s.meta and %s.ckpt' % (self.name, self.name)
@@ -122,31 +121,19 @@ class Model(object):
         y_ = tf.get_collection("y_")[0]
         keep_prob = tf.get_collection("keep_prob")[0]
         y_conv = tf.get_collection("y_conv")[0]
-        label_p = tf.argmax(y_conv, 1)
-        label_t = tf.argmax(y_, 1)
-        acc_op = tf.get_collection("accuracy")[0]
-        auc_op = tf.contrib.metrics.streaming_auc(tf.nn.softmax(y_conv)[:, 1], label_t, curve='ROC')
-        precision_op = tf.contrib.metrics.streaming_precision(label_p, label_t)
-        recall_op = tf.contrib.metrics.streaming_recall(label_p, label_t)
-        accuracy_op = tf.contrib.metrics.streaming_accuracy(label_p, label_t)
 
         print '#################  start evaluation  ####################'
         with tf.Session() as sess:
-            #sess.run(tf.global_variables_initializer())
-            #sess.run(tf.local_variables_initializer())
             saver.restore(sess, "../data/model/%s.ckpt" % self.name)
-            acc, label_pred, auc, precision, recall, accuracy = sess.run([acc_op, label_p, auc_op, precision_op, recall_op, accuracy_op],
-                                            feed_dict={x_image: self.X_imgs, y_: self.Y_labels, keep_prob: 1.0})
-            print 'Acc: %g \n' % acc
-            print 'AUC: %g \n' % auc[0]
-            print 'Precision: %g \n ' % precision[0]
-            print 'Recall: %g \n' % recall[0]
-            print 'Accuracy: %g \n' % accuracy[0]
+            label_pred, score = sess.run([tf.argmax(y_conv, 1), tf.nn.softmax(y_conv)[:, 1]],
+                                         feed_dict={x_image: self.X_imgs, y_: self.Y_labels, keep_prob: 1.0})
             label_true = np.argmax(self.Y_labels, 1)
             print 'metrics by sklearn \n'
-            print 'Precision: %g \n' % metrics.precision_score(label_true, label_pred)
-            print 'Recall: %g \n' % metrics.recall_score(label_true, label_pred)
-            print 'F1: %g \n' % metrics.f1_score(label_true, label_pred)
+            print 'Accuracy: %f \n' % metrics.accuracy_score(label_true, label_pred)
+            print 'Precision: %f \n' % metrics.precision_score(label_true, label_pred)
+            print 'Recall: %f \n' % metrics.recall_score(label_true, label_pred)
+            print 'F1: %f \n' % metrics.f1_score(label_true, label_pred)
+            print 'ROC_AUC: %f \n' % metrics.roc_auc_score(label_true, score)
         print '#################  end evaluation  ####################'
 
     @staticmethod

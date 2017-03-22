@@ -90,4 +90,3 @@ if __name__ == '__main__':
     m.train_cnn()
     print '--------------- Evaluation on Training Samples ---------------'
     m.evaluate()
-    m.predict()
