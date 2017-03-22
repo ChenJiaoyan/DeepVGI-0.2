@@ -74,6 +74,7 @@ def deal_args(my_argv):
             n0 = arg
         elif opt in ("-b", "--batch_size"):
             b = arg
+    print 'settings: n1=%d, n0=%d, b=%d' % (n1, n0, b)
     return n1, n0, b
 
 
