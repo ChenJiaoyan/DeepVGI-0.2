@@ -77,7 +77,7 @@ def deal_args(my_argv):
             e = int(arg)
         elif opt in ("-t", "--thread_num"):
             t = int(arg)
-    print 'settings: n1=%d, n0=%d, b=%d, e=%d' % (n1, n0, b, e)
+    print 'settings: n1=%d, n0=%d, b=%d, e=%d, t=%d' % (n1, n0, b, e, t)
     return n1, n0, b, e, t
 
 
