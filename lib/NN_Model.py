@@ -137,7 +137,7 @@ class Model(object):
             acc, label_pred, auc, precision, recall = sess.run([acc_op, label_p, auc_op, precision_op, recall_op],
                                             feed_dict={x_image: self.X_imgs, y_: self.Y_labels, keep_prob: 1.0})
             print 'Accuracy: %g \n' % acc
-            print 'AUC: %g \n' % auc
+            print 'AUC: %g \n' % auc[0]
             print 'Precision: %g \n ' % precision
             print 'Recall: %g \n' % recall
             label_true = np.argmax(self.Y_labels, 1)
