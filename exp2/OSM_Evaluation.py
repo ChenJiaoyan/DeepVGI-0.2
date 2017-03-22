@@ -13,8 +13,6 @@ import NN_Model
 import FileIO
 
 
-
-
 def osm_building_weight():
     task_w = {}
     osm_buildings = FileIO.csv_reader("../data/buildings.csv")
@@ -58,15 +56,16 @@ def read_sample(n1, n0):
 
 
 def deal_args(my_argv):
-    n1, n0, b = 50, 50, 20
+    n1, n0, b, e = 50, 50, 20, 1000
     try:
-        opts, args = getopt.getopt(my_argv, "hy:n:b:", ["p_sample_size=", "n_sample_size=", "batch_size="])
+        opts, args = getopt.getopt(my_argv, "hy:n:b:e:",
+                                   ["p_sample_size=", "n_sample_size=", "batch_size=", "epoch_num="])
     except getopt.GetoptError:
-        print 'OSM_Evaluation.py -y <p_sample_size> -n <n_sample_size> -b <batch_size>'
-        print 'use the default settings: n1=%d, n0=%d, b=%d' % (n1, n0, b)
+        print 'OSM_Evaluation.py -y <p_sample_size> -n <n_sample_size> -b <batch_size> -e <epoch_num>'
+        print 'use the default settings: n1=%d, n0=%d, b=%d, e=%d' % (n1, n0, b,)
     for opt, arg in opts:
         if opt == '-h':
-            print 'OSM_Evaluation.py -n1 <p_sample_size> -n0 <n_sample_size> -b <batch_size>'
+            print 'OSM_Evaluation.py -n1 <p_sample_size> -n0 <n_sample_size> -b <batch_size> -e <epoch_num>'
             sys.exit()
         elif opt in ("-y", "--p_sample_size"):
             n1 = int(arg)
@@ -74,16 +73,18 @@ def deal_args(my_argv):
             n0 = int(arg)
         elif opt in ("-b", "--batch_size"):
             b = int(arg)
-    print 'settings: n1=%d, n0=%d, b=%d' % (n1, n0, b)
-    return n1, n0, b
+        elif opt in ("-e", "--epoch_num"):
+            e = int(arg)
+    print 'settings: n1=%d, n0=%d, b=%d, e=%d' % (n1, n0, b, e)
+    return n1, n0, b, e
 
 
 if __name__ == '__main__':
-
-    n1, n0, b = deal_args(sys.argv[1:])
+    n1, n0, b, e = deal_args(sys.argv[1:])
     print '--------------- Read Samples ---------------'
     img_X, Y = read_sample(n1, n0)
     print '--------------- Training ---------------'
     m = NN_Model.Model(img_X, Y, 'CNN_JY')
     m.set_batch_size(b)
+    m.set_epoch_num(e)
     m.train_cnn()
