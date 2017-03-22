@@ -95,7 +95,7 @@ class Model(object):
                     train_accuracy = accuracy.eval(session=sess,
                                                    feed_dict={x_image: self.X_imgs[ran], y_: self.Y_labels[ran],
                                                               keep_prob: 1.0})
-                    print("step %d, training accuracy %g \n" % (i, train_accuracy))
+                    print("epoch %d, training accuracy %g \n" % (i, train_accuracy))
                 train_step.run(session=sess,
                                feed_dict={x_image: self.X_imgs[ran, :], y_: self.Y_labels[ran], keep_prob: 0.5})
             saver.save(sess, '../data/model/%s.ckpt' % self.name)

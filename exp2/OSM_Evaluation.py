@@ -4,6 +4,7 @@
 import os
 import sys
 import random
+import getopt
 import numpy as np
 from scipy import misc
 
@@ -11,7 +12,7 @@ sys.path.append("../lib")
 import NN_Model
 import FileIO
 
-n1, n0 = 50, 50
+
 
 
 def osm_building_weight():
@@ -25,7 +26,7 @@ def osm_building_weight():
     return task_w
 
 
-def read_sample():
+def read_sample(n1, n0):
     img_X1, img_X0 = np.zeros((n1, 256, 256, 3)), np.zeros((n0, 256, 256, 3))
     label = np.zeros((n1 + n0, 2))
     label[0:n1, 1] = 1
@@ -56,9 +57,32 @@ def read_sample():
     return X[j], label[j]
 
 
+def deal_args(my_argv):
+    n1, n0, b = 50, 50, 20
+    try:
+        opts, args = getopt.getopt(my_argv, "hn1:n0:b", ["p_sample_size=", "n_sample_size=", "batch_size="])
+    except getopt.GetoptError:
+        print 'OSM_Evaluation.py -n1 <p_sample_size> -n0 <n_sample_size> -b <batch_size>'
+        print 'use the default settings: n1=%d, n0=%d, b=%d' % (n1, n0, b)
+    for opt, arg in opts:
+        if opt == '-h':
+            print 'OSM_Evaluation.py -n1 <p_sample_size> -n0 <n_sample_size> -b <batch_size>'
+            sys.exit()
+        elif opt in ("-n1", "--p_sample_size"):
+            n1 = arg
+        elif opt in ("-n0", "--n_sample_size"):
+            n0 = arg
+        elif opt in ("-b", "--batch_size"):
+            b = arg
+    return n1, n0, b
 
-print '--------------- Read Samples ---------------'
-img_X, Y = read_sample()
-m = NN_Model.Model(img_X, Y, 'CNN_JY')
-m.set_batch_size(20)
-m.train_cnn()
+
+if __name__ == '__main__':
+
+    n1, n0, b = deal_args(sys.argv[1:])
+    print '--------------- Read Samples ---------------'
+    img_X, Y = read_sample(n1, n0)
+    print '--------------- Training ---------------'
+    m = NN_Model.Model(img_X, Y, 'CNN_JY')
+    m.set_batch_size(b)
+    m.train_cnn()
