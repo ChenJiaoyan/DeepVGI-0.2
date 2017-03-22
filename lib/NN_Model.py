@@ -123,7 +123,7 @@ class Model(object):
         y_conv = tf.get_collection("y_conv")[0]
 
         print '#################  start evaluation  ####################'
-        with tf.Session() as sess:
+        with tf.Session(config=tf.ConfigProto(intra_op_parallelism_threads=8)) as sess:
             saver.restore(sess, "../data/model/%s.ckpt" % self.name)
             label_pred, score = sess.run([tf.argmax(y_conv, 1), tf.nn.softmax(y_conv)[:, 1]],
                                          feed_dict={x_image: self.X_imgs, y_: self.Y_labels, keep_prob: 1.0})
