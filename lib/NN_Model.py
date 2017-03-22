@@ -132,7 +132,6 @@ class Model(object):
                 label_pred[i1:i2], score[i1:i2] = sess.run([tf.argmax(y_conv, 1), tf.nn.softmax(y_conv)[:, 1]],
                                                            feed_dict={x_image: self.X_imgs[i1:i2],
                                                                       y_: self.Y_labels[i1:i2], keep_prob: 1.0})
-
             label_true = np.argmax(self.Y_labels, 1)
             print 'Accuracy: %f \n' % metrics.accuracy_score(label_true, label_pred)
             print 'Precision: %f \n' % metrics.precision_score(label_true, label_pred)

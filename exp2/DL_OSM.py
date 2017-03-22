@@ -85,7 +85,7 @@ def read_train_sample(n1, n0, train_imgs):
 
 
 def deal_args(my_argv):
-    v, n1, n0, b, e, t, c, z = False, 200, 200, 30, 1000, 4, 0, 1000
+    v, n1, n0, b, e, t, c, z = False, 200, 200, 30, 1000, 8, 0, 1000
     try:
         opts, args = getopt.getopt(my_argv, "vhy:n:b:e:t:c:z:",
                                    ["p_sample_size=", "n_sample_size=", "batch_size=", "epoch_num=", "thread_num=",
