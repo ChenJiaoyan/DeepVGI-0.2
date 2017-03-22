@@ -128,18 +128,20 @@ class Model(object):
         auc_op = tf.contrib.metrics.streaming_auc(tf.nn.softmax(y_conv)[:, 1], label_t, curve='ROC')
         precision_op = tf.contrib.metrics.streaming_precision(label_p, label_t)
         recall_op = tf.contrib.metrics.streaming_recall(label_p, label_t)
+        accuracy_op = tf.contrib.metrics.streaming_accuracy(label_p, label_t)
 
         print '#################  start evaluation  ####################'
         with tf.Session() as sess:
             sess.run(tf.global_variables_initializer())
             sess.run(tf.local_variables_initializer())
             saver.restore(sess, "../data/model/%s.ckpt" % self.name)
-            acc, label_pred, auc, precision, recall = sess.run([acc_op, label_p, auc_op, precision_op, recall_op],
+            acc, label_pred, auc, precision, recall, accuracy = sess.run([acc_op, label_p, auc_op, precision_op, recall_op, accuracy_op],
                                             feed_dict={x_image: self.X_imgs, y_: self.Y_labels, keep_prob: 1.0})
-            print 'Accuracy: %g \n' % acc
+            print 'Acc: %g \n' % acc
             print 'AUC: %g \n' % auc[0]
-            print 'Precision: %g \n ' % precision
-            print 'Recall: %g \n' % recall
+            print 'Precision: %g \n ' % precision[0]
+            print 'Recall: %g \n' % recall[0]
+            print 'Accuracy: %g \n' % accuracy[0]
             label_true = np.argmax(self.Y_labels, 1)
             print 'metrics by sklearn \n'
             print 'Precision: %g \n' % metrics.precision_score(label_true, label_pred)
