@@ -72,6 +72,6 @@ class MSClient:
         imgs = os.listdir(img_dir)
         l = len(imgs)
         batch = l / cv_n
-        train_imgs = imgs[cv_i * batch, (cv_i + 1) * batch]
-        test_imgs = imgs[0:cv_i*batch] + imgs[(cv_i+1)*batch: l]
+        train_imgs = imgs[cv_i * batch: (cv_i + 1) * batch]
+        test_imgs = imgs[0:cv_i * batch] + imgs[(cv_i + 1) * batch: l]
         return train_imgs, test_imgs
