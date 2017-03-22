@@ -149,6 +149,9 @@ class Model(object):
         correct_prediction = tf.equal(tf.argmax(y_conv, 1), tf.argmax(y_, 1))
         accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 
+        saver = tf.train.Saver()
+        #saver.export_meta_graph('../data/model/%s.meta' % self.name)
+
         # Train and Evaluate
         # X_train, X_test, y_train, y_test = train_test_split(\
         #      self.X,self.y,test_size=0.2, random_state=0)
@@ -170,6 +173,7 @@ class Model(object):
             if i % 100 == 0:
                 train_accuracy = accuracy.eval(session=sess, feed_dict={ \
                     x: X_train[ran], y_: Y_train[ran], keep_prob: 1.0})
+                saver.save(sess, 'my-model', global_step=i)
                 print("step %d, training accuracy %g" % (i, train_accuracy))
             train_step.run(session=sess, feed_dict={x: X_train[ran, :], \
                                                     y_: Y_train[ran], keep_prob: 0.5})
@@ -193,6 +197,7 @@ class Model(object):
 
         # Close Session
         sess.close()
+
 
 
 m = Model()
