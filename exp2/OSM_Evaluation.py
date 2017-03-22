@@ -88,3 +88,6 @@ if __name__ == '__main__':
     m.set_batch_size(b)
     m.set_epoch_num(e)
     m.train_cnn()
+    print '--------------- Evaluation on Training Samples ---------------'
+    m.evaluate()
+    m.predict()
