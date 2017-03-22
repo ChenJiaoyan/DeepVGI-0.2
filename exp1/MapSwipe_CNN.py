@@ -144,7 +144,7 @@ class Model(object):
         # operations
         with tf.name_scope('cross_entropy'):
             cross_entropy = tf.reduce_mean( \
-            tf.nn.softmax_cross_entropy_with_logits(y_conv, y_))  # Loss function
+                tf.nn.softmax_cross_entropy_with_logits(y_conv, y_))  # Loss function
 
         with tf.name_scope('optimizer'):
             train_step = tf.train.AdamOptimizer(1e-4).minimize(cross_entropy)
@@ -174,7 +174,6 @@ class Model(object):
 
         sess.run(tf.global_variables_initializer())
         tf.summary.scalar('cross entropy', cross_entropy)
-        tf.summary.scalar('optimizer', train_step)
         tf.summary.scalar('accuracy', accuracy)
 
         merged_summary_op = tf.summary.merge_all()
