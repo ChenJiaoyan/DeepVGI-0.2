@@ -82,13 +82,14 @@ def deal_args(my_argv):
     n1, n0, b, e, t, c = 50, 50, 20, 1000, 4, 0
     try:
         opts, args = getopt.getopt(my_argv, "hy:n:b:e:t:c:",
-                                   ["p_sample_size=", "n_sample_size=", "batch_size=", "epoch_num=", "thread_num=", "cv_round="])
+                                   ["p_sample_size=", "n_sample_size=", "batch_size=", "epoch_num=", "thread_num=",
+                                    "cv_round="])
     except getopt.GetoptError:
         print 'OSM_Evaluation.py -y <p_sample_size> -n <n_sample_size> -b <batch_size> -e <epoch_num> -t <thread_num>, -c <cv_round>'
         print 'use the default settings: n1=%d, n0=%d, b=%d, e=%d, t=%d, c=%d' % (n1, n0, b, e, t, c)
     for opt, arg in opts:
         if opt == '-h':
-            print 'OSM_Evaluation.py -n1 <p_sample_size> -n0 <n_sample_size> -b <batch_size> -e <epoch_num> -t <thread_num>'
+            print 'OSM_Evaluation.py -n1 <p_sample_size> -n0 <n_sample_size> -b <batch_size> -e <epoch_num> -t <thread_num>, -c <cv_round>'
             sys.exit()
         elif opt in ("-y", "--p_sample_size"):
             n1 = int(arg)
@@ -107,13 +108,13 @@ def deal_args(my_argv):
 
 
 if __name__ == '__main__':
-    tr_n1, tr_n0, tr_b, tr_e, tr_t, c = deal_args(sys.argv[1:])
+    tr_n1, tr_n0, tr_b, tr_e, tr_t, cv_i = deal_args(sys.argv[1:])
     te_n = 1000
     cv_n = 4
 
     print '--------------- Read Samples ---------------'
     client = MapSwipe.MSClient()
-    train_imgs, test_imgs = client.imgs_cross_validation(c, cv_n)
+    train_imgs, test_imgs = client.imgs_cross_validation(cv_i, cv_n)
     img_X, Y = read_train_sample(tr_n1, tr_n0, train_imgs)
     ms_p_imgs = client.read_p_images()
     ms_n_imgs = client.read_n_images()
