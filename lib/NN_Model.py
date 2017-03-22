@@ -107,8 +107,9 @@ class Model(object):
                 train_step.run(session=sess,
                                feed_dict={x_image: self.X_imgs[ran, :], y_: self.Y_labels[ran], keep_prob: 0.5})
                 if i % 100 == 0:
-                    train_accuracy = accuracy.eval(session=sess, feed_dict={x_image: self.X_imgs, y_: self.Y_labels,
-                                                                            keep_prob: 1.0})
+                    train_accuracy = accuracy.eval(session=sess,
+                                                   feed_dict={x_image: self.X_imgs[ran], y_: self.Y_labels[ran],
+                                                              keep_prob: 1.0})
                     print("epoch %d, training accuracy %f \n" % (i, train_accuracy))
             saver.save(sess, '../data/model/%s.ckpt' % self.name)
         print '#################  end learning  ####################'
@@ -137,7 +138,7 @@ class Model(object):
         print '#################  start evaluation  ####################'
         with tf.Session(config=tf.ConfigProto(intra_op_parallelism_threads=self.thread_num)) as sess:
             saver.restore(sess, "../data/model/%s.ckpt" % self.name)
-            batch = 100
+            batch = 200
             label_pred, score = np.zeros(self.sample_size), np.zeros(self.sample_size)
             for i in range(math.ceil(self.sample_size / batch)):
                 i1 = i * batch
