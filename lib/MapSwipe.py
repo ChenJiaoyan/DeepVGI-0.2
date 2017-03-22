@@ -2,6 +2,7 @@
 
 import math
 import FileIO
+import os
 
 
 def cal_lat_lon(task_x, task_y):
@@ -65,3 +66,12 @@ class MSClient:
             if bad_img_count == 0 and yes_count == 0 and maybe_count == 0:
                 n_imgs.append([x, y])
         return n_imgs
+
+    def imgs_cross_validation(self, cv_i, cv_n):
+        img_dir = '../data/image_project_' + str(self.project_id) + '/'
+        imgs = os.listdir(img_dir)
+        l = len(imgs)
+        batch = l / cv_n
+        train_imgs = imgs[cv_i * batch, (cv_i + 1) * batch]
+        test_imgs = imgs[0:cv_i*batch] + imgs[(cv_i+1)*batch: l]
+        return train_imgs, test_imgs
