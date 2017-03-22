@@ -69,10 +69,13 @@ def deal_args(my_argv):
             print 'OSM_Evaluation.py -n1 <p_sample_size> -n0 <n_sample_size> -b <batch_size>'
             sys.exit()
         elif opt in ("-n1", "--p_sample_size"):
+            print 'n1 ' + arg
             n1 = int(arg)
         elif opt in ("-n0", "--n_sample_size"):
+            print 'n0 ' + arg
             n0 = int(arg)
         elif opt in ("-b", "--batch_size"):
+            print 'b ' + arg
             b = int(arg)
     print 'settings: n1=%d, n0=%d, b=%d' % (n1, n0, b)
     return n1, n0, b
