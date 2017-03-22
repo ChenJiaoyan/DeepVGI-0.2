@@ -168,7 +168,7 @@ class Model(object):
         sess = tf.Session()
         print '     training ...'
 
-        merged_summary_op = tf.merge_all_summaries()
+        merged_summary_op = tf.tf.summary.merge_all()
         summary_writer = tf.train.SummaryWriter('/tmp/mnist_logs', sess.graph)
 
         sess.run(tf.global_variables_initializer())
@@ -181,7 +181,7 @@ class Model(object):
                 print("step %d, training accuracy %g" % (i, train_accuracy))
             train_step.run(session=sess, feed_dict={x: X_train[ran, :], \
                                                     y_: Y_train[ran], keep_prob: 0.5})
-            summary_str = session.run(merged_summary_op)
+            summary_str = sess.run(merged_summary_op)
             summary_writer.add_summary(summary_str, total_step)
 
         print '     evaluating ...'
