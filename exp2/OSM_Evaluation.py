@@ -85,9 +85,9 @@ if __name__ == '__main__':
     img_X, Y = read_sample(n1, n0)
     print '--------------- Training ---------------'
     m = NN_Model.Model(img_X, Y, 'CNN_JY')
-    #m.set_batch_size(b)
-    #m.set_epoch_num(e)
-    #m.train_cnn()
+    m.set_batch_size(b)
+    m.set_epoch_num(e)
+    m.train_cnn()
     print '--------------- Evaluation on Training Samples ---------------'
     m.evaluate()
     m.predict()
