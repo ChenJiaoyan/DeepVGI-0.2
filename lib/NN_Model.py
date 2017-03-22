@@ -77,7 +77,7 @@ class Model(object):
 
         cross_entropy = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(y_conv, y_))
         train_step = tf.train.AdamOptimizer(1e-4).minimize(cross_entropy)
-        #train_step = tf.train.GradientDescentOptimizer(1e-4).minimize(cross_entropy)
+        # train_step = tf.train.GradientDescentOptimizer(1e-4).minimize(cross_entropy)
         correct_prediction = tf.equal(tf.argmax(y_conv, 1), tf.argmax(y_, 1))
         accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
         tf.add_to_collection("accuracy", accuracy)
@@ -124,13 +124,16 @@ class Model(object):
         keep_prob = tf.get_collection("keep_prob")[0]
         y_conv = tf.get_collection("y_conv")[0]
         label_p = tf.argmax(y_conv, 1)
-        tf.contrib.metrics.streaming_auc()
+        auc_op = tf.contrib.metrics.streaming_auc(tf.nn.softmax(y_conv), tf.argmax(y_, 1), curve='ROC')
         print '#################  start evaluation  ####################'
         with tf.Session() as sess:
             saver.restore(sess, "../data/model/%s.ckpt" % self.name)
-            acc, label_pred = sess.run([accuracy, label_p], feed_dict={x_image: self.X_imgs, y_: self.Y_labels,
-                                                                       keep_prob: 1.0})
+            print sess.run(tf.nn.softmax(y_conv), feed_dict={x_image: self.X_imgs, y_: self.Y_labels, keep_prob: 1.0})
+
+            acc, label_pred, auc = sess.run([accuracy, label_p, auc_op],
+                                            feed_dict={x_image: self.X_imgs, y_: self.Y_labels, keep_prob: 1.0})
             print 'Accuracy: %g \n' % acc
+            print 'AUC: %g \n' % auc
             label_true = np.argmax(self.Y_labels, 1)
             print 'Precision: %g \n' % metrics.precision_score(label_true, label_pred)
             print 'Recall: %g \n' % metrics.recall_score(label_true, label_pred)
