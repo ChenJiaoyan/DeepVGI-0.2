@@ -173,9 +173,9 @@ class Model(object):
         print '     training ...'
 
         sess.run(tf.global_variables_initializer())
-        tf.summary.scalar('cross entropy', cost)
-        tf.summary.scalar('optimizer', optimizer)
-        tf.summary.scalar('accuracy', acc)
+        tf.summary.scalar('cross entropy', cross_entropy)
+        tf.summary.scalar('optimizer', train_step)
+        tf.summary.scalar('accuracy', accuracy)
 
         merged_summary_op = tf.summary.merge_all()
         summary_writer = tf.summary.FileWriter('../../zhou/tf/log', sess.graph)
