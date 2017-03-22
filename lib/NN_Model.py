@@ -126,7 +126,7 @@ class Model(object):
             saver.restore(sess, "../data/model/%s.ckpt" % self.name)
             batch = 200
             label_pred, score = np.zeros(self.sample_size), np.zeros(self.sample_size)
-            for i in range(math.ceil(self.sample_size / batch)):
+            for i in range(int(math.ceil(self.sample_size / float(batch)))):
                 i1 = i * batch
                 i2 = (i + 1) * batch if (i + 1) * batch < self.sample_size else self.sample_size
                 label_pred[i1:i2], score[i1:i2] = sess.run([tf.argmax(y_conv, 1), tf.nn.softmax(y_conv)[:, 1]],
