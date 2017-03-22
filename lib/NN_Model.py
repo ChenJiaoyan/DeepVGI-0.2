@@ -9,6 +9,7 @@ class Model(object):
     epoch_num = 2000
     class_num = 2
     batch_size = 50
+    thread_num = 4
 
     def __init__(self, imgs, labels, name='CNN_Default'):
         # X_imgs shape: img_number * Row * Col * RGB_bands
@@ -38,6 +39,9 @@ class Model(object):
 
     def set_batch_size(self, batch_size):
         self.batch_size = batch_size
+
+    def set_thread_num(self, thread_num):
+        self.thread_num = thread_num
 
     def train_cnn(self):
         ## input
@@ -86,7 +90,7 @@ class Model(object):
         saver.export_meta_graph('../data/model/%s.meta' % self.name)
 
         print '#################  start learning  ####################'
-        with tf.Session() as sess:
+        with tf.Session(config=tf.ConfigProto(intra_op_parallelism_threads=self.thread_num)) as sess:
             sess.run(tf.global_variables_initializer())
             sess.run(tf.local_variables_initializer())
             for i in range(self.epoch_num):
@@ -123,7 +127,7 @@ class Model(object):
         y_conv = tf.get_collection("y_conv")[0]
 
         print '#################  start evaluation  ####################'
-        with tf.Session() as sess:
+        with tf.Session(config=tf.ConfigProto(intra_op_parallelism_threads=self.thread_num)) as sess:
             saver.restore(sess, "../data/model/%s.ckpt" % self.name)
             label_pred, score = sess.run([tf.argmax(y_conv, 1), tf.nn.softmax(y_conv)[:, 1]],
                                          feed_dict={x_image: self.X_imgs, y_: self.Y_labels, keep_prob: 1.0})

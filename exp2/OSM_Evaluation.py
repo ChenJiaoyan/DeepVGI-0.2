@@ -56,16 +56,16 @@ def read_sample(n1, n0):
 
 
 def deal_args(my_argv):
-    n1, n0, b, e = 50, 50, 20, 1000
+    n1, n0, b, e, t = 50, 50, 20, 1000, 4
     try:
-        opts, args = getopt.getopt(my_argv, "hy:n:b:e:",
-                                   ["p_sample_size=", "n_sample_size=", "batch_size=", "epoch_num="])
+        opts, args = getopt.getopt(my_argv, "hy:n:b:e:t:",
+                                   ["p_sample_size=", "n_sample_size=", "batch_size=", "epoch_num=", "thread_num="])
     except getopt.GetoptError:
-        print 'OSM_Evaluation.py -y <p_sample_size> -n <n_sample_size> -b <batch_size> -e <epoch_num>'
-        print 'use the default settings: n1=%d, n0=%d, b=%d, e=%d' % (n1, n0, b,)
+        print 'OSM_Evaluation.py -y <p_sample_size> -n <n_sample_size> -b <batch_size> -e <epoch_num> -t <thread_num>'
+        print 'use the default settings: n1=%d, n0=%d, b=%d, e=%d, t=%d' % (n1, n0, b, e, t)
     for opt, arg in opts:
         if opt == '-h':
-            print 'OSM_Evaluation.py -n1 <p_sample_size> -n0 <n_sample_size> -b <batch_size> -e <epoch_num>'
+            print 'OSM_Evaluation.py -n1 <p_sample_size> -n0 <n_sample_size> -b <batch_size> -e <epoch_num> -t <thread_num>'
             sys.exit()
         elif opt in ("-y", "--p_sample_size"):
             n1 = int(arg)
@@ -75,18 +75,21 @@ def deal_args(my_argv):
             b = int(arg)
         elif opt in ("-e", "--epoch_num"):
             e = int(arg)
-    print 'settings: n1=%d, n0=%d, b=%d, e=%d' % (n1, n0, b, e)
-    return n1, n0, b, e
+        elif opt in ("-t", "--thread_num"):
+            t = int(arg)
+    print 'settings: n1=%d, n0=%d, b=%d, e=%d, t=%d' % (n1, n0, b, e, t)
+    return n1, n0, b, e, t
 
 
 if __name__ == '__main__':
-    n1, n0, b, e = deal_args(sys.argv[1:])
+    n1, n0, b, e, t = deal_args(sys.argv[1:])
     print '--------------- Read Samples ---------------'
     img_X, Y = read_sample(n1, n0)
     print '--------------- Training ---------------'
     m = NN_Model.Model(img_X, Y, 'CNN_JY')
     m.set_batch_size(b)
     m.set_epoch_num(e)
+    m.set_thread_num(t)
     m.train_cnn()
     print '--------------- Evaluation on Training Samples ---------------'
     m.evaluate()
