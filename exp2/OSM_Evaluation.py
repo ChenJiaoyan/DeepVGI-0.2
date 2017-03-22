@@ -11,6 +11,7 @@ from scipy import misc
 sys.path.append("../lib")
 import NN_Model
 import FileIO
+import MapSwipe
 
 
 def osm_building_weight():
@@ -24,17 +25,40 @@ def osm_building_weight():
     return task_w
 
 
-def read_sample(n1, n0):
+def read_test_sample(n, test_imgs, ms_p_imgs, ms_n_imgs):
+    img_X = np.zeros((n, 256, 256, 3))
+    label = np.zeros((n, 2))
+    img_dir = '../data/image_project_922/'
+    random.shuffle(test_imgs)
+    i = 0
+    te_p, te_n = 0, 0
+    for img in test_imgs:
+        if i >= n:
+            break
+        img_X[i] = misc.imread(os.path.join(img_dir, img))
+        i1, i2 = img.index('-'), img.index('.')
+        task_x, task_y = img[0:i1], img[(i1 + 1):i2]
+        if [int(task_x), int(task_y)] in ms_p_imgs:
+            label[i, 1] = 1
+            i += 1
+            te_p += 1
+        elif [int(task_x), int(task_y)] in ms_n_imgs:
+            label[i, 0] = 1
+            i += 1
+            te_n += 1
+    print 'positive testing samples: %d \n ' % te_p
+    print 'negative testing samples: %d \n ' % te_n
+    return img_X, label
+
+
+def read_train_sample(n1, n0, train_imgs):
     img_X1, img_X0 = np.zeros((n1, 256, 256, 3)), np.zeros((n0, 256, 256, 3))
     label = np.zeros((n1 + n0, 2))
-    label[0:n1, 1] = 1
-    label[n1:(n1 + n0), 0] = 1
 
     task_w = osm_building_weight();
     img_dir = '../data/image_project_922/'
-    imgs = os.listdir(img_dir)
     osm_imgs, none_osm_imgs = [], []
-    for img in imgs:
+    for img in train_imgs:
         i1, i2 = img.index('-'), img.index('.')
         task_x, task_y = img[0:i1], img[(i1 + 1):i2]
         k = '%s-%s' % (task_x, task_y)
@@ -42,12 +66,16 @@ def read_sample(n1, n0):
             osm_imgs.append(img)
         else:
             none_osm_imgs.append(img)
+
     osm_imgs = random.sample(osm_imgs, n1)
-    none_osm_imgs = random.sample(none_osm_imgs, n0)
     for i, img in enumerate(osm_imgs):
         img_X1[i] = misc.imread(os.path.join(img_dir, img))
+    label[0:n1, 1] = 1
+
+    none_osm_imgs = random.sample(none_osm_imgs, n0)
     for i, img in enumerate(none_osm_imgs):
         img_X0[i] = misc.imread(os.path.join(img_dir, img))
+    label[n1:(n1 + n0), 0] = 1
 
     j = range(n1 + n0)
     random.shuffle(j)
@@ -56,17 +84,20 @@ def read_sample(n1, n0):
 
 
 def deal_args(my_argv):
-    n1, n0, b, e, t = 50, 50, 20, 1000, 4
+    v, n1, n0, b, e, t, c, z = False, 200, 200, 30, 1000, 4, 0, 500
     try:
-        opts, args = getopt.getopt(my_argv, "hy:n:b:e:t:",
-                                   ["p_sample_size=", "n_sample_size=", "batch_size=", "epoch_num=", "thread_num="])
+        opts, args = getopt.getopt(my_argv, "vhy:n:b:e:t:c:z:",
+                                   ["p_sample_size=", "n_sample_size=", "batch_size=", "epoch_num=", "thread_num=",
+                                    "cv_round=", 'test_size='])
     except getopt.GetoptError:
-        print 'OSM_Evaluation.py -y <p_sample_size> -n <n_sample_size> -b <batch_size> -e <epoch_num> -t <thread_num>'
-        print 'use the default settings: n1=%d, n0=%d, b=%d, e=%d, t=%d' % (n1, n0, b, e, t)
+        print 'OSM_Evaluation.py -v -y <p_sample_size> -n <n_sample_size> -b <batch_size> -e <epoch_num> -t <thread_num>, -c <cv_round>, -z <test_size>'
+        print 'default settings: v=%s, n1=%d, n0=%d, b=%d, e=%d, t=%d, c=%d, z=%d' % (v, n1, n0, b, e, t, c, z)
     for opt, arg in opts:
         if opt == '-h':
-            print 'OSM_Evaluation.py -n1 <p_sample_size> -n0 <n_sample_size> -b <batch_size> -e <epoch_num> -t <thread_num>'
+            print 'OSM_Evaluation.py -v -y <p_sample_size> -n <n_sample_size> -b <batch_size> -e <epoch_num> -t <thread_num>, -c <cv_round>, -z <test_size>'
             sys.exit()
+        elif opt == '-v':
+            v = True
         elif opt in ("-y", "--p_sample_size"):
             n1 = int(arg)
         elif opt in ("-n", "--n_sample_size"):
@@ -77,19 +108,37 @@ def deal_args(my_argv):
             e = int(arg)
         elif opt in ("-t", "--thread_num"):
             t = int(arg)
-    print 'settings: n1=%d, n0=%d, b=%d, e=%d, t=%d' % (n1, n0, b, e, t)
-    return n1, n0, b, e, t
+        elif opt in ("-c", "--cv_round"):
+            c = int(arg)
+        elif opt in ("-z", "--test_size"):
+            z = int(arg)
+    print 'settings: v=%s, n1=%d, n0=%d, b=%d, e=%d, t=%d, c=%d, z=%d' % (v, n1, n0, b, e, t, c, z)
+    return v, n1, n0, b, e, t, c, z
 
 
 if __name__ == '__main__':
-    n1, n0, b, e, t = deal_args(sys.argv[1:])
+    evaluate_only, tr_n1, tr_n0, tr_b, tr_e, tr_t, cv_i, te_n = deal_args(sys.argv[1:])
+    cv_n = 4
+
     print '--------------- Read Samples ---------------'
-    img_X, Y = read_sample(n1, n0)
-    print '--------------- Training ---------------'
+    client = MapSwipe.MSClient()
+    train_imgs, test_imgs = client.imgs_cross_validation(cv_i, cv_n)
+    img_X, Y = read_train_sample(tr_n1, tr_n0, train_imgs)
+    ms_p_imgs = client.read_p_images()
+    ms_n_imgs = client.read_n_images()
+    print len(ms_p_imgs)
+    print len(ms_n_imgs)
+    img_X2, Y2 = read_test_sample(te_n, test_imgs, ms_p_imgs, ms_n_imgs)
+
     m = NN_Model.Model(img_X, Y, 'CNN_JY')
-    m.set_batch_size(b)
-    m.set_epoch_num(e)
-    m.set_thread_num(t)
-    m.train_cnn()
-    print '--------------- Evaluation on Training Samples ---------------'
+
+    if not evaluate_only:
+        print '--------------- Training on OSM Labels---------------'
+        m.set_batch_size(tr_b)
+        m.set_epoch_num(tr_e)
+        m.set_thread_num(tr_t)
+        m.train_cnn()
+
+    print '--------------- Evaluation on MapSwipe Samples ---------------'
+    m.set_evaluation_input(img_X2, Y2)
     m.evaluate()
