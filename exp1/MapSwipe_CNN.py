@@ -168,7 +168,7 @@ class Model(object):
         sess = tf.Session()
         print '     training ...'
 
-        merged_summary_op = tf.tf.summary.merge_all()
+        merged_summary_op = tf.summary.merge_all()
         summary_writer = tf.train.SummaryWriter('/tmp/mnist_logs', sess.graph)
 
         sess.run(tf.global_variables_initializer())
