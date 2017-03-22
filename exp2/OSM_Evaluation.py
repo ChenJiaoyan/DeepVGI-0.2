@@ -126,6 +126,8 @@ if __name__ == '__main__':
     img_X, Y = read_train_sample(tr_n1, tr_n0, train_imgs)
     ms_p_imgs = client.read_p_images()
     ms_n_imgs = client.read_n_images()
+    print len(ms_p_imgs)
+    print len(ms_n_imgs)
     img_X2, Y2 = read_test_sample(te_n, test_imgs, ms_p_imgs, ms_n_imgs)
 
     m = NN_Model.Model(img_X, Y, 'CNN_JY')
