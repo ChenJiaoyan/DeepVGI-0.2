@@ -145,13 +145,18 @@ class Model(object):
         with tf.name_scope('cross_entropy'):
             cross_entropy = tf.reduce_mean( \
                 tf.nn.softmax_cross_entropy_with_logits(y_conv, y_))  # Loss function
+        tf.summary.scalar('cross entropy', cross_entropy)
 
-        with tf.name_scope('optimizer'):
+        with tf.name_scope('train'):
             train_step = tf.train.AdamOptimizer(1e-4).minimize(cross_entropy)
+
         prediction = tf.argmax(y_conv, 1)
         with tf.name_scope('accuracy'):
-            correct_prediction = tf.equal(tf.argmax(y_conv, 1), tf.argmax(y_, 1))
-            accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
+            with tf.name_scope('correct_prediction'):
+                correct_prediction = tf.equal(tf.argmax(y_conv, 1), tf.argmax(y_, 1))
+            with tf.name_scope('accurary'):
+                accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
+        tf.summary.scalar('accuracy', accuracy)
 
         saver = tf.train.Saver()
         #saver.export_meta_graph('../data/model/%s.meta' % self.name)
@@ -171,13 +176,11 @@ class Model(object):
 
         sess = tf.Session()
         print '     training ...'
-
-        sess.run(tf.global_variables_initializer())
-        tf.summary.scalar('cross entropy', cross_entropy)
-        tf.summary.scalar('accuracy', accuracy)
-
         merged_summary_op = tf.summary.merge_all()
         summary_writer = tf.summary.FileWriter('../../zhou/tf/log', sess.graph)
+
+        sess.run(tf.global_variables_initializer())
+
         for i in range(1000):
             ran = self.__get_batch(X_train.shape[0], i, 30)
             if i % 100 == 0:
