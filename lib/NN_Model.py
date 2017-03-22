@@ -1,6 +1,8 @@
 #! /usr/bin/python
 
 import tensorflow as tf
+import numpy as np
+from sklearn import metrics
 
 
 class Model(object):
@@ -74,10 +76,8 @@ class Model(object):
         tf.add_to_collection("y_conv", y_conv)
 
         init_op = tf.global_variables_initializer()
-#       init_op = tf.initialize_all_variables()
         cross_entropy = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(y_conv, y_))
-#       train_step = tf.train.AdamOptimizer(1e-4).minimize(cross_entropy)
-#       error of uninitialized value beta1_power in using AdamOptimizer()
+        #       train_step = tf.train.AdamOptimizer(1e-4).minimize(cross_entropy)
         train_step = tf.train.GradientDescentOptimizer(1e-4).minimize(cross_entropy)
         correct_prediction = tf.equal(tf.argmax(y_conv, 1), tf.argmax(y_, 1))
         accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
@@ -107,15 +107,13 @@ class Model(object):
         y_conv = tf.get_collection("y_conv")[0]
         x_image = tf.get_collection("x_image")[0]
         keep_prob = tf.get_collection("keep_prob")[0]
-        prediction = tf.argmax(y_conv, 1)
-        prob = tf.divide(y_conv[:, 1], tf.add(y_conv[:, 0] + y_conv[:, 1]))
+        label_p = tf.argmax(y_conv, 1)
         print '#################  start predicting  ####################'
         with tf.Session() as sess:
             saver.restore(sess, "../data/model/%s.ckpt" % self.name)
-            label_results = sess.run(prediction, feed_dict={x_image: self.X_imgs, keep_prob: 1.0})
-            print label_results
-            prob_results = sess.run(prob, feed_dict={x_image: self.X_imgs, keep_prob: 1.0})
-            print prob_results
+            label_pred, y_pred = sess.run([label_p, y_conv], feed_dict={x_image: self.X_imgs, keep_prob: 1.0})
+            print label_pred
+            print y_pred
         print '#################  end predicting  ####################'
 
     def evaluate(self):
@@ -124,12 +122,18 @@ class Model(object):
         x_image = tf.get_collection("x_image")[0]
         y_ = tf.get_collection("y_")[0]
         keep_prob = tf.get_collection("keep_prob")[0]
+        y_conv = tf.get_collection("y_conv")[0]
+        label_p = tf.argmax(y_conv, 1)
         print '#################  start evaluation  ####################'
         with tf.Session() as sess:
             saver.restore(sess, "../data/model/%s.ckpt" % self.name)
-            acc = accuracy.eval(session=sess, feed_dict={x_image: self.X_imgs, y_: self.Y_labels,
-                                                         keep_prob: 1.0})
-            print("testing accuracy %g \n" % acc)
+            acc, label_pred = sess.run([accuracy, label_p], feed_dict={x_image: self.X_imgs, y_: self.Y_labels,
+                                                                       keep_prob: 1.0})
+            print 'Accuracy: %g \n' % acc
+            label_true = np.argmax(self.Y_labels, 1)
+            print 'Precision: %g \n' % metrics.precision_score(label_true, label_pred)
+            print 'Recall: %g \n' % metrics.recall_score(label_true, label_pred)
+            print 'F1: %g \n' % metrics.f1_score(label_true, label_pred)
         print '#################  end evaluation  ####################'
 
     @staticmethod
