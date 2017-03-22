@@ -79,18 +79,20 @@ def read_train_sample(n1, n0, train_imgs):
 
 
 def deal_args(my_argv):
-    n1, n0, b, e, t, c = 200, 200, 30, 1000, 4, 0
+    v, n1, n0, b, e, t, c, z = False, 200, 200, 30, 1000, 4, 0,500
     try:
-        opts, args = getopt.getopt(my_argv, "hy:n:b:e:t:c:",
+        opts, args = getopt.getopt(my_argv, "vhy:n:b:e:t:c:z:",
                                    ["p_sample_size=", "n_sample_size=", "batch_size=", "epoch_num=", "thread_num=",
-                                    "cv_round="])
+                                    "cv_round=", 'test_size='])
     except getopt.GetoptError:
-        print 'OSM_Evaluation.py -y <p_sample_size> -n <n_sample_size> -b <batch_size> -e <epoch_num> -t <thread_num>, -c <cv_round>'
-        print 'use the default settings: n1=%d, n0=%d, b=%d, e=%d, t=%d, c=%d' % (n1, n0, b, e, t, c)
+        print 'OSM_Evaluation.py -v -y <p_sample_size> -n <n_sample_size> -b <batch_size> -e <epoch_num> -t <thread_num>, -c <cv_round>, -z <test_size>'
+        print 'default settings: v=%s, n1=%d, n0=%d, b=%d, e=%d, t=%d, c=%d, z=%d' % (v, n1, n0, b, e, t, c, z)
     for opt, arg in opts:
         if opt == '-h':
-            print 'OSM_Evaluation.py -n1 <p_sample_size> -n0 <n_sample_size> -b <batch_size> -e <epoch_num> -t <thread_num>, -c <cv_round>'
+            print 'OSM_Evaluation.py -v -y <p_sample_size> -n <n_sample_size> -b <batch_size> -e <epoch_num> -t <thread_num>, -c <cv_round>, -z <test_size>'
             sys.exit()
+        elif opt == '-v':
+            v = True
         elif opt in ("-y", "--p_sample_size"):
             n1 = int(arg)
         elif opt in ("-n", "--n_sample_size"):
@@ -103,13 +105,14 @@ def deal_args(my_argv):
             t = int(arg)
         elif opt in ("-c", "--cv_round"):
             c = int(arg)
-    print 'settings: n1=%d, n0=%d, b=%d, e=%d, t=%d, c=%d' % (n1, n0, b, e, t, c)
-    return n1, n0, b, e, t, c
+        elif opt in ("-z", "--test_size"):
+            z = int(arg)
+    print 'settings: v=%s, n1=%d, n0=%d, b=%d, e=%d, t=%d, c=%d, z=%d' % (v, n1, n0, b, e, t, c, z)
+    return v, n1, n0, b, e, t, c, z
 
 
 if __name__ == '__main__':
-    tr_n1, tr_n0, tr_b, tr_e, tr_t, cv_i = deal_args(sys.argv[1:])
-    te_n = 1000
+    evaluate_only, tr_n1, tr_n0, tr_b, tr_e, tr_t, cv_i, te_n = deal_args(sys.argv[1:])
     cv_n = 4
 
     print '--------------- Read Samples ---------------'
@@ -122,10 +125,12 @@ if __name__ == '__main__':
 
     print '--------------- Training on OSM Labels---------------'
     m = NN_Model.Model(img_X, Y, 'CNN_JY')
-    m.set_batch_size(tr_b)
-    m.set_epoch_num(tr_e)
-    m.set_thread_num(tr_t)
-    m.train_cnn()
+
+    if not evaluate_only:
+        m.set_batch_size(tr_b)
+        m.set_epoch_num(tr_e)
+        m.set_thread_num(tr_t)
+        m.train_cnn()
 
     print '--------------- Evaluation on MapSwipe Samples ---------------'
     m.set_evaluation_input(img_X2, Y2)
