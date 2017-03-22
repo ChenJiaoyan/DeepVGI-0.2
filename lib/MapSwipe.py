@@ -56,15 +56,21 @@ class MSClient:
         return p_imgs
 
     def read_n_images(self):
+        tmp = []
         ms_file = '../data/project_' + str(self.project_id) + '.csv'
         lines = FileIO.read_lines(ms_file, 1)
-        n_imgs = []
         for line in lines:
             tmp = line.strip().split(',')
             x, y = int(tmp[4]), int(tmp[5])
-            yes_count, maybe_count, bad_img_count = int(tmp[8]), int(tmp[9]), int(tmp[10])
-            if bad_img_count == 0 and yes_count == 0 and maybe_count == 0:
-                n_imgs.append([x, y])
+            tmp.append([x, y])
+        img_dir = '../data/image_project_' + str(self.project_id) + '/'
+        imgs = os.listdir(img_dir)
+        n_imgs = []
+        for img in imgs:
+            i1, i2 = img.index('-'), img.index('.')
+            task_x, task_y = int(img[0:i1]), int(img[(i1 + 1):i2])
+            if [task_x, task_y] not in tmp:
+                n_imgs.append([int(task_x), int(task_y)])
         return n_imgs
 
     def imgs_cross_validation(self, cv_i, cv_n):
