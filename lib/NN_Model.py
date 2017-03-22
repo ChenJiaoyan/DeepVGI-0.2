@@ -3,6 +3,7 @@
 import tensorflow as tf
 import numpy as np
 from sklearn import metrics
+import math
 
 
 class Model(object):
@@ -26,10 +27,18 @@ class Model(object):
         self.X_imgs = imgs
         self.Y_labels = labels
         self.X_shape = imgs.shape
+        self.sample_size = imgs.shape[0]
+        self.rows = imgs.shape[1]
+        self.cols = imgs.shape[2]
+        self.bands = imgs.shape[3]
 
     def set_prediction_input(self, imgs):
         self.X_imgs = imgs
         self.X_shape = imgs.shape
+        self.sample_size = imgs.shape[0]
+        self.rows = imgs.shape[1]
+        self.cols = imgs.shape[2]
+        self.bands = imgs.shape[3]
 
     def set_epoch_num(self, epoch_num):
         self.epoch_num = epoch_num
@@ -125,17 +134,23 @@ class Model(object):
         y_ = tf.get_collection("y_")[0]
         keep_prob = tf.get_collection("keep_prob")[0]
         y_conv = tf.get_collection("y_conv")[0]
-
         print '#################  start evaluation  ####################'
         with tf.Session(config=tf.ConfigProto(intra_op_parallelism_threads=self.thread_num)) as sess:
             saver.restore(sess, "../data/model/%s.ckpt" % self.name)
-            label_pred, score = sess.run([tf.argmax(y_conv, 1), tf.nn.softmax(y_conv)[:, 1]],
-                                         feed_dict={x_image: self.X_imgs, y_: self.Y_labels, keep_prob: 1.0})
+            batch = 100
+            label_pred, score = np.zeros(self.sample_size), np.zeros(self.sample_size)
+            for i in range(math.ceil(self.sample_size / batch)):
+                i1 = i * batch
+                i2 = (i + 1) * batch if (i + 1) * batch < self.sample_size else self.sample_size
+                label_pred[i1:i2], score[i1:i2] = sess.run([tf.argmax(y_conv, 1), tf.nn.softmax(y_conv)[:, 1]],
+                                                           feed_dict={x_image: self.X_imgs[i1:i2],
+                                                                      y_: self.Y_labels[i1:i2], keep_prob: 1.0})
+
             label_true = np.argmax(self.Y_labels, 1)
             print 'Accuracy: %f \n' % metrics.accuracy_score(label_true, label_pred)
             print 'Precision: %f \n' % metrics.precision_score(label_true, label_pred)
             print 'Recall: %f \n' % metrics.recall_score(label_true, label_pred)
-            print 'F1: %f \n' % metrics.f1_score(label_true, label_pred)
+            print 'F1 Score: %f \n' % metrics.f1_score(label_true, label_pred)
             print 'ROC_AUC: %f \n' % metrics.roc_auc_score(label_true, score)
         print '#################  end evaluation  ####################'
 
