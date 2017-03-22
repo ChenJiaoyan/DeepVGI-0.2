@@ -120,13 +120,13 @@ if __name__ == '__main__':
     ms_n_imgs = client.read_n_images()
     img_X2, Y2 = read_test_sample(te_n, test_imgs, ms_p_imgs, ms_n_imgs)
 
-    print '--------------- Training ---------------'
+    print '--------------- Training on OSM Labels---------------'
     m = NN_Model.Model(img_X, Y, 'CNN_JY')
     m.set_batch_size(tr_b)
     m.set_epoch_num(tr_e)
     m.set_thread_num(tr_t)
     m.train_cnn()
 
-    print '--------------- Evaluation on Training Samples ---------------'
+    print '--------------- Evaluation on MapSwipe Samples ---------------'
     m.set_evaluation_input(img_X2, Y2)
     m.evaluate()
