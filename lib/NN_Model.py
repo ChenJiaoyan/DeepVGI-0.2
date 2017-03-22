@@ -93,9 +93,9 @@ class Model(object):
                 ran = self.__get_batch(self.sample_size, i, self.batch_size)
                 if i % 100 == 0:
                     train_accuracy = accuracy.eval(session=sess,
-                                                   feed_dict={x_image: self.X_imgs[ran], y_: self.Y_labels[ran],
+                                                   feed_dict={x_image: self.X_imgs, y_: self.Y_labels,
                                                               keep_prob: 1.0})
-                    print("epoch %d, training accuracy %g \n" % (i, train_accuracy))
+                    print("epoch %d, training accuracy %f \n" % (i, train_accuracy))
                 train_step.run(session=sess,
                                feed_dict={x_image: self.X_imgs[ran, :], y_: self.Y_labels[ran], keep_prob: 0.5})
             saver.save(sess, '../data/model/%s.ckpt' % self.name)
@@ -122,22 +122,19 @@ class Model(object):
         y_ = tf.get_collection("y_")[0]
         keep_prob = tf.get_collection("keep_prob")[0]
         y_conv = tf.get_collection("y_conv")[0]
-        acc_op = tf.get_collection("accuracy")[0]
-        label_p = tf.argmax(y_conv, 1)
-        prob = tf.nn.softmax(y_conv)[:, 1]
 
         print '#################  start evaluation  ####################'
         with tf.Session() as sess:
             saver.restore(sess, "../data/model/%s.ckpt" % self.name)
-            acc, label_pred, p = sess.run([acc_op, label_p, prob],
-                                          feed_dict={x_image: self.X_imgs, y_: self.Y_labels, keep_prob: 1.0})
-            print 'Accuracy: %g \n' % acc
+            label_pred, score = sess.run([tf.argmax(y_conv, 1), tf.nn.softmax(y_conv)[:, 1]],
+                                     feed_dict={x_image: self.X_imgs, y_: self.Y_labels, keep_prob: 1.0})
             label_true = np.argmax(self.Y_labels, 1)
             print 'metrics by sklearn \n'
-            print 'Accuracy: %g \n' % metrics.accuracy_score(label_true, label_pred)
-            print 'Precision: %g \n' % metrics.precision_score(label_true, label_pred)
-            print 'Recall: %g \n' % metrics.recall_score(label_true, label_pred)
-            print 'F1: %g \n' % metrics.f1_score(label_true, label_pred)
+            print 'Accuracy: %f \n' % metrics.accuracy_score(label_true, label_pred)
+            print 'Precision: %f \n' % metrics.precision_score(label_true, label_pred)
+            print 'Recall: %f \n' % metrics.recall_score(label_true, label_pred)
+            print 'F1: %f \n' % metrics.f1_score(label_true, label_pred)
+            print 'ROC_AUC: %f \n' % metrics.roc_auc_score(label_true, score)
         print '#################  end evaluation  ####################'
 
     @staticmethod
