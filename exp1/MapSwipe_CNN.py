@@ -181,8 +181,10 @@ class Model(object):
                 print("step %d, training accuracy %g" % (i, train_accuracy))
             train_step.run(session=sess, feed_dict={x: X_train[ran, :], \
                                                     y_: Y_train[ran], keep_prob: 0.5})
-            summary_str = sess.run(merged_summary_op)
-            summary_writer.add_summary(summary_str, total_step)
+            if i % 100 == 0:
+                summary_str = sess.run(merged_summary_op)
+                summary_writer.add_summary(summary_str, i)
+
 
         print '     evaluating ...'
         n = X_test.shape[0]
