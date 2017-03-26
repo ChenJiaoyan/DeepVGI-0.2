@@ -106,15 +106,18 @@ class Model(object):
         h_pool5_flat = tf.reshape(h_pool5, [-1, 2 * 2 * 256])
         h_fc6 = tf.nn.relu(tf.matmul(h_pool5_flat, W_fc6) + b_fc6)
 
-        ## FC7
+        ## FC7, Dropout
         W_fc7 = self.__weight_variable([4096, 4096])
         b_fc7 = self.__bias_variable([4096])
         h_fc7 = tf.nn.relu(tf.matmul(h_fc6, W_fc7) + b_fc7)
+        keep_prob = tf.placeholder(tf.float32)
+        h_fc7_drop = tf.nn.dropout(h_fc7, keep_prob)
+        tf.add_to_collection("keep_prob", keep_prob)
 
         ## FC8 (Readout Layer)
         W_fc8 = self.__weight_variable([4096, 2])
         b_fc8 = self.__bias_variable([2])
-        y_conv = tf.nn.relu(tf.matmul(h_fc7, W_fc8) + b_fc8)
+        y_conv = tf.nn.relu(tf.matmul(h_fc7_drop, W_fc8) + b_fc8)
         tf.add_to_collection("y_conv", y_conv)
 
         cross_entropy = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(y_conv, y_))
@@ -125,22 +128,7 @@ class Model(object):
 
         saver = tf.train.Saver()
         saver.export_meta_graph('../data/model/%s.meta' % self.name)
-
-        print '#################  start learning  ####################'
-        with tf.Session(config=tf.ConfigProto(intra_op_parallelism_threads=self.thread_num)) as sess:
-            sess.run(tf.global_variables_initializer())
-            sess.run(tf.local_variables_initializer())
-            for i in range(self.epoch_num):
-                ran = self.__get_batch(self.sample_size, i, self.batch_size)
-                train_step.run(session=sess,
-                               feed_dict={x_image: self.X_imgs[ran, :], y_: self.Y_labels[ran]})
-                if i % 100 == 0:
-                    train_accuracy = accuracy.eval(session=sess,
-                                                   feed_dict={x_image: self.X_imgs[ran], y_: self.Y_labels[ran]})
-                    print("epoch %d, training accuracy %f \n" % (i, train_accuracy))
-            saver.save(sess, '../data/model/%s.ckpt' % self.name)
-        print '#################  end learning  ####################'
-        print 'model saved in %s.meta and %s.ckpt' % (self.name, self.name)
+        self.learn(saver, x_image, y_, keep_prob, train_step, accuracy)
 
     def train_lenet(self):
         ## input
@@ -187,23 +175,24 @@ class Model(object):
 
         saver = tf.train.Saver()
         saver.export_meta_graph('../data/model/%s.meta' % self.name)
+        self.learn(saver, x_image, y_, keep_prob, train_step, accuracy)
 
+    def learn(self, saver, x_image, y_, keep_prob, train_step_op, accuracy_op):
         print '#################  start learning  ####################'
         with tf.Session(config=tf.ConfigProto(intra_op_parallelism_threads=self.thread_num)) as sess:
             sess.run(tf.global_variables_initializer())
             sess.run(tf.local_variables_initializer())
             for i in range(self.epoch_num):
                 ran = self.__get_batch(self.sample_size, i, self.batch_size)
-                train_step.run(session=sess,
-                               feed_dict={x_image: self.X_imgs[ran, :], y_: self.Y_labels[ran], keep_prob: 0.5})
+                train_step_op.run(session=sess,
+                                  feed_dict={x_image: self.X_imgs[ran, :], y_: self.Y_labels[ran], keep_prob: 0.5})
                 if i % 100 == 0:
-                    train_accuracy = accuracy.eval(session=sess,
-                                                   feed_dict={x_image: self.X_imgs[ran], y_: self.Y_labels[ran],
-                                                              keep_prob: 1.0})
+                    train_accuracy = accuracy_op.eval(session=sess,
+                                                      feed_dict={x_image: self.X_imgs[ran], y_: self.Y_labels[ran],
+                                                                 keep_prob: 1.0})
                     print("epoch %d, training accuracy %f \n" % (i, train_accuracy))
             saver.save(sess, '../data/model/%s.ckpt' % self.name)
         print '#################  end learning  ####################'
-        print 'model saved in %s.meta and %s.ckpt' % (self.name, self.name)
 
     def evaluate(self):
         saver = tf.train.import_meta_graph('../data/model/%s.meta' % self.name)
