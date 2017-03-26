@@ -62,6 +62,8 @@ class Model(object):
     def train_segnet(self):
         a = ''
 
+    def train_alexnet(self):
+        a = ''
 
     def train_lenet(self):
         ## input
