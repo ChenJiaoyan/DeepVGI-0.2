@@ -119,7 +119,8 @@ class Model(object):
         W_fc8 = self.__weight_variable([4096, 2])
         b_fc8 = self.__bias_variable([2])
         #y_conv = tf.nn.relu(tf.matmul(h_fc7_drop, W_fc8) + b_fc8)
-        y_conv = tf.nn.relu(tf.matmul(h_fc7, W_fc8) + b_fc8) # bypass dropout
+        # bypass dropout
+        y_conv = tf.nn.relu(tf.matmul(h_fc7, W_fc8) + b_fc8)
         tf.add_to_collection("y_conv", y_conv)
 
         cross_entropy = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(y_conv, y_))
