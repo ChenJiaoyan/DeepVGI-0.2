@@ -52,7 +52,18 @@ class Model(object):
     def set_thread_num(self, thread_num):
         self.thread_num = thread_num
 
-    def train_cnn(self):
+    def train(self, nn):
+        if nn == 'segnet':
+            self.train_segnet()
+        elif nn == 'lenet':
+            self.train_cnn()
+
+
+    def train_segnet(self):
+        a = ''
+
+
+    def train_lenet(self):
         ## input
         x_image = tf.placeholder(tf.float32, shape=[None, self.rows, self.cols, self.bands])
         y_ = tf.placeholder(tf.float32, shape=[None, self.class_num])

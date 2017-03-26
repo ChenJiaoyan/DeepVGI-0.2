@@ -132,7 +132,7 @@ if __name__ == '__main__':
         m.set_batch_size(tr_b)
         m.set_epoch_num(tr_e)
         m.set_thread_num(tr_t)
-        m.train_cnn()
+        m.train('lenet')
         print '--------------- Evaluation on Training Samples ---------------'
         m.evaluate()
     del img_X, Y, train_imgs

@@ -9,6 +9,7 @@
       <w>hexencode</w>
       <w>imgs</w>
       <w>keypair</w>
+      <w>lenet</w>
       <w>logit</w>
       <w>logits</w>
       <w>msfile</w>
@@ -18,6 +19,7 @@
       <w>outshp</w>
       <w>pred</w>
       <w>projet</w>
+      <w>segnet</w>
       <w>shapefile</w>
       <w>sklearn</w>
       <w>spatialdata</w>
