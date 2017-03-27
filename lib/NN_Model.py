@@ -67,70 +67,65 @@ class Model(object):
         ## input
         x_image = tf.placeholder(tf.float32, shape=[None, self.rows, self.cols, self.bands])
         y_ = tf.placeholder(tf.float32, shape=[None, self.class_num])
-        tf.add_to_collection("x_image", x_image)
-        tf.add_to_collection("y_", y_)
 
         ## Conv1, Pool1, Norm1
-        W_conv1 = self.__weight_variable([16, 16, self.bands, 96])
+        W_conv1 = self.__weight_variable([11, 11, self.bands, 96])
         b_conv1 = self.__bias_variable([96])
         h_conv1 = tf.nn.relu(tf.nn.conv2d(x_image, W_conv1, strides=[1, 4, 4, 1], padding='SAME') + b_conv1)
-        h_pool1 = self.__max_pool_4x4(h_conv1)
-        h_norm1 = self.__norm_4(h_pool1)
+        h_norm1 = self.__norm_2(h_conv1)
+        h_pool1 = tf.nn.max_pool(h_norm1, ksize=[1, 3, 3, 1], strides=[1, 2, 2, 1], padding='VALID')
 
         ## Conv2, Pool2, Norm2
         W_conv2 = self.__weight_variable([5, 5, 96, 256])
         b_conv2 = self.__bias_variable([256])
-        h_conv2 = tf.nn.relu(self.__conv2d(h_norm1, W_conv2) + b_conv2)
-        h_pool2 = self.__max_pool_4x4(h_conv2)
-        h_norm2 = self.__norm_4(h_pool2)
+        h_conv2 = tf.nn.relu(tf.nn.conv2d(h_pool1, W_conv2, strides=[1, 1, 1, 1], padding='SAME', group=2)+b_conv2)
+        h_norm2 = self.__norm_2(h_conv2)
+        h_pool2 = tf.nn.max_pool(h_norm2, ksize=[1, 3, 3, 1], strides=[1, 2, 2, 1], padding='VALID')
 
         ## Conv3
         W_conv3 = self.__weight_variable([3, 3, 256, 384])
         b_conv3 = self.__bias_variable([384])
-        h_conv3 = tf.nn.relu(self.__conv2d(h_norm2, W_conv3) + b_conv3)
+        h_conv3 = tf.nn.relu(tf.nn.conv2d(h_pool2, W_conv3, strides=[1, 1, 1, 1], padding='SAME', group=2)+b_conv3)
 
         ## Conv4
         W_conv4 = self.__weight_variable([3, 3, 384, 384])
         b_conv4 = self.__bias_variable([384])
-        h_conv4 = tf.nn.relu(self.__conv2d(h_conv3, W_conv4) + b_conv4)
+        h_conv4 = tf.nn.relu(tf.nn.conv2d(h_conv3, W_conv4, strides=[1, 1, 1, 1], padding='SAME', group=2)+b_conv4)
 
         ## Conv5, 5
         W_conv5 = self.__weight_variable([3, 3, 384, 256])
         b_conv5 = self.__bias_variable([256])
-        h_conv5 = tf.nn.relu(self.__conv2d(h_conv4, W_conv5) + b_conv5)
+        h_conv5 = tf.nn.relu(tf.nn.conv2d(h_conv4, W_conv5, strides=[1, 1, 1, 1], padding='SAME', group=2)+b_conv5)
         h_pool5 = tf.nn.max_pool(h_conv5, ksize=[1, 3, 3, 1], strides=[1, 2, 2, 1], padding='VALID')
 
         ## FC6
         W_fc6 = self.__weight_variable([1 * 1 * 256, 4096])
         b_fc6 = self.__bias_variable([4096])
-        h_pool5_flat = tf.reshape(h_pool5, [-1, 1 * 1 * 256])
-        h_fc6 = tf.nn.relu(tf.matmul(h_pool5_flat, W_fc6) + b_fc6)
+        h_fc6 = tf.nn.relu_layer(tf.reshape(h_pool5, [-1, int(np.prod(h_pool5.get_shape()[1:]))]), W_fc6, b_fc6)
 
-        ## FC7, Dropout
+        ## FC7
         W_fc7 = self.__weight_variable([4096, 4096])
         b_fc7 = self.__bias_variable([4096])
-        h_fc7 = tf.nn.relu(tf.matmul(h_fc6, W_fc7) + b_fc7)
-
-        keep_prob = tf.placeholder(tf.float32)
-        # h_fc7_drop = tf.nn.dropout(h_fc7, keep_prob)
-        tf.add_to_collection("keep_prob", keep_prob)
+        h_fc7 = tf.nn.xw_plus_b(h_fc6, W_fc7, b_fc7)
 
         ## FC8 (Readout Layer)
         W_fc8 = self.__weight_variable([4096, 2])
         b_fc8 = self.__bias_variable([2])
-        # y_conv = tf.nn.relu(tf.matmul(h_fc7_drop, W_fc8) + b_fc8)
-        # bypass dropout
-        y_conv = tf.matmul(h_fc7, W_fc8) + b_fc8
+        y_conv = tf.nn.xw_plus_b(h_fc7, W_fc8, b_fc8)
         prob = tf.nn.softmax(y_conv)
-
-        tf.add_to_collection("y_conv", y_conv)
-        tf.add_to_collection("prob", prob)
 
         cross_entropy = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(y_conv, y_))
         train_step = tf.train.AdamOptimizer(1e-4).minimize(cross_entropy)
         correct_prediction = tf.equal(tf.argmax(y_conv, 1), tf.argmax(y_, 1))
         accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
+
         tf.add_to_collection("accuracy", accuracy)
+        tf.add_to_collection("x_image", x_image)
+        tf.add_to_collection("y_", y_)
+        tf.add_to_collection("y_conv", y_conv)
+        tf.add_to_collection("prob", prob)
+        keep_prob = tf.placeholder(tf.float32)
+        tf.add_to_collection("keep_prob", keep_prob)
 
         saver = tf.train.Saver()
         saver.export_meta_graph('../data/model/%s.meta' % self.name)
@@ -145,7 +140,8 @@ class Model(object):
                 ran = self.__get_batch(self.sample_size, i, self.batch_size)
 
                 prob_r, y_conv_r = sess.run([prob, y_conv],
-                                            feed_dict={x_image: self.X_imgs[ran], y_: self.Y_labels[ran], keep_prob: 1.0})
+                                            feed_dict={x_image: self.X_imgs[ran], y_: self.Y_labels[ran],
+                                                       keep_prob: 1.0})
                 print prob_r
                 print y_conv_r
 
@@ -287,5 +283,5 @@ class Model(object):
         return tf.nn.max_pool(x, ksize=[1, 4, 4, 1], strides=[1, 4, 4, 1], padding='SAME')
 
     @staticmethod
-    def __norm_4(x):
-        return tf.nn.lrn(x, 4, bias=1.0, alpha=0.001 / 9.0, beta=0.75)
+    def __norm_2(x):
+        return tf.nn.lrn(x, 2, bias=1.0, alpha=2e-05, beta=0.75)
