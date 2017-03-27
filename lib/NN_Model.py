@@ -147,8 +147,8 @@ class Model(object):
                                                    feed_dict={x_image: self.X_imgs[ran], y_: self.Y_labels[ran],
                                                               keep_prob: 1.0})
 
-                    y_conv_r = sess.run(y_conv, feed_dict={x_image: self.X_imgs[ran], y_: self.Y_labels[ran], keep_prob: 1.0})
-                    print y_conv_r
+                    h_fc7_r = sess.run(h_fc7, feed_dict={x_image: self.X_imgs[ran], y_: self.Y_labels[ran], keep_prob: 1.0})
+                    print h_fc7_r
                     print("epoch %d, training accuracy %f \n" % (i, train_accuracy))
             saver.save(sess, '../data/model/%s.ckpt' % self.name)
         print '#################  end learning  ####################'
