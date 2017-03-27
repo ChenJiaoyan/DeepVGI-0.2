@@ -121,7 +121,7 @@ class Model(object):
         # y_conv = tf.nn.relu(tf.matmul(h_fc7_drop, W_fc8) + b_fc8)
         # bypass dropout
         y_conv = tf.matmul(h_fc7, W_fc8) + b_fc8
-        prob = tf.nn.moftmax(y_conv)
+        prob = tf.nn.softmax(y_conv)
 
         tf.add_to_collection("y_conv", y_conv)
         tf.add_to_collection("prob", prob)
