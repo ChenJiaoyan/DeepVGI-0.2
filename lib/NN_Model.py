@@ -112,13 +112,13 @@ class Model(object):
         h_fc7 = tf.nn.relu(tf.matmul(h_fc6, W_fc7) + b_fc7)
 
         keep_prob = tf.placeholder(tf.float32)
-        h_fc7_drop = tf.nn.dropout(h_fc7, keep_prob)
+        # h_fc7_drop = tf.nn.dropout(h_fc7, keep_prob)
         tf.add_to_collection("keep_prob", keep_prob)
 
         ## FC8 (Readout Layer)
         W_fc8 = self.__weight_variable([4096, 2])
         b_fc8 = self.__bias_variable([2])
-        #y_conv = tf.nn.relu(tf.matmul(h_fc7_drop, W_fc8) + b_fc8)
+        # y_conv = tf.nn.relu(tf.matmul(h_fc7_drop, W_fc8) + b_fc8)
         # bypass dropout
         y_conv = tf.nn.relu(tf.matmul(h_fc7, W_fc8) + b_fc8)
         tf.add_to_collection("y_conv", y_conv)
@@ -131,7 +131,32 @@ class Model(object):
 
         saver = tf.train.Saver()
         saver.export_meta_graph('../data/model/%s.meta' % self.name)
-        self.learn(saver, x_image, y_, keep_prob, train_step, accuracy)
+
+        # self.learn(saver, x_image, y_, keep_prob, train_step, accuracy)
+
+        print '#################  start learning  ####################'
+        with tf.Session(config=tf.ConfigProto(intra_op_parallelism_threads=self.thread_num)) as sess:
+            sess.run(tf.global_variables_initializer())
+            sess.run(tf.local_variables_initializer())
+            o_norm1, o_norm2, o_conv3, o_conv4, o_pool5 = sess.run([h_norm1, h_norm2, h_conv3, h_conv4, h_pool5],
+                                                                   feed_dict={x_image: self.X_imgs[0],
+                                                                              y_: self.Y_labels[0], keep_prob: 1.0})
+            print o_norm1.shape
+            print o_norm2.shape
+            print o_conv3.shape
+            print o_conv4.shape
+            print o_pool5.shape
+            for i in range(self.epoch_num):
+                ran = self.__get_batch(self.sample_size, i, self.batch_size)
+                train_step.run(session=sess,
+                               feed_dict={x_image: self.X_imgs[ran, :], y_: self.Y_labels[ran], keep_prob: 0.5})
+                if i % 100 == 0:
+                    train_accuracy = accuracy.eval(session=sess,
+                                                   feed_dict={x_image: self.X_imgs[ran], y_: self.Y_labels[ran],
+                                                              keep_prob: 1.0})
+                    print("epoch %d, training accuracy %f \n" % (i, train_accuracy))
+            saver.save(sess, '../data/model/%s.ckpt' % self.name)
+        print '#################  end learning  ####################'
 
     def train_lenet(self):
         ## input
