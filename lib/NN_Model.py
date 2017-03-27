@@ -152,16 +152,20 @@ class Model(object):
         W_fc6 = self.__weight_variable([shape_n, 4096])
         b_fc6 = self.__bias_variable([4096])
         h_fc6 = tf.nn.relu_layer(tf.reshape(h_pool5, [-1, shape_n]), W_fc6, b_fc6)
+        keep_prob = tf.placeholder(tf.float32)
+        h_fc6_drop = tf.nn.dropout(h_fc6, keep_prob)
 
         ## FC 7
         W_fc7 = self.__weight_variable([4096, 4096])
         b_fc7 = self.__bias_variable([4096])
-        h_fc7 = tf.nn.xw_plus_b(h_fc6, W_fc7, b_fc7)
+        h_fc7 = tf.nn.relu(tf.nn.xw_plus_b(h_fc6_drop, W_fc7, b_fc7))
+        h_fc7_drop = tf.nn.dropout(h_fc7, keep_prob)
+
 
         ## FC 8 (Readout Layer)
         W_fc8 = self.__weight_variable([4096, 2])
         b_fc8 = self.__bias_variable([2])
-        y_conv = tf.nn.xw_plus_b(h_fc7, W_fc8, b_fc8)
+        y_conv = tf.nn.xw_plus_b(h_fc7_drop, W_fc8, b_fc8)
         prob = tf.nn.softmax(y_conv)
 
         cross_entropy = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(y_conv, y_))
@@ -174,7 +178,6 @@ class Model(object):
         tf.add_to_collection("y_", y_)
         tf.add_to_collection("y_conv", y_conv)
         tf.add_to_collection("prob", prob)
-        keep_prob = tf.placeholder(tf.float32)  # NOT used
         tf.add_to_collection("keep_prob", keep_prob)
 
         saver = tf.train.Saver()
