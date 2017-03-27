@@ -138,14 +138,6 @@ class Model(object):
         with tf.Session(config=tf.ConfigProto(intra_op_parallelism_threads=self.thread_num)) as sess:
             sess.run(tf.global_variables_initializer())
             sess.run(tf.local_variables_initializer())
-            o_norm1, o_norm2, o_conv3, o_conv4, o_pool5 = sess.run([h_norm1, h_norm2, h_conv3, h_conv4, h_pool5],
-                                                                   feed_dict={x_image: self.X_imgs[0:2],
-                                                                              y_: self.Y_labels[0:2], keep_prob: 1.0})
-            print o_norm1.shape
-            print o_norm2.shape
-            print o_conv3.shape
-            print o_conv4.shape
-            print o_pool5.shape
             for i in range(self.epoch_num):
                 ran = self.__get_batch(self.sample_size, i, self.batch_size)
                 train_step.run(session=sess,
@@ -154,6 +146,9 @@ class Model(object):
                     train_accuracy = accuracy.eval(session=sess,
                                                    feed_dict={x_image: self.X_imgs[ran], y_: self.Y_labels[ran],
                                                               keep_prob: 1.0})
+
+                    y_conv_r = sess.run(y_conv, feed_dict={x_image: self.X_imgs[ran], y_: self.Y_labels[ran], keep_prob: 1.0})
+                    print y_conv_r
                     print("epoch %d, training accuracy %f \n" % (i, train_accuracy))
             saver.save(sess, '../data/model/%s.ckpt' % self.name)
         print '#################  end learning  ####################'
@@ -240,8 +235,6 @@ class Model(object):
                 label_pred[i1:i2], score[i1:i2] = sess.run([tf.argmax(y_conv, 1), tf.nn.softmax(y_conv)[:, 1]],
                                                            feed_dict={x_image: self.X_imgs[i1:i2],
                                                                       y_: self.Y_labels[i1:i2], keep_prob: 1.0})
-                print label_pred[i1:i2]
-                print score[i1:i2]
             label_true = np.argmax(self.Y_labels, 1)
             print 'Accuracy: %f \n' % metrics.accuracy_score(label_true, label_pred)
             print 'Precision: %f \n' % metrics.precision_score(label_true, label_pred)
