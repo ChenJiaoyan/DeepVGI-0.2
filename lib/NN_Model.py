@@ -53,15 +53,158 @@ class Model(object):
         self.thread_num = thread_num
 
     def train(self, nn):
-        if nn == 'segnet':
+        if nn == 'vggnet':
             self.train_segnet()
         elif nn == 'lenet':
             self.train_lenet()
         elif nn == 'alexnet':
             self.train_alexnet()
+        else:
+            print 'unsupported network: %s \n' % nn
 
-    def train_segnet(self):
-        a = ''
+    def train_vggnet(self):
+        ## input
+        x_image = tf.placeholder(tf.float32, shape=[None, self.rows, self.cols, self.bands])
+        y_ = tf.placeholder(tf.float32, shape=[None, self.class_num])
+
+        ## Conv1_1
+        W_conv1_1 = self.__weight_variable([3, 3, self.bands, 64])
+        b_conv1_1 = self.__bias_variable([64])
+        h_conv1_1 = tf.nn.relu(self.__conv2d(x_image, W_conv1_1) + b_conv1_1)
+
+        ## Conv1_2
+        W_conv1_2 = self.__weight_variable([3, 3, 64, 64])
+        b_conv1_2 = self.__bias_variable([64])
+        h_conv1_2 = tf.nn.relu(self.__conv2d(h_conv1_1, W_conv1_2) + b_conv1_2)
+
+        ## Pool1
+        h_pool1 = self.__max_pool_2x2(h_conv1_2)
+
+        ## Conv2_1
+        W_conv2_1 = self.__weight_variable([3, 3, 64, 128])
+        b_conv2_1 = self.__bias_variable([128])
+        h_conv2_1 = tf.nn.relu(self.__conv2d(h_pool1, W_conv2_1) + b_conv2_1)
+
+        ## Conv2_2
+        W_conv2_2 = self.__weight_variable([3, 3, 128, 128])
+        b_conv2_2 = self.__bias_variable([128])
+        h_conv2_2 = tf.nn.relu(self.__conv2d(h_conv2_1, W_conv2_2) + b_conv2_2)
+
+        ## Pool2
+        h_pool2 = self.__max_pool_2x2(h_conv2_2)
+
+        ## Conv3_1
+        W_conv3_1 = self.__weight_variable([3, 3, 128, 256])
+        b_conv3_1 = self.__bias_variable([256])
+        h_conv3_1 = tf.nn.relu(self.__conv2d(h_pool2, W_conv3_1) + b_conv3_1)
+
+        ## Conv3_2
+        W_conv3_2 = self.__weight_variable([3, 3, 256, 256])
+        b_conv3_2 = self.__bias_variable([256])
+        h_conv3_2 = tf.nn.relu(self.__conv2d(h_conv3_1, W_conv3_2) + b_conv3_2)
+
+        ## Conv3_3
+        W_conv3_3 = self.__weight_variable([3, 3, 256, 256])
+        b_conv3_3 = self.__bias_variable([256])
+        h_conv3_3 = tf.nn.relu(self.__conv2d(h_conv3_2, W_conv3_3) + b_conv3_3)
+
+        ## Pool3
+        h_pool3 = self.__max_pool_2x2(h_conv3_3)
+
+        ## Conv4_1
+        W_conv4_1 = self.__weight_variable([3, 3, 256, 512])
+        b_conv4_1 = self.__bias_variable([512])
+        h_conv4_1 = tf.nn.relu(self.__conv2d(h_pool3, W_conv4_1) + b_conv4_1)
+
+        ## Conv4_2
+        W_conv4_2 = self.__weight_variable([3, 3, 512, 512])
+        b_conv4_2 = self.__bias_variable([512])
+        h_conv4_2 = tf.nn.relu(self.__conv2d(h_conv4_1, W_conv4_2) + b_conv4_2)
+
+        ## Conv4_3
+        W_conv4_3 = self.__weight_variable([3, 3, 512, 512])
+        b_conv4_3 = self.__bias_variable([512])
+        h_conv4_3 = tf.nn.relu(self.__conv2d(h_conv4_2, W_conv4_3) + b_conv4_3)
+
+        ## Pool4
+        h_pool4 = self.__max_pool_2x2(h_conv4_3)
+
+        ## Conv5_1
+        W_conv5_1 = self.__weight_variable([3, 3, 512, 512])
+        b_conv5_1 = self.__bias_variable([512])
+        h_conv5_1 = tf.nn.relu(self.__conv2d(h_pool4, W_conv5_1) + b_conv5_1)
+
+        ## Conv5_2
+        W_conv5_2 = self.__weight_variable([3, 3, 512, 512])
+        b_conv5_2 = self.__bias_variable([512])
+        h_conv5_2 = tf.nn.relu(self.__conv2d(h_conv5_1, W_conv5_2) + b_conv5_2)
+
+        ## Conv5_3
+        W_conv5_3 = self.__weight_variable([3, 3, 512, 512])
+        b_conv5_3 = self.__bias_variable([512])
+        h_conv5_3 = tf.nn.relu(self.__conv2d(h_conv5_2, W_conv5_3) + b_conv5_3)
+
+        ## Pool5
+        h_pool5 = self.__max_pool_2x2(h_conv5_3)
+
+        ## FC 6
+        shape_n = int(np.prod(h_pool5.get_shape()[1:]))
+        W_fc6 = self.__weight_variable([shape_n, 4096])
+        b_fc6 = self.__bias_variable([4096])
+        h_fc6 = tf.nn.relu_layer(tf.reshape(h_pool5, [-1, shape_n]), W_fc6, b_fc6)
+
+        ## FC 7
+        W_fc7 = self.__weight_variable([4096, 4096])
+        b_fc7 = self.__bias_variable([4096])
+        h_fc7 = tf.nn.xw_plus_b(h_fc6, W_fc7, b_fc7)
+
+        ## FC 8 (Readout Layer)
+        W_fc8 = self.__weight_variable([4096, 2])
+        b_fc8 = self.__bias_variable([2])
+        y_conv = tf.nn.xw_plus_b(h_fc7, W_fc8, b_fc8)
+        prob = tf.nn.softmax(y_conv)
+
+        cross_entropy = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(y_conv, y_))
+        train_step = tf.train.AdamOptimizer(1e-4).minimize(cross_entropy)
+        correct_prediction = tf.equal(tf.argmax(y_conv, 1), tf.argmax(y_, 1))
+        accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
+
+        tf.add_to_collection("accuracy", accuracy)
+        tf.add_to_collection("x_image", x_image)
+        tf.add_to_collection("y_", y_)
+        tf.add_to_collection("y_conv", y_conv)
+        tf.add_to_collection("prob", prob)
+        keep_prob = tf.placeholder(tf.float32)  # NOT used
+        tf.add_to_collection("keep_prob", keep_prob)
+
+        saver = tf.train.Saver()
+        saver.export_meta_graph('../data/model/%s.meta' % self.name)
+
+        # self.learn(saver, x_image, y_, keep_prob, train_step, accuracy)
+
+        print '#################  start learning  ####################'
+        with tf.Session(config=tf.ConfigProto(intra_op_parallelism_threads=self.thread_num)) as sess:
+            sess.run(tf.global_variables_initializer())
+            sess.run(tf.local_variables_initializer())
+            for i in range(self.epoch_num):
+                ran = self.__get_batch(self.sample_size, i, self.batch_size)
+
+                prob_r, y_conv_r = sess.run([prob, y_conv],
+                                            feed_dict={x_image: self.X_imgs[ran], y_: self.Y_labels[ran],
+                                                       keep_prob: 1.0})
+                print prob_r
+                print y_conv_r
+
+                train_step.run(session=sess,
+                               feed_dict={x_image: self.X_imgs[ran, :], y_: self.Y_labels[ran], keep_prob: 0.5})
+                if i % 100 == 0:
+                    train_accuracy = accuracy.eval(session=sess,
+                                                   feed_dict={x_image: self.X_imgs[ran], y_: self.Y_labels[ran],
+                                                              keep_prob: 1.0})
+
+                    print("epoch %d, training accuracy %f \n" % (i, train_accuracy))
+            saver.save(sess, '../data/model/%s.ckpt' % self.name)
+        print '#################  end learning  ####################'
 
     def train_alexnet(self):
         ## input
