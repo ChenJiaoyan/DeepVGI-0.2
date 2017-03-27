@@ -139,8 +139,8 @@ class Model(object):
             sess.run(tf.global_variables_initializer())
             sess.run(tf.local_variables_initializer())
             o_norm1, o_norm2, o_conv3, o_conv4, o_pool5 = sess.run([h_norm1, h_norm2, h_conv3, h_conv4, h_pool5],
-                                                                   feed_dict={x_image: self.X_imgs[0],
-                                                                              y_: self.Y_labels[0], keep_prob: 1.0})
+                                                                   feed_dict={x_image: self.X_imgs[0:2],
+                                                                              y_: self.Y_labels[0:2], keep_prob: 1.0})
             print o_norm1.shape
             print o_norm2.shape
             print o_conv3.shape
