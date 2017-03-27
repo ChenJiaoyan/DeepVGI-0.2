@@ -54,7 +54,7 @@ class Model(object):
 
     def train(self, nn):
         if nn == 'vggnet':
-            self.train_segnet()
+            self.train_vggnet()
         elif nn == 'lenet':
             self.train_lenet()
         elif nn == 'alexnet':
