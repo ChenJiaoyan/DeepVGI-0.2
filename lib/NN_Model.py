@@ -78,24 +78,24 @@ class Model(object):
         ## Conv2, Pool2, Norm2
         W_conv2 = self.__weight_variable([5, 5, 96, 256])
         b_conv2 = self.__bias_variable([256])
-        h_conv2 = tf.nn.relu(tf.nn.conv2d(h_pool1, W_conv2, strides=[1, 1, 1, 1], padding='SAME')+b_conv2)
+        h_conv2 = tf.nn.relu(tf.nn.conv2d(h_pool1, W_conv2, strides=[1, 1, 1, 1], padding='SAME') + b_conv2)
         h_norm2 = self.__norm_2(h_conv2)
         h_pool2 = tf.nn.max_pool(h_norm2, ksize=[1, 3, 3, 1], strides=[1, 2, 2, 1], padding='VALID')
 
         ## Conv3
         W_conv3 = self.__weight_variable([3, 3, 256, 384])
         b_conv3 = self.__bias_variable([384])
-        h_conv3 = tf.nn.relu(tf.nn.conv2d(h_pool2, W_conv3, strides=[1, 1, 1, 1], padding='SAME')+b_conv3)
+        h_conv3 = tf.nn.relu(tf.nn.conv2d(h_pool2, W_conv3, strides=[1, 1, 1, 1], padding='SAME') + b_conv3)
 
         ## Conv4
         W_conv4 = self.__weight_variable([3, 3, 384, 384])
         b_conv4 = self.__bias_variable([384])
-        h_conv4 = tf.nn.relu(tf.nn.conv2d(h_conv3, W_conv4, strides=[1, 1, 1, 1], padding='SAME')+b_conv4)
+        h_conv4 = tf.nn.relu(tf.nn.conv2d(h_conv3, W_conv4, strides=[1, 1, 1, 1], padding='SAME') + b_conv4)
 
         ## Conv5, 5
         W_conv5 = self.__weight_variable([3, 3, 384, 256])
         b_conv5 = self.__bias_variable([256])
-        h_conv5 = tf.nn.relu(tf.nn.conv2d(h_conv4, W_conv5, strides=[1, 1, 1, 1], padding='SAME')+b_conv5)
+        h_conv5 = tf.nn.relu(tf.nn.conv2d(h_conv4, W_conv5, strides=[1, 1, 1, 1], padding='SAME') + b_conv5)
         h_pool5 = tf.nn.max_pool(h_conv5, ksize=[1, 3, 3, 1], strides=[1, 2, 2, 1], padding='VALID')
 
         ## FC6
@@ -124,37 +124,40 @@ class Model(object):
         tf.add_to_collection("y_", y_)
         tf.add_to_collection("y_conv", y_conv)
         tf.add_to_collection("prob", prob)
-        keep_prob = tf.placeholder(tf.float32)
+        keep_prob = tf.placeholder(tf.float32)  # NOT used
         tf.add_to_collection("keep_prob", keep_prob)
 
         saver = tf.train.Saver()
         saver.export_meta_graph('../data/model/%s.meta' % self.name)
 
-        # self.learn(saver, x_image, y_, keep_prob, train_step, accuracy)
+        self.learn(saver, x_image, y_, keep_prob, train_step, accuracy)
 
-        print '#################  start learning  ####################'
-        with tf.Session(config=tf.ConfigProto(intra_op_parallelism_threads=self.thread_num)) as sess:
-            sess.run(tf.global_variables_initializer())
-            sess.run(tf.local_variables_initializer())
-            for i in range(self.epoch_num):
-                ran = self.__get_batch(self.sample_size, i, self.batch_size)
+        ## for debug
 
-                prob_r, y_conv_r = sess.run([prob, y_conv],
-                                            feed_dict={x_image: self.X_imgs[ran], y_: self.Y_labels[ran],
-                                                       keep_prob: 1.0})
-                print prob_r
-                print y_conv_r
-
-                train_step.run(session=sess,
-                               feed_dict={x_image: self.X_imgs[ran, :], y_: self.Y_labels[ran], keep_prob: 0.5})
-                if i % 100 == 0:
-                    train_accuracy = accuracy.eval(session=sess,
-                                                   feed_dict={x_image: self.X_imgs[ran], y_: self.Y_labels[ran],
-                                                              keep_prob: 1.0})
-
-                    print("epoch %d, training accuracy %f \n" % (i, train_accuracy))
-            saver.save(sess, '../data/model/%s.ckpt' % self.name)
-        print '#################  end learning  ####################'
+    #        print '#################  start learning  ####################'
+    #        with tf.Session(config=tf.ConfigProto(intra_op_parallelism_threads=self.thread_num)) as sess:
+    #            sess.run(tf.global_variables_initializer())
+    #            sess.run(tf.local_variables_initializer())
+    #            for i in range(self.epoch_num):
+    #                ran = self.__get_batch(self.sample_size, i, self.batch_size)
+    #
+    #                prob_r, y_conv_r = sess.run([prob, y_conv],
+    #                                            feed_dict={x_image: self.X_imgs[ran], y_: self.Y_labels[ran],
+    #                                                       keep_prob: 1.0})
+    #                print prob_r
+    #                print y_conv_r
+    #
+    #                train_step.run(session=sess,
+    #                               feed_dict={x_image: self.X_imgs[ran, :], y_: self.Y_labels[ran], keep_prob: 0.5})
+    #                if i % 100 == 0:
+    #                    train_accuracy = accuracy.eval(session=sess,
+    #                                                   feed_dict={x_image: self.X_imgs[ran], y_: self.Y_labels[ran],
+    #                                                              keep_prob: 1.0})
+    #
+    #                    print("epoch %d, training accuracy %f \n" % (i, train_accuracy))
+    #            saver.save(sess, '../data/model/%s.ckpt' % self.name)
+    #        print '#################  end learning  ####################'
+    ## for debug
 
     def train_lenet(self):
         ## input
