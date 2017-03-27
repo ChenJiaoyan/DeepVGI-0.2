@@ -71,7 +71,7 @@ class Model(object):
         tf.add_to_collection("y_", y_)
 
         ## Conv1, Pool1, Norm1
-        W_conv1 = self.__weight_variable([11, 11, self.bands, 96])
+        W_conv1 = self.__weight_variable([16, 16, self.bands, 96])
         b_conv1 = self.__bias_variable([96])
         h_conv1 = tf.nn.relu(tf.nn.conv2d(x_image, W_conv1, strides=[1, 4, 4, 1], padding='SAME') + b_conv1)
         h_pool1 = self.__max_pool_4x4(h_conv1)
@@ -240,6 +240,8 @@ class Model(object):
                 label_pred[i1:i2], score[i1:i2] = sess.run([tf.argmax(y_conv, 1), tf.nn.softmax(y_conv)[:, 1]],
                                                            feed_dict={x_image: self.X_imgs[i1:i2],
                                                                       y_: self.Y_labels[i1:i2], keep_prob: 1.0})
+                print label_pred[i1:i2]
+                print score[i1:i2]
             label_true = np.argmax(self.Y_labels, 1)
             print 'Accuracy: %f \n' % metrics.accuracy_score(label_true, label_pred)
             print 'Precision: %f \n' % metrics.precision_score(label_true, label_pred)
