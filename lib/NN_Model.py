@@ -120,8 +120,11 @@ class Model(object):
         b_fc8 = self.__bias_variable([2])
         # y_conv = tf.nn.relu(tf.matmul(h_fc7_drop, W_fc8) + b_fc8)
         # bypass dropout
-        y_conv = tf.nn.relu(tf.matmul(h_fc7, W_fc8) + b_fc8)
+        y_conv = tf.matmul(h_fc7, W_fc8) + b_fc8
+        prob = tf.nn.moftmax(y_conv)
+
         tf.add_to_collection("y_conv", y_conv)
+        tf.add_to_collection("prob", prob)
 
         cross_entropy = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(y_conv, y_))
         train_step = tf.train.AdamOptimizer(1e-4).minimize(cross_entropy)
@@ -147,8 +150,10 @@ class Model(object):
                                                    feed_dict={x_image: self.X_imgs[ran], y_: self.Y_labels[ran],
                                                               keep_prob: 1.0})
 
-                    h_fc7_r = sess.run(h_fc7, feed_dict={x_image: self.X_imgs[ran], y_: self.Y_labels[ran], keep_prob: 1.0})
-                    print h_fc7_r
+                    prob_r, y_conv_r = sess.run([prob, y_conv],
+                                       feed_dict={x_image: self.X_imgs[ran], y_: self.Y_labels[ran], keep_prob: 1.0})
+                    print prob_r
+                    print y_conv_r
                     print("epoch %d, training accuracy %f \n" % (i, train_accuracy))
             saver.save(sess, '../data/model/%s.ckpt' % self.name)
         print '#################  end learning  ####################'
