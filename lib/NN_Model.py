@@ -167,7 +167,7 @@ class Model(object):
         tf.add_to_collection("y_", y_)
 
         ## First Layer
-        W_conv1 = self.__weight_variable([12, 12, self.bands, 16])
+        W_conv1 = self.__weight_variable([16, 16, self.bands, 16])
         b_conv1 = self.__bias_variable([16])
         h_conv1 = tf.nn.relu(self.__conv2d(x_image, W_conv1) + b_conv1)
         h_pool1 = self.__max_pool_4x4(h_conv1)
