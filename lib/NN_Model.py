@@ -78,24 +78,24 @@ class Model(object):
         ## Conv2, Pool2, Norm2
         W_conv2 = self.__weight_variable([5, 5, 96, 256])
         b_conv2 = self.__bias_variable([256])
-        h_conv2 = tf.nn.relu(tf.nn.conv2d(h_pool1, W_conv2, strides=[1, 1, 1, 1], padding='SAME', group=2)+b_conv2)
+        h_conv2 = tf.nn.relu(tf.nn.conv2d(h_pool1, W_conv2, strides=[1, 1, 1, 1], padding='SAME')+b_conv2)
         h_norm2 = self.__norm_2(h_conv2)
         h_pool2 = tf.nn.max_pool(h_norm2, ksize=[1, 3, 3, 1], strides=[1, 2, 2, 1], padding='VALID')
 
         ## Conv3
         W_conv3 = self.__weight_variable([3, 3, 256, 384])
         b_conv3 = self.__bias_variable([384])
-        h_conv3 = tf.nn.relu(tf.nn.conv2d(h_pool2, W_conv3, strides=[1, 1, 1, 1], padding='SAME', group=2)+b_conv3)
+        h_conv3 = tf.nn.relu(tf.nn.conv2d(h_pool2, W_conv3, strides=[1, 1, 1, 1], padding='SAME')+b_conv3)
 
         ## Conv4
         W_conv4 = self.__weight_variable([3, 3, 384, 384])
         b_conv4 = self.__bias_variable([384])
-        h_conv4 = tf.nn.relu(tf.nn.conv2d(h_conv3, W_conv4, strides=[1, 1, 1, 1], padding='SAME', group=2)+b_conv4)
+        h_conv4 = tf.nn.relu(tf.nn.conv2d(h_conv3, W_conv4, strides=[1, 1, 1, 1], padding='SAME')+b_conv4)
 
         ## Conv5, 5
         W_conv5 = self.__weight_variable([3, 3, 384, 256])
         b_conv5 = self.__bias_variable([256])
-        h_conv5 = tf.nn.relu(tf.nn.conv2d(h_conv4, W_conv5, strides=[1, 1, 1, 1], padding='SAME', group=2)+b_conv5)
+        h_conv5 = tf.nn.relu(tf.nn.conv2d(h_conv4, W_conv5, strides=[1, 1, 1, 1], padding='SAME')+b_conv5)
         h_pool5 = tf.nn.max_pool(h_conv5, ksize=[1, 3, 3, 1], strides=[1, 2, 2, 1], padding='VALID')
 
         ## FC6
