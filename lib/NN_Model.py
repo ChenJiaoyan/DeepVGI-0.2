@@ -101,9 +101,9 @@ class Model(object):
         h_pool5 = tf.nn.max_pool(h_conv5, ksize=[1, 3, 3, 1], strides=[1, 2, 2, 1], padding='VALID')
 
         ## FC6
-        W_fc6 = self.__weight_variable([16 * 16 * 256, 4096])
+        W_fc6 = self.__weight_variable([1 * 1 * 256, 4096])
         b_fc6 = self.__bias_variable([4096])
-        h_pool5_flat = tf.reshape(h_pool5, [-1, 16 * 16 * 256])
+        h_pool5_flat = tf.reshape(h_pool5, [-1, 1 * 1 * 256])
         h_fc6 = tf.nn.relu(tf.matmul(h_pool5_flat, W_fc6) + b_fc6)
 
         ## FC7, Dropout
