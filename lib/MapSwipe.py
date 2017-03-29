@@ -56,20 +56,20 @@ class MSClient:
         return p_imgs
 
     def read_n_images(self):
-        tmp = []
+        csv_imgs = []
         ms_file = '../data/project_' + str(self.project_id) + '.csv'
         lines = FileIO.read_lines(ms_file, 1)
         for line in lines:
             tmp = line.strip().split(',')
             x, y = int(tmp[4]), int(tmp[5])
-            tmp.append([x, y])
+            csv_imgs.append([x, y])
         img_dir = '../data/image_project_' + str(self.project_id) + '/'
         imgs = os.listdir(img_dir)
         n_imgs = []
         for img in imgs:
             i1, i2 = img.index('-'), img.index('.')
             task_x, task_y = int(img[0:i1]), int(img[(i1 + 1):i2])
-            if [task_x, task_y] not in tmp:
+            if [task_x, task_y] not in csv_imgs:
                 n_imgs.append([int(task_x), int(task_y)])
         return n_imgs
 
