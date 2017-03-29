@@ -1,6 +1,6 @@
 #! /usr/bin/python
 import sys
-sys.path.append("lib")
+sys.path.append("../lib")
 import MapSwipe
 
 import tensorflow as tf
