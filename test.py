@@ -1,4 +1,7 @@
 #! /usr/bin/python
+import sys
+sys.path.append("../lib")
+import MapSwipe
 
 import tensorflow as tf
 
@@ -39,5 +42,10 @@ def restore_test():
         r = sess.run(w121)
         print r
 
-store_test()
-restore_test()
+#store_test()
+#restore_test()
+
+client = MapSwipe.MSClient()
+s_n_imgs = client.read_n_images()
+print s_n_imgs
+print 'negative images: %d' % len(s_n_imgs)
