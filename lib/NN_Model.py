@@ -161,7 +161,6 @@ class Model(object):
         h_fc7 = tf.nn.relu(tf.nn.xw_plus_b(h_fc6_drop, W_fc7, b_fc7))
         h_fc7_drop = tf.nn.dropout(h_fc7, keep_prob)
 
-
         ## FC 8 (Readout Layer)
         W_fc8 = self.__weight_variable([4096, 2])
         b_fc8 = self.__bias_variable([2])
@@ -183,33 +182,34 @@ class Model(object):
         saver = tf.train.Saver()
         saver.export_meta_graph('../data/model/%s.meta' % self.name)
 
-        self.learn(saver, x_image, y_, keep_prob, train_step, accuracy)
+        self.learn(saver, x_image, y_, keep_prob, train_step, accuracy, y_conv)
 
         ## for debug
-#        print '#################  start learning  ####################'
-#        with tf.Session(config=tf.ConfigProto(intra_op_parallelism_threads=self.thread_num)) as sess:
-#            sess.run(tf.global_variables_initializer())
-#            sess.run(tf.local_variables_initializer())
-#            for i in range(self.epoch_num):
-#                ran = self.__get_batch(self.sample_size, i, self.batch_size)
-#
-#                prob_r, y_conv_r = sess.run([prob, y_conv],
-#                                            feed_dict={x_image: self.X_imgs[ran], y_: self.Y_labels[ran],
-#                                                       keep_prob: 1.0})
-#                print prob_r
-#                print y_conv_r
-#
-#                train_step.run(session=sess,
-#                               feed_dict={x_image: self.X_imgs[ran, :], y_: self.Y_labels[ran], keep_prob: 0.5})
-#                if i % 100 == 0:
-#                    train_accuracy = accuracy.eval(session=sess,
-#                                                   feed_dict={x_image: self.X_imgs[ran], y_: self.Y_labels[ran],
-#                                                              keep_prob: 1.0})
-#
-#                    print("epoch %d, training accuracy %f \n" % (i, train_accuracy))
-#            saver.save(sess, '../data/model/%s.ckpt' % self.name)
-#        print '#################  end learning  ####################'
-        ## for debug
+
+    #        print '#################  start learning  ####################'
+    #        with tf.Session(config=tf.ConfigProto(intra_op_parallelism_threads=self.thread_num)) as sess:
+    #            sess.run(tf.global_variables_initializer())
+    #            sess.run(tf.local_variables_initializer())
+    #            for i in range(self.epoch_num):
+    #                ran = self.__get_batch(self.sample_size, i, self.batch_size)
+    #
+    #                prob_r, y_conv_r = sess.run([prob, y_conv],
+    #                                            feed_dict={x_image: self.X_imgs[ran], y_: self.Y_labels[ran],
+    #                                                       keep_prob: 1.0})
+    #                print prob_r
+    #                print y_conv_r
+    #
+    #                train_step.run(session=sess,
+    #                               feed_dict={x_image: self.X_imgs[ran, :], y_: self.Y_labels[ran], keep_prob: 0.5})
+    #                if i % 100 == 0:
+    #                    train_accuracy = accuracy.eval(session=sess,
+    #                                                   feed_dict={x_image: self.X_imgs[ran], y_: self.Y_labels[ran],
+    #                                                              keep_prob: 1.0})
+    #
+    #                    print("epoch %d, training accuracy %f \n" % (i, train_accuracy))
+    #            saver.save(sess, '../data/model/%s.ckpt' % self.name)
+    #        print '#################  end learning  ####################'
+    ## for debug
 
     def train_alexnet(self):
         ## input
@@ -278,7 +278,7 @@ class Model(object):
         saver = tf.train.Saver()
         saver.export_meta_graph('../data/model/%s.meta' % self.name)
 
-        self.learn(saver, x_image, y_, keep_prob, train_step, accuracy)
+        self.learn(saver, x_image, y_, keep_prob, train_step, accuracy, y_conv)
 
         ## for debug
 
@@ -352,9 +352,9 @@ class Model(object):
 
         saver = tf.train.Saver()
         saver.export_meta_graph('../data/model/%s.meta' % self.name)
-        self.learn(saver, x_image, y_, keep_prob, train_step, accuracy)
+        self.learn(saver, x_image, y_, keep_prob, train_step, accuracy, y_conv)
 
-    def learn(self, saver, x_image, y_, keep_prob, train_step_op, accuracy_op):
+    def learn(self, saver, x_image, y_, keep_prob, train_step_op, y_conv_op):
         print '#################  start learning  ####################'
         with tf.Session(config=tf.ConfigProto(intra_op_parallelism_threads=self.thread_num)) as sess:
             sess.run(tf.global_variables_initializer())
@@ -364,10 +364,16 @@ class Model(object):
                 train_step_op.run(session=sess,
                                   feed_dict={x_image: self.X_imgs[ran, :], y_: self.Y_labels[ran], keep_prob: 0.5})
                 if i % 100 == 0:
-                    train_accuracy = accuracy_op.eval(session=sess,
-                                                      feed_dict={x_image: self.X_imgs[ran], y_: self.Y_labels[ran],
-                                                                 keep_prob: 1.0})
-                    print("epoch %d, training accuracy %f \n" % (i, train_accuracy))
+                    label_pred, score = np.zeros(self.sample_size), np.zeros(self.sample_size)
+                    batch = 200
+                    for j in range(int(math.ceil(self.sample_size / float(batch)))):
+                        j1 = j * batch
+                        j2 = (j + 1) * batch if (j + 1) * batch < self.sample_size else self.sample_size
+                        label_pred[j1:j2], score[j1:j2] = sess.run([tf.argmax(y_conv_op, 1), tf.nn.softmax(y_conv_op)[:, 1]],
+                                                                   feed_dict={x_image: self.X_imgs[j1:j2],
+                                                                              y_: self.Y_labels[j1:j2], keep_prob: 1.0})
+                    label_true = np.argmax(self.Y_labels, 1)
+                    print 'training accuracy: %f, AUC: %f \n' % (metrics.accuracy_score(label_true, label_pred), metrics.roc_auc_score(label_true, score))
             saver.save(sess, '../data/model/%s.ckpt' % self.name)
         print '#################  end learning  ####################'
 
