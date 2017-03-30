@@ -182,7 +182,7 @@ class Model(object):
         saver = tf.train.Saver()
         saver.export_meta_graph('../data/model/%s.meta' % self.name)
 
-        self.learn(saver, x_image, y_, keep_prob, train_step, accuracy, y_conv)
+        self.learn(saver, x_image, y_, keep_prob, train_step, y_conv)
 
         ## for debug
 
@@ -278,7 +278,7 @@ class Model(object):
         saver = tf.train.Saver()
         saver.export_meta_graph('../data/model/%s.meta' % self.name)
 
-        self.learn(saver, x_image, y_, keep_prob, train_step, accuracy, y_conv)
+        self.learn(saver, x_image, y_, keep_prob, train_step, y_conv)
 
         ## for debug
 
@@ -352,7 +352,7 @@ class Model(object):
 
         saver = tf.train.Saver()
         saver.export_meta_graph('../data/model/%s.meta' % self.name)
-        self.learn(saver, x_image, y_, keep_prob, train_step, accuracy, y_conv)
+        self.learn(saver, x_image, y_, keep_prob, train_step, y_conv)
 
     def learn(self, saver, x_image, y_, keep_prob, train_step_op, y_conv_op):
         print '#################  start learning  ####################'
