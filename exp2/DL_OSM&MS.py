@@ -68,8 +68,8 @@ def read_train_sample(n1, n0, train_imgs, ms_n_imgs):
         elif [int(task_x), int(task_y)] in ms_n_imgs:
             none_ms_imgs.append(img)
 
-    print 'osm_imgs: %d \n' % osm_imgs
-    print 'none_ms_imgs: %d \n' % none_ms_imgs
+    print 'osm_imgs: %d \n' % len(osm_imgs)
+    print 'none_ms_imgs: %d \n' % len(none_ms_imgs)
 
     osm_imgs = random.sample(osm_imgs, n1)
     for i, img in enumerate(osm_imgs):

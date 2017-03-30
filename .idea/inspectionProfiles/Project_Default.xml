@@ -29,6 +29,7 @@
           <option value="lib" />
           <option value="FileIO" />
           <option value="NN_Model" />
+          <option value="Parameters" />
         </list>
       </option>
     </inspection_tool>

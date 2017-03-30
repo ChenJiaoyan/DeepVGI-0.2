@@ -68,8 +68,8 @@ def read_train_sample(n1, n0, train_imgs):
         else:
             none_osm_imgs.append(img)
 
-    print 'osm_imgs: %d \n' % osm_imgs
-    print 'none_osm_imgs: %d \n' % none_osm_imgs
+    print 'osm_imgs: %d \n' % len(osm_imgs)
+    print 'none_osm_imgs: %d \n' % len(none_osm_imgs)
 
     osm_imgs = random.sample(osm_imgs, n1)
     for i, img in enumerate(osm_imgs):
