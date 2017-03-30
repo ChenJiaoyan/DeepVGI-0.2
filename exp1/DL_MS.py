@@ -45,8 +45,12 @@ def read_train_sample(n1, n0, train_imgs):
     label = np.zeros((n1 + n0, 2))
     img_dir = '../data/image_project_922/'
 
-    ms_po_imgs = train_imgs.read_p_images()
-    ms_ne_imgs = train_imgs.read_n_images()
+    ms_po_imgs, ms_ne_imgs = [], []
+    for img in train_imgs:
+        if img in ms_p_imgs:
+            ms_po_imgs.append(img)
+        if img in ms_p_imgs:
+            ms_ne_imgs.append(img)
 
     ms_po_imgs = random.sample(ms_po_imgs, n1)
     for i, img in enumerate(ms_po_imgs):
