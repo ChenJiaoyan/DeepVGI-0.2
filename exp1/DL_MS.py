@@ -69,7 +69,7 @@ def read_train_sample(n1, n0, train_imgs, ms_p_imgs, ms_n_imgs):
 
 
 def deal_args(my_argv):
-    v, n1, n0, b, e, t, c, z = False, 200, 200, 30, 1000, 8, 0, 1000
+    v, n1, n0, b, e, t, c, z = False, 100, 100, 30, 1000, 8, 0, 1000
     m = 'lenet'
     try:
         opts, args = getopt.getopt(my_argv, "vhy:n:b:e:t:c:z:m:",
