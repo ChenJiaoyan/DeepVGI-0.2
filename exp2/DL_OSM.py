@@ -4,7 +4,6 @@
 import os
 import sys
 import random
-import getopt
 import gc
 import numpy as np
 from scipy import misc
@@ -13,6 +12,7 @@ sys.path.append("../lib")
 import NN_Model
 import FileIO
 import MapSwipe
+import Parameters
 
 
 def osm_building_weight():
@@ -68,6 +68,9 @@ def read_train_sample(n1, n0, train_imgs):
         else:
             none_osm_imgs.append(img)
 
+    print 'osm_imgs: %d \n' % osm_imgs
+    print 'none_osm_imgs: %d \n' % none_osm_imgs
+
     osm_imgs = random.sample(osm_imgs, n1)
     for i, img in enumerate(osm_imgs):
         img_X1[i] = misc.imread(os.path.join(img_dir, img))
@@ -83,47 +86,8 @@ def read_train_sample(n1, n0, train_imgs):
     X = np.concatenate((img_X1, img_X0))
     return X[j], label[j]
 
-
-def deal_args(my_argv):
-    v, n1, n0, b, e, t, c, z = False, 200, 200, 30, 1000, 8, 0, 1000
-    m = 'lenet'
-    try:
-        opts, args = getopt.getopt(my_argv, "vhy:n:b:e:t:c:z:m:",
-                                   ["p_sample_size=", "n_sample_size=", "batch_size=", "epoch_num=", "thread_num=",
-                                    "cv_round=", 'test_size=', 'network_model='])
-    except getopt.GetoptError:
-        print 'DL_MS.py -v -y <p_sample_size> -n <n_sample_size> -b <batch_size> -e <epoch_num> -t <thread_num>, ' \
-              '-c <cv_round>, -z <test_size>, -m <network_model>'
-        print 'default settings: v=%s, n1=%d, n0=%d, b=%d, e=%d, t=%d, c=%d, z=%d, m=%s' % (v, n1, n0, b, e, t, c, z, m)
-    for opt, arg in opts:
-        if opt == '-h':
-            print 'DL_MS.py -v -y <p_sample_size> -n <n_sample_size> -b <batch_size> -e <epoch_num> -t <thread_num>, ' \
-                  '-c <cv_round>, -z <test_size>, -m <network_model>'
-            sys.exit()
-        elif opt == '-v':
-            v = True
-        elif opt in ("-y", "--p_sample_size"):
-            n1 = int(arg)
-        elif opt in ("-n", "--n_sample_size"):
-            n0 = int(arg)
-        elif opt in ("-b", "--batch_size"):
-            b = int(arg)
-        elif opt in ("-e", "--epoch_num"):
-            e = int(arg)
-        elif opt in ("-t", "--thread_num"):
-            t = int(arg)
-        elif opt in ("-c", "--cv_round"):
-            c = int(arg)
-        elif opt in ("-z", "--test_size"):
-            z = int(arg)
-        elif opt in ("-m", "--network_model"):
-            m = arg
-    print 'settings: v=%s, n1=%d, n0=%d, b=%d, e=%d, t=%d, c=%d, z=%d, m=%s' % (v, n1, n0, b, e, t, c, z, m)
-    return v, n1, n0, b, e, t, c, z, m
-
-
 if __name__ == '__main__':
-    evaluate_only, tr_n1, tr_n0, tr_b, tr_e, tr_t, cv_i, te_n, nn = deal_args(sys.argv[1:])
+    evaluate_only, tr_n1, tr_n0, tr_b, tr_e, tr_t, cv_i, te_n, nn = Parameters.deal_args(sys.argv[1:])
     cv_n = 4
 
     print '--------------- Read Samples ---------------'
