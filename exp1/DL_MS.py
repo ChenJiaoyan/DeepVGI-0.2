@@ -40,13 +40,17 @@ def read_test_sample(n, test_imgs, ms_p_imgs, ms_n_imgs):
     return img_X, label
 
 ## read train samples from MapSwipe (Positive and Negative)
-def read_train_sample(n1, n0, train_imgs):
+def read_train_sample(n1, n0, train_imgs, ms_p_imgs, ms_n_imgs):
     img_X1, img_X0 = np.zeros((n1, 256, 256, 3)), np.zeros((n0, 256, 256, 3))
     label = np.zeros((n1 + n0, 2))
     img_dir = '../data/image_project_922/'
 
-    ms_po_imgs = train_imgs.read_p_images()
-    ms_ne_imgs = train_imgs.read_n_images()
+    ms_po_imgs, ms_ne_imgs = [], []
+    for img in train_imgs:
+        if img in ms_p_imgs:
+            ms_po_imgs.append(img)
+        if img in ms_n_imgs:
+            ms_ne_imgs.append(img)
 
     ms_po_imgs = random.sample(ms_po_imgs, n1)
     for i, img in enumerate(ms_po_imgs):
@@ -65,7 +69,7 @@ def read_train_sample(n1, n0, train_imgs):
 
 
 def deal_args(my_argv):
-    v, n1, n0, b, e, t, c, z = False, 200, 200, 30, 1000, 8, 0, 1000
+    v, n1, n0, b, e, t, c, z = False, 50, 50, 30, 100, 2, 0, 50
     m = 'lenet'
     try:
         opts, args = getopt.getopt(my_argv, "vhy:n:b:e:t:c:z:m:",
@@ -109,7 +113,9 @@ if __name__ == '__main__':
     print '--------------- Read Samples ---------------'
     client = MapSwipe.MSClient()
     train_imgs, test_imgs = client.imgs_cross_validation(cv_i, cv_n)
-    img_X, Y = read_train_sample(tr_n1, tr_n0, train_imgs)
+    ms_p_imgs = client.read_p_images()
+    ms_n_imgs = client.read_n_images()
+    img_X, Y = read_train_sample(tr_n1, tr_n0, train_imgs, ms_p_imgs, ms_n_imgs)
     m = NN_Model.Model(img_X, Y, nn + '_JY')
 
     if not evaluate_only:
