@@ -49,7 +49,7 @@ def read_train_sample(n1, n0, train_imgs, ms_p_imgs, ms_n_imgs):
     for img in train_imgs:
         i1, i2 = img.index('-'), img.index('.')
         task_x, task_y = img[0:i1], img[(i1 + 1):i2]
-        k =  [task_x, task_y]
+        k =  [int(task_x), int(task_y)]
         if k in ms_p_imgs:
             ms_po_imgs.append(img)
         elif k in ms_n_imgs:
