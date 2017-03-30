@@ -40,7 +40,7 @@ def read_test_sample(n, test_imgs, ms_p_imgs, ms_n_imgs):
     return img_X, label
 
 ## read train samples from MapSwipe (Positive and Negative)
-def read_train_sample(n1, n0, train_imgs):
+def read_train_sample(n1, n0, train_imgs, ms_p_imgs, ms_n_imgs):
     img_X1, img_X0 = np.zeros((n1, 256, 256, 3)), np.zeros((n0, 256, 256, 3))
     label = np.zeros((n1 + n0, 2))
     img_dir = '../data/image_project_922/'
