@@ -1,6 +1,6 @@
 #! /usr/bin/python
 
-# (1) train CNN with OSM labeled images; (2) evaluate the CNN with testing MapSwipe images
+# (1) train CNN with MapSwipe labeled images; (2) evaluate the CNN with testing MapSwipe images
 import os
 import sys
 import random
@@ -13,18 +13,6 @@ sys.path.append("../lib")
 import NN_Model
 import FileIO
 import MapSwipe
-
-
-def osm_building_weight():
-    task_w = {}
-    osm_buildings = FileIO.csv_reader("../data/buildings.csv")
-    for row in osm_buildings:
-        task_x = row['task_x']
-        task_y = row['task_y']
-        k = '%s-%s' % (task_x, task_y)
-        task_w[k] = 1
-    return task_w
-
 
 def read_test_sample(n, test_imgs, ms_p_imgs, ms_n_imgs):
     img_X = np.zeros((n, 256, 256, 3))
@@ -55,26 +43,18 @@ def read_test_sample(n, test_imgs, ms_p_imgs, ms_n_imgs):
 def read_train_sample(n1, n0, train_imgs):
     img_X1, img_X0 = np.zeros((n1, 256, 256, 3)), np.zeros((n0, 256, 256, 3))
     label = np.zeros((n1 + n0, 2))
-
-    task_w = osm_building_weight();
     img_dir = '../data/image_project_922/'
-    osm_imgs, none_osm_imgs = [], []
-    for img in train_imgs:
-        i1, i2 = img.index('-'), img.index('.')
-        task_x, task_y = img[0:i1], img[(i1 + 1):i2]
-        k = '%s-%s' % (task_x, task_y)
-        if task_w.has_key(k):
-            osm_imgs.append(img)
-        else:
-            none_osm_imgs.append(img)
 
-    osm_imgs = random.sample(osm_imgs, n1)
-    for i, img in enumerate(osm_imgs):
+    ms_po_imgs = train_imgs.read_p_images()
+    ms_ne_imgs = train_imgs.read_n_images()
+
+    ms_po_imgs = random.sample(ms_po_imgs, n1)
+    for i, img in enumerate(ms_po_imgs):
         img_X1[i] = misc.imread(os.path.join(img_dir, img))
     label[0:n1, 1] = 1
 
-    none_osm_imgs = random.sample(none_osm_imgs, n0)
-    for i, img in enumerate(none_osm_imgs):
+    ms_ne_imgs = random.sample(ms_ne_imgs, n0)
+    for i, img in enumerate(ms_ne_imgs):
         img_X0[i] = misc.imread(os.path.join(img_dir, img))
     label[n1:(n1 + n0), 0] = 1
 
