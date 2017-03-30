@@ -4,6 +4,7 @@ import tensorflow as tf
 import numpy as np
 from sklearn import metrics
 import math
+import time
 
 
 class Model(object):
@@ -361,19 +362,25 @@ class Model(object):
             sess.run(tf.local_variables_initializer())
             for i in range(self.epoch_num):
                 ran = self.__get_batch(self.sample_size, i, self.batch_size)
+                start_time = time.time()
                 train_step_op.run(session=sess,
                                   feed_dict={x_image: self.X_imgs[ran, :], y_: self.Y_labels[ran], keep_prob: 0.5})
+                print "train time with a batch %s\n" % (time.time() - start_time)
                 if i % 100 == 0:
+                    start_time = time.time()
                     label_pred, score = np.zeros(self.sample_size), np.zeros(self.sample_size)
                     batch = 100
                     for j in range(int(math.ceil(self.sample_size / float(batch)))):
                         j1 = j * batch
                         j2 = (j + 1) * batch if (j + 1) * batch < self.sample_size else self.sample_size
-                        label_pred[j1:j2], score[j1:j2] = sess.run([tf.argmax(y_conv_op, 1), tf.nn.softmax(y_conv_op)[:, 1]],
-                                                                   feed_dict={x_image: self.X_imgs[j1:j2],
-                                                                              y_: self.Y_labels[j1:j2], keep_prob: 1.0})
+                        label_pred[j1:j2], score[j1:j2] = sess.run(
+                            [tf.argmax(y_conv_op, 1), tf.nn.softmax(y_conv_op)[:, 1]],
+                            feed_dict={x_image: self.X_imgs[j1:j2],
+                                       y_: self.Y_labels[j1:j2], keep_prob: 1.0})
                     label_true = np.argmax(self.Y_labels, 1)
-                    print 'training accuracy: %f, AUC: %f \n' % (metrics.accuracy_score(label_true, label_pred), metrics.roc_auc_score(label_true, score))
+                    print 'epoch %d, training accuracy: %f, AUC: %f \n' % (
+                    i, metrics.accuracy_score(label_true, label_pred), metrics.roc_auc_score(label_true, score))
+                    print "evaluation time %s\n" % (time.time() - start_time)
             saver.save(sess, '../data/model/%s.ckpt' % self.name)
         print '#################  end learning  ####################'
 
