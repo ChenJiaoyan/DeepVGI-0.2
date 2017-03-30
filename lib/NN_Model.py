@@ -365,7 +365,7 @@ class Model(object):
                                   feed_dict={x_image: self.X_imgs[ran, :], y_: self.Y_labels[ran], keep_prob: 0.5})
                 if i % 100 == 0:
                     label_pred, score = np.zeros(self.sample_size), np.zeros(self.sample_size)
-                    batch = 200
+                    batch = 100
                     for j in range(int(math.ceil(self.sample_size / float(batch)))):
                         j1 = j * batch
                         j2 = (j + 1) * batch if (j + 1) * batch < self.sample_size else self.sample_size
@@ -386,7 +386,7 @@ class Model(object):
         print '#################  start evaluation  ####################'
         with tf.Session(config=tf.ConfigProto(intra_op_parallelism_threads=self.thread_num)) as sess:
             saver.restore(sess, "../data/model/%s.ckpt" % self.name)
-            batch = 200
+            batch = 100
             label_pred, score = np.zeros(self.sample_size), np.zeros(self.sample_size)
             for i in range(int(math.ceil(self.sample_size / float(batch)))):
                 i1 = i * batch
