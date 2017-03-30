@@ -52,6 +52,9 @@ def read_train_sample(n1, n0, train_imgs, ms_p_imgs, ms_n_imgs):
         if img in ms_n_imgs:
             ms_ne_imgs.append(img)
 
+    print 'ms_po_imgs: %d \n' % len(ms_po_imgs)
+    print 'ms_ne_imgs: %d \n' % len(ms_ne_imgs)
+
     ms_po_imgs = random.sample(ms_po_imgs, n1)
     for i, img in enumerate(ms_po_imgs):
         img_X1[i] = misc.imread(os.path.join(img_dir, img))
