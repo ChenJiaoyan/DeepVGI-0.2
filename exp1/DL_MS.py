@@ -113,7 +113,9 @@ if __name__ == '__main__':
     print '--------------- Read Samples ---------------'
     client = MapSwipe.MSClient()
     train_imgs, test_imgs = client.imgs_cross_validation(cv_i, cv_n)
-    img_X, Y = read_train_sample(tr_n1, tr_n0, train_imgs)
+    ms_p_imgs = client.read_p_images()
+    ms_n_imgs = client.read_n_images()
+    img_X, Y = read_train_sample(tr_n1, tr_n0, train_imgs, ms_p_imgs, ms_n_imgs)
     m = NN_Model.Model(img_X, Y, nn + '_JY')
 
     if not evaluate_only:
