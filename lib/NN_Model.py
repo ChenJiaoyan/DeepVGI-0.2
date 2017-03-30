@@ -356,18 +356,16 @@ class Model(object):
         self.learn(saver, x_image, y_, keep_prob, train_step, y_conv)
 
     def learn(self, saver, x_image, y_, keep_prob, train_step_op, y_conv_op):
+        start_time = time.time()
         print '#################  start learning  ####################'
         with tf.Session(config=tf.ConfigProto(intra_op_parallelism_threads=self.thread_num)) as sess:
             sess.run(tf.global_variables_initializer())
             sess.run(tf.local_variables_initializer())
             for i in range(self.epoch_num):
                 ran = self.__get_batch(self.sample_size, i, self.batch_size)
-                start_time = time.time()
                 train_step_op.run(session=sess,
                                   feed_dict={x_image: self.X_imgs[ran, :], y_: self.Y_labels[ran], keep_prob: 0.5})
-                print "train time with a batch %s\n" % (time.time() - start_time)
-                if i % 100 == 0:
-                    start_time = time.time()
+                if (i <= 900 and i % 300 == 0) or (900 < i <= 1600 and i % 200 == 0) or (i > 1600 and i % 100 == 0):
                     label_pred, score = np.zeros(self.sample_size), np.zeros(self.sample_size)
                     batch = 100
                     for j in range(int(math.ceil(self.sample_size / float(batch)))):
@@ -380,9 +378,9 @@ class Model(object):
                     label_true = np.argmax(self.Y_labels, 1)
                     print 'epoch %d, training accuracy: %f, AUC: %f \n' % (
                     i, metrics.accuracy_score(label_true, label_pred), metrics.roc_auc_score(label_true, score))
-                    print "evaluation time %s\n" % (time.time() - start_time)
             saver.save(sess, '../data/model/%s.ckpt' % self.name)
         print '#################  end learning  ####################'
+        print "time spent: %s seconds\n" % (time.time() - start_time)
 
     def evaluate(self):
         saver = tf.train.import_meta_graph('../data/model/%s.meta' % self.name)
@@ -390,6 +388,7 @@ class Model(object):
         y_ = tf.get_collection("y_")[0]
         keep_prob = tf.get_collection("keep_prob")[0]
         y_conv = tf.get_collection("y_conv")[0]
+        start_time = time.time()
         print '#################  start evaluation  ####################'
         with tf.Session(config=tf.ConfigProto(intra_op_parallelism_threads=self.thread_num)) as sess:
             saver.restore(sess, "../data/model/%s.ckpt" % self.name)
@@ -409,6 +408,7 @@ class Model(object):
             print 'F1 Score: %f \n' % metrics.f1_score(label_true, label_pred)
             print 'ROC_AUC: %f \n' % metrics.roc_auc_score(label_true, score)
         print '#################  end evaluation  ####################'
+        print "time spent: %s seconds\n" % (time.time() - start_time)
 
     @staticmethod
     def __get_batch(l, i, n):
