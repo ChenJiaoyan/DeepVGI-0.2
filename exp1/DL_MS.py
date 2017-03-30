@@ -49,7 +49,7 @@ def read_train_sample(n1, n0, train_imgs):
     for img in train_imgs:
         if img in ms_p_imgs:
             ms_po_imgs.append(img)
-        if img in ms_p_imgs:
+        if img in ms_n_imgs:
             ms_ne_imgs.append(img)
 
     ms_po_imgs = random.sample(ms_po_imgs, n1)
