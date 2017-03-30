@@ -68,11 +68,13 @@ def read_train_sample(n1, n0, train_imgs):
         else:
             none_osm_imgs.append(img)
 
+    print 'osm_imgs: %d' % len(osm_imgs)
     osm_imgs = random.sample(osm_imgs, n1)
     for i, img in enumerate(osm_imgs):
         img_X1[i] = misc.imread(os.path.join(img_dir, img))
     label[0:n1, 1] = 1
 
+    print 'none_osm_imgs: %d' % len(osm_imgs)
     none_osm_imgs = random.sample(none_osm_imgs, n0)
     for i, img in enumerate(none_osm_imgs):
         img_X0[i] = misc.imread(os.path.join(img_dir, img))
