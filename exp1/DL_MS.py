@@ -128,7 +128,7 @@ if __name__ == '__main__':
     m = NN_Model.Model(img_X, Y, nn + '_JY')
 
     if not evaluate_only:
-        print '--------------- Training on OSM Labels---------------'
+        print '--------------- Training on MS Labels---------------'
         m.set_batch_size(tr_b)
         m.set_epoch_num(tr_e)
         m.set_thread_num(tr_t)
