@@ -59,9 +59,9 @@ def lat_long_zoom_to_URL(x, y, zoom):
 if __name__ == "__main__":
 
     zoom = 18
-    inputdir = os.getcwd()
-    img_dir = '/home/ubuntu/DeepVGI-0.2/data/image_project_922'
-    filename = 'data_for_yan.csv'
+    outdir = '../data/image_project_922_negative'
+    img_dir = '../data/image_project_922'
+    filename = '../data/all_tasks_922.csv'
 
     with open(filename) as csvfile:
         reader = csv.DictReader(csvfile)
@@ -78,10 +78,11 @@ if __name__ == "__main__":
 
 
     for i in tilelist:
+        image_name = str(i[0]) + '-' + str(i[1]) + '.jpeg'
         os.chdir(img_dir)
-        if not os.path.exists(str(i[0]) + '-' + str(i[1]) + '.jpeg'):
-            os.chdir(inputdir)
+        if not os.path.exists(image_name):
+            os.chdir(outdir)
             URL = lat_long_zoom_to_URL(i[0], i[1], zoom)
-            os.chdir(inputdir + '/n_image_922')
-            # print URL
-            urllib.urlretrieve(URL, i[0]+'-'+i[1]+'.jpeg')
+            urllib.urlretrieve(URL, image_name)
+            if os.path.getsize(image_name) <= 1033L:
+                os.remove(image_name)
