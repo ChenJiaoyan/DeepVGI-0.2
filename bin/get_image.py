@@ -59,9 +59,9 @@ def lat_long_zoom_to_URL(x, y, zoom):
 if __name__ == "__main__":
 
     zoom = 18
-    outdir = '../data/image_project_922_negative'
-    img_dir = '../data/image_project_922'
-    filename = '../data/all_tasks_922.csv'
+    outdir = '/home/ubuntu/DeepVGI-0.2/data/image_project_922_negative'
+    img_dir = '/home/ubuntu/DeepVGI-0.2/data/image_project_922'
+    filename = '/home/ubuntu/DeepVGI-0.2/data/all_tasks_922.csv'
 
     with open(filename) as csvfile:
         reader = csv.DictReader(csvfile)
