@@ -57,28 +57,33 @@ def read_train_sample(n1, n0, train_imgs, ms_n_imgs):
     label = np.zeros((n1 + n0, 2))
 
     task_w = osm_building_weight();
-    img_dir = '../data/image_project_922/'
-    osm_imgs, none_ms_imgs = [], []
+    img_dir1 = '../data/image_project_922/'
+    img_dir2 = '../data/image_project_922_negative/'
+    p_imgs, n_imgs = [], []
+
     for img in train_imgs:
         i1, i2 = img.index('-'), img.index('.')
         task_x, task_y = img[0:i1], img[(i1 + 1):i2]
         k = '%s-%s' % (task_x, task_y)
         if task_w.has_key(k):
-            osm_imgs.append(img)
+            p_imgs.append(img)
         elif [int(task_x), int(task_y)] in ms_n_imgs:
-            none_ms_imgs.append(img)
+            n_imgs.append(img)
 
-    print 'osm_imgs: %d \n' % len(osm_imgs)
-    print 'none_ms_imgs: %d \n' % len(none_ms_imgs)
+    print 'p_imgs labeled by OSM: %d \n' % len(p_imgs)
+    print 'n_imgs labeled by MS: %d \n' % len(n_imgs)
 
-    osm_imgs = random.sample(osm_imgs, n1)
-    for i, img in enumerate(osm_imgs):
-        img_X1[i] = misc.imread(os.path.join(img_dir, img))
+    p_imgs = random.sample(p_imgs, n1)
+    for i, img in enumerate(p_imgs):
+        if os.path.exists(os.path.join(img_dir1,img)):
+            img_X1[i] = misc.imread(os.path.join(img_dir1, img))
+        else:
+            img_X1[i] = misc.imread(os.path.join(img_dir2, img))
     label[0:n1, 1] = 1
 
-    none_ms_imgs = random.sample(none_ms_imgs, n0)
-    for i, img in enumerate(none_ms_imgs):
-        img_X0[i] = misc.imread(os.path.join(img_dir, img))
+    n_imgs = random.sample(n_imgs, n0)
+    for i, img in enumerate(n_imgs):
+        img_X0[i] = misc.imread(os.path.join(img_dir2, img))
     label[n1:(n1 + n0), 0] = 1
 
     j = range(n1 + n0)

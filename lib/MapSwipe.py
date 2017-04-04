@@ -3,6 +3,7 @@
 import math
 import FileIO
 import os
+import random
 
 
 def cal_lat_lon(task_x, task_y):
@@ -56,26 +57,22 @@ class MSClient:
         return p_imgs
 
     def read_n_images(self):
-        csv_imgs = []
-        ms_file = '../data/project_' + str(self.project_id) + '.csv'
-        lines = FileIO.read_lines(ms_file, 1)
-        for line in lines:
-            tmp = line.strip().split(',')
-            x, y = int(tmp[4]), int(tmp[5])
-            csv_imgs.append([x, y])
-        img_dir = '../data/image_project_' + str(self.project_id) + '/'
+        img_dir = '../data/image_project_' + str(self.project_id) + '_negative/'
         imgs = os.listdir(img_dir)
         n_imgs = []
         for img in imgs:
             i1, i2 = img.index('-'), img.index('.')
             task_x, task_y = int(img[0:i1]), int(img[(i1 + 1):i2])
-            if [task_x, task_y] not in csv_imgs:
-                n_imgs.append([int(task_x), int(task_y)])
+            n_imgs.append([int(task_x), int(task_y)])
         return n_imgs
 
     def imgs_cross_validation(self, cv_i, cv_n):
-        img_dir = '../data/image_project_' + str(self.project_id) + '/'
-        imgs = os.listdir(img_dir)
+        img_dir1 = '../data/image_project_' + str(self.project_id) + '/'
+        imgs1 = os.listdir(img_dir1)
+        img_dir2 = '../data/image_project_' + str(self.project_id) + '_negative/'
+        imgs2 = os.listdir(img_dir2)
+        imgs = imgs1 + imgs2
+        imgs = random.shuffle(imgs)
         l = len(imgs)
         batch = l / cv_n
         test_imgs = imgs[cv_i * batch: (cv_i + 1) * batch]
