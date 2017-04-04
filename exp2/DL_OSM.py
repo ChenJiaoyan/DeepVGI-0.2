@@ -29,14 +29,18 @@ def osm_building_weight():
 def read_test_sample(n, test_imgs, ms_p_imgs, ms_n_imgs):
     img_X = np.zeros((n, 256, 256, 3))
     label = np.zeros((n, 2))
-    img_dir = '../data/image_project_922/'
+    img_dir1 = '../data/image_project_922/'
+    img_dir2 = '../data/image_project_922_negative/'
     random.shuffle(test_imgs)
     i = 0
     te_p, te_n = 0, 0
     for img in test_imgs:
         if i >= n:
             break
-        img_X[i] = misc.imread(os.path.join(img_dir, img))
+        if os.path.exists(os.path.join(img_dir1, img)):
+            img_X[i] = misc.imread(os.path.join(img_dir1, img))
+        else:
+            img_X[i] = misc.imread(os.path.join(img_dir2, img))
         i1, i2 = img.index('-'), img.index('.')
         task_x, task_y = img[0:i1], img[(i1 + 1):i2]
         if [int(task_x), int(task_y)] in ms_p_imgs:
