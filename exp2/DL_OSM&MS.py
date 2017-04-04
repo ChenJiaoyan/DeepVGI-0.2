@@ -5,6 +5,7 @@ import os
 import sys
 import random
 import gc
+import time
 import numpy as np
 from scipy import misc
 
@@ -101,11 +102,13 @@ if __name__ == '__main__':
     cv_n = 4
 
     print '--------------- Read Samples ---------------'
+    start_time = time.time()
     client = MapSwipe.MSClient()
     train_imgs, test_imgs = client.imgs_cross_validation(cv_i, cv_n)
     ms_p_imgs = client.read_p_images()
     ms_n_imgs = client.read_n_images()
     img_X, Y = read_train_sample(tr_n1, tr_n0, train_imgs, ms_n_imgs)
+    print "time spent for reading samples: %s seconds\n" % (time.time() - start_time)
     m = NN_Model.Model(img_X, Y, nn + '_JY')
 
     if not evaluate_only:
