@@ -68,11 +68,9 @@ class MSClient:
 
     def imgs_cross_validation(self, cv_i, cv_n):
         img_dir1 = '../data/image_project_' + str(self.project_id) + '/'
-        imgs1 = os.listdir(img_dir1)
         img_dir2 = '../data/image_project_' + str(self.project_id) + '_negative/'
-        imgs2 = os.listdir(img_dir2)
-        imgs = imgs1 + imgs2
-        imgs = random.shuffle(imgs)
+        imgs = os.listdir(img_dir2) + os.listdir(img_dir1)
+        random.shuffle(imgs)
         l = len(imgs)
         batch = l / cv_n
         test_imgs = imgs[cv_i * batch: (cv_i + 1) * batch]
