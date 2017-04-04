@@ -1,6 +1,7 @@
 #! /usr/bin/python
 
 import getopt
+import sys
 
 
 def deal_args(my_argv):
