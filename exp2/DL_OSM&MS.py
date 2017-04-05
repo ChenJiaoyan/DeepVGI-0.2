@@ -65,7 +65,6 @@ def read_train_sample(n1, n0, train_imgs, ms_n_imgs):
     img_dir1 = '../data/image_project_922/'
     img_dir2 = '../data/image_project_922_negative/'
     p_imgs, n_imgs = [], []
-
     for img in train_imgs:
         i1, i2 = img.index('-'), img.index('.')
         task_x, task_y = img[0:i1], img[(i1 + 1):i2]
