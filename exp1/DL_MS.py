@@ -126,7 +126,7 @@ if __name__ == '__main__':
     print 'ms_p_imgs: %d \n' % len(ms_p_imgs)
     print 'ms_n_imgs: %d\n' % len(ms_n_imgs)
     img_X, Y = read_train_sample(tr_n1, tr_n0, train_imgs, ms_p_imgs, ms_n_imgs)
-    m = NN_Model.Model(img_X, Y, nn + '_JY')
+    m = NN_Model.Model(img_X, Y, nn + '_ZY')
 
     if not evaluate_only:
         print '--------------- Training on MS Labels---------------'
