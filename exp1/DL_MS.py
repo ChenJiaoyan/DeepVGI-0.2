@@ -43,7 +43,8 @@ def read_test_sample(n, test_imgs, ms_p_imgs, ms_n_imgs):
 def read_train_sample(n1, n0, train_imgs, ms_p_imgs, ms_n_imgs):
     img_X1, img_X0 = np.zeros((n1, 256, 256, 3)), np.zeros((n0, 256, 256, 3))
     label = np.zeros((n1 + n0, 2))
-    img_dir = '../data/image_project_922/'
+    img_dir1 = '../data/image_project_922/'
+    img_dir2 = '../data/image_project_922_negative/'
 
     ms_po_imgs, ms_ne_imgs = [], []
     for img in train_imgs:
@@ -60,12 +61,12 @@ def read_train_sample(n1, n0, train_imgs, ms_p_imgs, ms_n_imgs):
 
     ms_po_imgs = random.sample(ms_po_imgs, n1)
     for i, img in enumerate(ms_po_imgs):
-        img_X1[i] = misc.imread(os.path.join(img_dir, img))
+        img_X1[i] = misc.imread(os.path.join(img_dir1, img))
     label[0:n1, 1] = 1
 
     ms_ne_imgs = random.sample(ms_ne_imgs, n0)
     for i, img in enumerate(ms_ne_imgs):
-        img_X0[i] = misc.imread(os.path.join(img_dir, img))
+        img_X0[i] = misc.imread(os.path.join(img_dir2, img))
     label[n1:(n1 + n0), 0] = 1
 
     j = range(n1 + n0)
