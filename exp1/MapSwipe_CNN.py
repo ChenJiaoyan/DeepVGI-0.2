@@ -146,6 +146,9 @@ class Model(object):
             cross_entropy = tf.reduce_mean( \
                 tf.nn.softmax_cross_entropy_with_logits(y_conv, y_))  # Loss function
         tf.summary.scalar('cross entropy', cross_entropy)
+        tf.summary.histogram("histogram loss", cross_entropy)
+
+        tf.summary.image('image', y_conv, max_outputs=3)
 
         with tf.name_scope('train'):
             train_step = tf.train.AdamOptimizer(1e-4).minimize(cross_entropy)
@@ -157,6 +160,7 @@ class Model(object):
             with tf.name_scope('accurary'):
                 accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
         tf.summary.scalar('accuracy', accuracy)
+
 
         saver = tf.train.Saver()
         #saver.export_meta_graph('../data/model/%s.meta' % self.name)
