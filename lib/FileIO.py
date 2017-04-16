@@ -1,6 +1,9 @@
 #! /usr/bin/python
 
 import csv
+import os
+from scipy import misc
+import numpy as np
 
 
 def csv_reader(file_name):
@@ -32,3 +35,43 @@ def get_urban_tasks(urban_file='../data/malawi_urban.csv'):
         if c == 'urban':
             urbans.append(task_x + ',' + task_y)
     return urbans
+
+
+def read_external_test_sample():
+    lines = FileIO.read_lines("../data/test_imgs.csv", 0)
+    lines_p = FileIO.read_lines("../data/test_positive_imgs.csv", 0)
+    imgs_p, imgs_n = [], []
+    for line in lines_p:
+        imgs_p.append(line.strip())
+    for line in lines:
+        if line.strip() not in imgs_p:
+            imgs_n.append(line.strip())
+    n = len(imgs_p) + len(imgs_n)
+    img_X = np.zeros((n, 256, 256, 3))
+    label = np.zeros((n, 2))
+    dir1 = '../data/image_project_922/'
+    dir2 = '../data/image_project_922_negative/'
+    i = 0
+    for img in imgs_p:
+        if os.path.exists(os.path.join(dir1, img)):
+            img_X[i] = misc.imread(os.path.join(dir1, img))
+            label[i, 1] = 1
+            i += 1
+        elif os.path.exists(os.path.join(dir2, img)):
+            img_X[i] = misc.imread(os.path.join(dir2, img))
+            label[i, 1] = 1
+            i += 1
+    n_p = i
+    print 'positive external testing samples: %d \n' % n_p
+    for img in imgs_n:
+        if os.path.exists(os.path.join(dir1, img)):
+            img_X[i] = misc.imread(os.path.join(dir1, img))
+            label[i, 0] = 1
+            i += 1
+        elif os.path.exists(os.path.join(dir2, img)):
+            img_X[i] = misc.imread(os.path.join(dir2, img))
+            label[i, 0] = 1
+            i += 1
+    n_n = i - n_p
+    print 'negative external testing samples: %d \n' % n_n
+    return img_X[0:i], label[0:i]
