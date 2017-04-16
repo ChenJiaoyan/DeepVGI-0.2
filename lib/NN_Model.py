@@ -385,7 +385,7 @@ class Model(object):
         print '#################  end learning  ####################'
         print "time spent: %s seconds\n" % (time.time() - start_time)
 
-    def evaluate(self):
+    def evaluate(self, output_label_score=False):
         saver = tf.train.import_meta_graph('../data/model/%s.meta' % self.name)
         x_image = tf.get_collection("x_image")[0]
         y_ = tf.get_collection("y_")[0]
@@ -404,6 +404,9 @@ class Model(object):
                 label_pred[i1:i2], score[i1:i2] = sess.run([tf.argmax(y_conv, 1), tf.nn.softmax(y_conv)[:, 1]],
                                                            feed_dict={x_image: self.X_imgs[i1:i2],
                                                                       y_: self.Y_labels[i1:i2], keep_prob: 1.0})
+            if output_label_score:
+                for i in range(self.sample_size):
+                    print '%f, %f' % (score[i], label_pred[i])
             label_true = np.argmax(self.Y_labels, 1)
             print 'Accuracy: %f \n' % metrics.accuracy_score(label_true, label_pred)
             print 'Precision: %f \n' % metrics.precision_score(label_true, label_pred)
