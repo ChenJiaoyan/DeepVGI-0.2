@@ -110,7 +110,7 @@ def active_sampling(m0, ms_p_imgs, act_n, p_imgs):
             i += 1
     X = ms_p_X[0:i]
     m0.set_prediction_input(X)
-    scores = m0.predict()
+    scores, _ = m0.predict()
     j = 0
     for k, score in enumerate(scores):
         if score < 0.5:
