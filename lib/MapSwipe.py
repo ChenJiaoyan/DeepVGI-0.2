@@ -70,9 +70,14 @@ class MSClient:
         img_dir1 = '../data/image_project_' + str(self.project_id) + '/'
         img_dir2 = '../data/image_project_' + str(self.project_id) + '_negative/'
         imgs = os.listdir(img_dir2) + os.listdir(img_dir1)
+        e_imgs = FileIO.read_lines("../data/test_imgs.csv", 0)
+        for e_img in e_imgs:
+            if e_img.strip() in imgs:
+                imgs.remove(e_img.strip())
         random.shuffle(imgs)
         l = len(imgs)
         batch = l / cv_n
         test_imgs = imgs[cv_i * batch: (cv_i + 1) * batch]
         train_imgs = imgs[0:cv_i * batch] + imgs[(cv_i + 1) * batch: l]
         return train_imgs, test_imgs
+
