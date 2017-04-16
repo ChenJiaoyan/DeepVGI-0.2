@@ -5,7 +5,7 @@ import sys
 
 
 def deal_args(my_argv):
-    v, d, n1, n0, b, e, t, c, z = False, False, 200, 200, 30, 1000, 8, 0, 1000
+    v, n1, n0, b, e, t, c, z, d = False, 200, 200, 30, 1000, 8, 0, 1000, False
     m = 'lenet'
     try:
         opts, args = getopt.getopt(my_argv, "vdhy:n:b:e:t:c:z:m:",
@@ -41,4 +41,4 @@ def deal_args(my_argv):
         elif opt in ("-m", "--network_model"):
             m = arg
     print 'settings: v=%s, d=%s, n1=%d, n0=%d, b=%d, e=%d, t=%d, c=%d, z=%d, m=%s' % (v, d, n1, n0, b, e, t, c, z, m)
-    return v, d, n1, n0, b, e, t, c, z, m
+    return v, n1, n0, b, e, t, c, z, m, d
