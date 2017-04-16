@@ -168,6 +168,6 @@ if __name__ == '__main__':
 
     if external_test:
         print '--------------- Evaluation on Expert  Labeled Samples ---------------'
-        img_X2, Y2 = read_external_test_sample(te_n, test_imgs, ms_p_imgs, ms_n_imgs)
-        m.set_evaluation_input(img_X2, Y2)
+        img_X3, Y3 = read_external_test_sample()
+        m.set_evaluation_input(img_X3, Y3)
         m.evaluate()
