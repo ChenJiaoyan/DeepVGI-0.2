@@ -5,20 +5,21 @@ import sys
 
 
 def deal_args(my_argv):
-    v, n1, n0, b, e, t, c, z, d = False, 200, 200, 30, 1000, 8, 0, 1000, False
+    v, n1, n0, b, e, t, c, z, d, a = False, 200, 200, 30, 1000, 8, 0, 1000, False, 50
     m = 'lenet'
     try:
-        opts, args = getopt.getopt(my_argv, "vdhy:n:b:e:t:c:z:m:",
+        opts, args = getopt.getopt(my_argv, "vdhy:n:b:e:t:c:z:m:a:",
                                    ["p_sample_size=", "n_sample_size=", "batch_size=", "epoch_num=", "thread_num=",
-                                    "cv_round=", 'test_size=', 'network_model='])
+                                    "cv_round=", 'test_size=', 'network_model=', 'active_size='])
     except getopt.GetoptError:
         print 'DL_MS.py -v -d -y <p_sample_size> -n <n_sample_size> -b <batch_size> -e <epoch_num> -t <thread_num>, ' \
-              '-c <cv_round>, -z <test_size>, -m <network_model>'
-        print 'default settings: v=%s, d=%s, n1=%d, n0=%d, b=%d, e=%d, t=%d, c=%d, z=%d, m=%s' % (v, d, n1, n0, b, e, t, c, z, m)
+              '-c <cv_round>, -z <test_size>, -m <network_model>, -a <active_size>'
+        print 'default settings: v=%s, d=%s, n1=%d, n0=%d, b=%d, e=%d, t=%d, c=%d, z=%d, m=%s, a=%d' % (
+            v, d, n1, n0, b, e, t, c, z, m, a)
     for opt, arg in opts:
         if opt == '-h':
             print 'DL_MS.py -v -d -y <p_sample_size> -n <n_sample_size> -b <batch_size> -e <epoch_num> -t <thread_num>, ' \
-                  '-c <cv_round>, -z <test_size>, -m <network_model>'
+                  '-c <cv_round>, -z <test_size>, -m <network_model>, -a <active_size>'
             sys.exit()
         elif opt == '-d':
             d = True
@@ -40,5 +41,8 @@ def deal_args(my_argv):
             z = int(arg)
         elif opt in ("-m", "--network_model"):
             m = arg
-    print 'settings: v=%s, d=%s, n1=%d, n0=%d, b=%d, e=%d, t=%d, c=%d, z=%d, m=%s' % (v, d, n1, n0, b, e, t, c, z, m)
-    return v, n1, n0, b, e, t, c, z, m, d
+        elif opt in ("-a", "--active_size"):
+            a = int(arg)
+    print 'settings: v=%s, d=%s, n1=%d, n0=%d, b=%d, e=%d, t=%d, c=%d, z=%d, m=%s, a=%d' % (
+        v, d, n1, n0, b, e, t, c, z, m, a)
+    return v, n1, n0, b, e, t, c, z, m, d, a
