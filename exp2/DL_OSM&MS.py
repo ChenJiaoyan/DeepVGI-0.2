@@ -97,7 +97,8 @@ def read_train_sample(n1, n0, train_imgs, ms_n_imgs):
 
 
 if __name__ == '__main__':
-    evaluate_only, tr_n1, tr_n0, tr_b, tr_e, tr_t, cv_i, te_n, nn, external_test = Parameters.deal_args(sys.argv[1:])
+    evaluate_only, tr_n1, tr_n0, tr_b, tr_e, tr_t, cv_i, te_n, nn, external_test, act_n = Parameters.deal_args(
+        sys.argv[1:])
     cv_n = 4
 
     print '--------------- Read Samples ---------------'
