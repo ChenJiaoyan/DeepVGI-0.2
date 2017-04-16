@@ -178,6 +178,6 @@ if __name__ == '__main__':
         print '--------------- Ma: Evaluation on Expert  Labeled Samples ---------------'
         img_X3, Y3 = FileIO.read_external_test_sample()
         ma.set_evaluation_input(img_X3, Y3)
-        ma.evaluate()
+        ma.evaluate(True)
         del img_X3, Y3
         gc.collect()
