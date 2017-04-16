@@ -380,7 +380,7 @@ class Model(object):
                                        y_: self.Y_labels[j1:j2], keep_prob: 1.0})
                     label_true = np.argmax(self.Y_labels, 1)
                     print 'epoch %d, training accuracy: %f, AUC: %f \n' % (
-                    i, metrics.accuracy_score(label_true, label_pred), metrics.roc_auc_score(label_true, score))
+                        i, metrics.accuracy_score(label_true, label_pred), metrics.roc_auc_score(label_true, score))
             saver.save(sess, '../data/model/%s.ckpt' % self.name)
         print '#################  end learning  ####################'
         print "time spent: %s seconds\n" % (time.time() - start_time)
@@ -412,6 +412,29 @@ class Model(object):
             print 'ROC_AUC: %f \n' % metrics.roc_auc_score(label_true, score)
         print '#################  end evaluation  ####################'
         print "time spent: %s seconds\n" % (time.time() - start_time)
+
+    def predict(self):
+        saver = tf.train.import_meta_graph('../data/model/%s.meta' % self.name)
+        x_image = tf.get_collection("x_image")[0]
+        y_ = tf.get_collection("y_")[0]
+        y_conv = tf.get_collection("y_conv")[0]
+        keep_prob = tf.get_collection("keep_prob")[0]
+        start_time = time.time()
+        label_pred, score = np.zeros(self.sample_size), np.zeros(self.sample_size)
+        print '#################  start prediction  ####################'
+        with tf.Session(config=tf.ConfigProto(intra_op_parallelism_threads=self.thread_num)) as sess:
+            saver.restore(sess, "../data/model/%s.ckpt" % self.name)
+            batch = 100
+            for j in range(int(math.ceil(self.sample_size / float(batch)))):
+                j1 = j * batch
+                j2 = (j + 1) * batch if (j + 1) * batch < self.sample_size else self.sample_size
+                label_pred[j1:j2], score[j1:j2] = sess.run(
+                    [tf.argmax(y_conv, 1), tf.nn.softmax(y_conv)[:, 1]],
+                    feed_dict={x_image: self.X_imgs[j1:j2],
+                               y_: self.Y_labels[j1:j2], keep_prob: 1.0})
+        print '#################  end prediction  ####################'
+        print "time spent: %s seconds\n" % (time.time() - start_time)
+        return score, label_pred
 
     @staticmethod
     def __get_batch(l, i, n):
