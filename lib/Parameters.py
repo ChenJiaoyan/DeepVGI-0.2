@@ -5,7 +5,7 @@ import sys
 
 
 def deal_args(my_argv):
-    v, n1, n0, b, e, t, c, z, d, a = False, 200, 200, 30, 1000, 8, 0, 1000, False, 50
+    v, d, n1, n0, b, e, t, c, z, a = False, False, 200, 200, 30, 1000, 8, 0, 1000, 50
     m = 'lenet'
     try:
         opts, args = getopt.getopt(my_argv, "vdhy:n:b:e:t:c:z:m:a:",
@@ -45,4 +45,4 @@ def deal_args(my_argv):
             a = int(arg)
     print 'settings: v=%s, d=%s, n1=%d, n0=%d, b=%d, e=%d, t=%d, c=%d, z=%d, m=%s, a=%d' % (
         v, d, n1, n0, b, e, t, c, z, m, a)
-    return v, n1, n0, b, e, t, c, z, m, d, a
+    return v, d, n1, n0, b, e, t, c, z, m, a

@@ -124,7 +124,7 @@ def active_sampling(m0, ms_p_imgs, act_n, p_imgs):
 
 
 if __name__ == '__main__':
-    evaluate_only, tr_n1, tr_n0, tr_b, tr_e, tr_t, cv_i, te_n, nn, external_test, act_n = Parameters.deal_args(
+    evaluate_only, external_test, tr_n1, tr_n0, tr_b, tr_e, tr_t, cv_i, te_n, nn,  act_n = Parameters.deal_args(
         sys.argv[1:])
     cv_n = 4
 
