@@ -109,7 +109,7 @@ if __name__ == '__main__':
     train_imgs, test_imgs = client.imgs_cross_validation(cv_i, cv_n)
     img_X, Y = read_train_sample(tr_n1, tr_n0, train_imgs, ms_n_imgs)
     print "time spent for reading samples: %s seconds\n" % (time.time() - start_time)
-    m = NN_Model.Model(img_X, Y, nn + '_JY')
+    m = NN_Model.Model(img_X, Y, nn + '_DL_OSMMS')
 
     if not evaluate_only:
         print '--------------- Training on OSM Labels---------------'
