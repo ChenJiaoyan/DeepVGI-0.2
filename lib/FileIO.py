@@ -46,6 +46,18 @@ def read_external_test_sample():
     for line in lines:
         if line.strip() not in imgs_p:
             imgs_n.append(line.strip())
+    return imgs_p, imgs_n
+
+
+def read_external_test_sample():
+    lines = read_lines("../data/test_imgs.csv", 0)
+    lines_p = read_lines("../data/test_positive_imgs.csv", 0)
+    imgs_p, imgs_n = [], []
+    for line in lines_p:
+        imgs_p.append(line.strip())
+    for line in lines:
+        if line.strip() not in imgs_p:
+            imgs_n.append(line.strip())
     n = len(imgs_p) + len(imgs_n)
     img_X = np.zeros((n, 256, 256, 3))
     label = np.zeros((n, 2))
