@@ -162,7 +162,7 @@ if __name__ == '__main__':
         print '--------------- Ma: Evaluation on Training Samples ---------------'
         ma.evaluate()
     else:
-        ma = NN_Model.Model(img_X, Y, nn + '_JY_Ma')
+        ma = NN_Model.Model(img_X, Y, nn + '_exp3_Ma')
 
     del img_X, Y, train_imgs, p_imgs, n_imgs
     gc.collect()
