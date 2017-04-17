@@ -104,8 +104,6 @@ if __name__ == '__main__':
     print '--------------- Read Samples ---------------'
     if external_test:
         img_X3, Y3 = FileIO.read_external_test_sample()
-    print img_X3.shape()
-    print Y3.shape()
     start_time = time.time()
     client = MapSwipe.MSClient()
     ms_p_imgs = client.read_p_images()
