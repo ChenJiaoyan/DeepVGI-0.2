@@ -49,16 +49,11 @@ def read_external_test_sample():
     n = len(imgs_p) + len(imgs_n)
     img_X = np.zeros((n, 256, 256, 3))
     label = np.zeros((n, 2))
-    dir1 = '../data/image_project_922/'
-    dir2 = '../data/image_project_922_negative/'
+    dir1 = '../data/imagery/'
     i = 0
     for img in imgs_p:
         if os.path.exists(os.path.join(dir1, img)):
             img_X[i] = misc.imread(os.path.join(dir1, img))
-            label[i, 1] = 1
-            i += 1
-        elif os.path.exists(os.path.join(dir2, img)):
-            img_X[i] = misc.imread(os.path.join(dir2, img))
             label[i, 1] = 1
             i += 1
     n_p = i
@@ -66,10 +61,6 @@ def read_external_test_sample():
     for img in imgs_n:
         if os.path.exists(os.path.join(dir1, img)):
             img_X[i] = misc.imread(os.path.join(dir1, img))
-            label[i, 0] = 1
-            i += 1
-        elif os.path.exists(os.path.join(dir2, img)):
-            img_X[i] = misc.imread(os.path.join(dir2, img))
             label[i, 0] = 1
             i += 1
     n_n = i - n_p
