@@ -102,8 +102,6 @@ if __name__ == '__main__':
     cv_n = 4
 
     print '--------------- Read Samples ---------------'
-    if external_test:
-        img_X3, Y3 = FileIO.read_external_test_sample()
     start_time = time.time()
     client = MapSwipe.MSClient()
     ms_p_imgs = client.read_p_images()
@@ -133,6 +131,7 @@ if __name__ == '__main__':
 
     if external_test:
         print '--------------- Evaluation on Expert  Labeled Samples ---------------'
+        img_X3, Y3 = FileIO.read_external_test_sample()
         m.set_evaluation_input(img_X3, Y3)
         m.evaluate(True)
         del img_X3, Y3
