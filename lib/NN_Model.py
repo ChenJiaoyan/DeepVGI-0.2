@@ -24,9 +24,6 @@ class Model(object):
         self.cols = imgs.shape[2]
         self.bands = imgs.shape[3]
 
-    def __init__(self, name='CNN_Default'):
-        self.name = name
-
     def set_evaluation_input(self, imgs, labels):
         self.X_imgs = imgs
         self.Y_labels = labels
