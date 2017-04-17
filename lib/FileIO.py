@@ -38,8 +38,8 @@ def get_urban_tasks(urban_file='../data/malawi_urban.csv'):
 
 
 def read_external_test_sample():
-    lines = FileIO.read_lines("../data/test_imgs.csv", 0)
-    lines_p = FileIO.read_lines("../data/test_positive_imgs.csv", 0)
+    lines = read_lines("../data/test_imgs.csv", 0)
+    lines_p = read_lines("../data/test_positive_imgs.csv", 0)
     imgs_p, imgs_n = [], []
     for line in lines_p:
         imgs_p.append(line.strip())
