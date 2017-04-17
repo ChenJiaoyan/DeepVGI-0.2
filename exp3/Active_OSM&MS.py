@@ -135,6 +135,9 @@ if __name__ == '__main__':
     ms_n_imgs = client.read_n_images()
     train_imgs, test_imgs = client.imgs_cross_validation(cv_i, cv_n)
     img_X, Y, p_imgs, n_imgs = read_train_sample(tr_n1, tr_n0, train_imgs, ms_n_imgs)
+    img_X2, Y2 = read_test_sample(te_n, test_imgs, ms_p_imgs, ms_n_imgs)
+    if external_test:
+        img_X3, Y3 = FileIO.read_external_test_sample()
     print "time spent for reading samples: %s seconds\n" % (time.time() - start_time)
 
     if not evaluate_only:
@@ -168,7 +171,6 @@ if __name__ == '__main__':
     gc.collect()
 
     print '--------------- Ma: Evaluation on MapSwipe Samples ---------------'
-    img_X2, Y2 = read_test_sample(te_n, test_imgs, ms_p_imgs, ms_n_imgs)
     ma.set_evaluation_input(img_X2, Y2)
     ma.evaluate()
     del img_X2, Y2
@@ -176,7 +178,6 @@ if __name__ == '__main__':
 
     if external_test:
         print '--------------- Ma: Evaluation on Expert  Labeled Samples ---------------'
-        img_X3, Y3 = FileIO.read_external_test_sample()
         ma.set_evaluation_input(img_X3, Y3)
         ma.evaluate(True)
         del img_X3, Y3

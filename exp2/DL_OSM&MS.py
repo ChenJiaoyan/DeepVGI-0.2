@@ -108,6 +108,9 @@ if __name__ == '__main__':
     ms_n_imgs = client.read_n_images()
     train_imgs, test_imgs = client.imgs_cross_validation(cv_i, cv_n)
     img_X, Y = read_train_sample(tr_n1, tr_n0, train_imgs, ms_n_imgs)
+    img_X2, Y2 = read_test_sample(te_n, test_imgs, ms_p_imgs, ms_n_imgs)
+    if external_test:
+        img_X3, Y3 = FileIO.read_external_test_sample()
     print "time spent for reading samples: %s seconds\n" % (time.time() - start_time)
     m = NN_Model.Model(img_X, Y, nn + '_JY')
 
@@ -123,7 +126,6 @@ if __name__ == '__main__':
     gc.collect()
 
     print '--------------- Evaluation on MapSwipe Samples ---------------'
-    img_X2, Y2 = read_test_sample(te_n, test_imgs, ms_p_imgs, ms_n_imgs)
     m.set_evaluation_input(img_X2, Y2)
     m.evaluate()
     del img_X2, Y2
@@ -131,7 +133,6 @@ if __name__ == '__main__':
 
     if external_test:
         print '--------------- Evaluation on Expert  Labeled Samples ---------------'
-        img_X3, Y3 = FileIO.read_external_test_sample()
         m.set_evaluation_input(img_X3, Y3)
         m.evaluate(True)
         del img_X3, Y3
