@@ -56,7 +56,7 @@ def read_external_test_sample():
         if os.path.exists(os.path.join(dir1, img)):
             img_X[i] = misc.imread(os.path.join(dir1, img))
             label[i, 1] = 1
-            img_files.append(os.path.join(dir1, img))
+            img_files.append(img)
             i += 1
     n_p = i
     print 'positive external testing samples: %d \n' % n_p
@@ -64,7 +64,7 @@ def read_external_test_sample():
         if os.path.exists(os.path.join(dir1, img)):
             img_X[i] = misc.imread(os.path.join(dir1, img))
             label[i, 0] = 1
-            img_files.append(os.path.join(dir1, img))
+            img_files.append(img)
             i += 1
     n_n = i - n_p
     print 'negative external testing samples: %d \n' % n_n
