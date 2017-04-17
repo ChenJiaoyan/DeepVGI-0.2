@@ -176,7 +176,7 @@ if __name__ == '__main__':
 
     if external_test:
         print '--------------- Ma: Evaluation on Expert  Labeled Samples ---------------'
-        img_X3, Y3 = FileIO.read_external_test_sample()
+        img_X3, Y3, _ = FileIO.read_external_test_sample()
         ma.set_evaluation_input(img_X3, Y3)
         ma.evaluate(True)
         del img_X3, Y3

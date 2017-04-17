@@ -37,18 +37,6 @@ def get_urban_tasks(urban_file='../data/malawi_urban.csv'):
     return urbans
 
 
-def read_external_test_imgs():
-    lines = read_lines("../data/test_imgs.csv", 0)
-    lines_p = read_lines("../data/test_positive_imgs.csv", 0)
-    imgs_p, imgs_n = [], []
-    for line in lines_p:
-        imgs_p.append(line.strip())
-    for line in lines:
-        if line.strip() not in imgs_p:
-            imgs_n.append(line.strip())
-    return imgs_n, imgs_n
-
-
 def read_external_test_sample():
     lines = read_lines("../data/test_imgs.csv", 0)
     lines_p = read_lines("../data/test_positive_imgs.csv", 0)
@@ -63,10 +51,12 @@ def read_external_test_sample():
     label = np.zeros((n, 2))
     dir1 = '../data/imagery/'
     i = 0
+    img_files = []
     for img in imgs_p:
         if os.path.exists(os.path.join(dir1, img)):
             img_X[i] = misc.imread(os.path.join(dir1, img))
             label[i, 1] = 1
+            img_files.append(os.path.join(dir1, img))
             i += 1
     n_p = i
     print 'positive external testing samples: %d \n' % n_p
@@ -74,7 +64,8 @@ def read_external_test_sample():
         if os.path.exists(os.path.join(dir1, img)):
             img_X[i] = misc.imread(os.path.join(dir1, img))
             label[i, 0] = 1
+            img_files.append(os.path.join(dir1, img))
             i += 1
     n_n = i - n_p
     print 'negative external testing samples: %d \n' % n_n
-    return img_X[0:i], label[0:i]
+    return img_X[0:i], label[0:i], img_files
