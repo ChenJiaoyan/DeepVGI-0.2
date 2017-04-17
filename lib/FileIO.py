@@ -37,6 +37,18 @@ def get_urban_tasks(urban_file='../data/malawi_urban.csv'):
     return urbans
 
 
+def read_external_test_imgs():
+    lines = read_lines("../data/test_imgs.csv", 0)
+    lines_p = read_lines("../data/test_positive_imgs.csv", 0)
+    imgs_p, imgs_n = [], []
+    for line in lines_p:
+        imgs_p.append(line.strip())
+    for line in lines:
+        if line.strip() not in imgs_p:
+            imgs_n.append(line.strip())
+    return imgs_n, imgs_n
+
+
 def read_external_test_sample():
     lines = read_lines("../data/test_imgs.csv", 0)
     lines_p = read_lines("../data/test_positive_imgs.csv", 0)
