@@ -141,7 +141,7 @@ if __name__ == '__main__':
 
     if not evaluate_only:
         print '--------------- M0: Training on OSM Labels---------------'
-        m0 = NN_Model.Model(img_X, Y, nn + '_exp3_M0')
+        m0 = NN_Model.Model(img_X, Y, nn + '_JY_M0')
 #        m0.set_batch_size(tr_b)
 #        m0.set_epoch_num(tr_e)
 #        m0.set_thread_num(tr_t)
@@ -156,7 +156,7 @@ if __name__ == '__main__':
         random.shuffle(index)
         img_X = img_X[index]
         Y = Y[index]
-        ma = NN_Model.Model(img_X, Y, nn + '_exp3_Ma')
+        ma = NN_Model.Model(img_X, Y, nn + '_JY_Ma')
         ma.set_batch_size(tr_b)
         ma.set_epoch_num(tr_e)
         ma.set_thread_num(tr_t)
@@ -164,7 +164,7 @@ if __name__ == '__main__':
         print '--------------- Ma: Evaluation on Training Samples ---------------'
         ma.evaluate()
     else:
-        ma = NN_Model.Model(img_X, Y, nn + '_exp3_Ma')
+        ma = NN_Model.Model(img_X, Y, nn + '_JY_Ma')
 
     del img_X, Y, train_imgs, p_imgs, n_imgs
     gc.collect()
