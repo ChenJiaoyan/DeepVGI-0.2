@@ -99,16 +99,18 @@ def active_sampling(m0, ms_p_imgs, act_n, p_imgs):
     label = np.zeros((act_n, 2))
     label[:, 1] = 1
 
-    ms_p_X = np.zeros((len(ms_p_imgs), 256, 256, 3))
-    p_img_dir = '../data/image_project_922/'
+    ms_n = 10 * act_n
+    ms_imgs = random.sample(ms_p_imgs, ms_n)
+    ms_X = np.zeros((ms_n, 256, 256, 3))
+    img_dir = '../data/image_project_922/'
     i = 0
-    for [task_x, task_y] in ms_p_imgs:
+    for [task_x, task_y] in ms_imgs:
         img = '%s-%s.jpeg' % (task_x, task_y)
-        img_f = os.path.join(p_img_dir, img)
+        img_f = os.path.join(img_dir, img)
         if os.path.exists(img_f) and img not in p_imgs:
-            ms_p_X[i] = misc.imread(img_f)
+            ms_X[i] = misc.imread(img_f)
             i += 1
-    X = ms_p_X[0:i]
+    X = ms_X[0:i]
     m0.set_prediction_input(X)
     scores, _ = m0.predict()
     j = 0
@@ -140,12 +142,12 @@ if __name__ == '__main__':
     if not evaluate_only:
         print '--------------- M0: Training on OSM Labels---------------'
         m0 = NN_Model.Model(img_X, Y, nn + '_exp3_M0')
-        m0.set_batch_size(tr_b)
-        m0.set_epoch_num(tr_e)
-        m0.set_thread_num(tr_t)
-        m0.train(nn)
-        print '--------------- M0: Evaluation on Training Samples ---------------'
-        m0.evaluate()
+#        m0.set_batch_size(tr_b)
+#        m0.set_epoch_num(tr_e)
+#        m0.set_thread_num(tr_t)
+#        m0.train(nn)
+#        print '--------------- M0: Evaluation on Training Samples ---------------'
+#        m0.evaluate()
 
         img_Xa, Ya = active_sampling(m0, ms_n_imgs, act_n, p_imgs)
         img_X = np.concatenate((img_X, img_Xa), axis=0)
