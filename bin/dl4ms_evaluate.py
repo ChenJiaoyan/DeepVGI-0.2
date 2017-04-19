@@ -6,7 +6,6 @@ import sys
 import numpy as np
 
 sys.path.append("../lib")
-import NN_Model
 import FileIO
 import MapSwipe
 
@@ -20,18 +19,20 @@ def mapswipe_label(img, ms_p_imgs):
         return 0.0
 
 
-def my_eva(img_files, labels, imgs_p, imgs_n):
+def my_eva(imgs, labels, imgs_p, imgs_n):
     TP, TN, FP, FN = 0, 0, 0, 0
-    for i, img in enumerate(img_files):
+    for i, img in enumerate(imgs):
         label = labels[i]
         if img in imgs_p:
             if label == 1:
                 TP += 1
             else:
                 FN += 1
+        #        print '%d, %s: FN' % (i+1, img)
         elif img in imgs_n:
             if label == 1:
                 FP += 1
+        #        print '%d, %s: FP' % (i+1, img)
             else:
                 TN += 1
         else:
@@ -44,19 +45,28 @@ def my_eva(img_files, labels, imgs_p, imgs_n):
 
 
 if __name__ == '__main__':
-    model_name = sys.argv[1]
-    img_X, Y, img_files = FileIO.read_external_test_sample()
+    lines = FileIO.read_lines("../data/test_scores.csv", 0)
+    scores, labels = [], []
+    for line in lines:
+        tmp = line.strip().split(',')
+        scores.append(float(tmp[0]))
+        labels.append(float(tmp[1]))
+
     imgs_p, imgs_n = FileIO.read_external_test_img()
+    imgs = imgs_p + imgs_n
+
     client = MapSwipe.MSClient()
-    ms_p_imgs = client.read_p_images()
+    ms_p_imgs = client.read_p_images2()
+
     print 'threshold, mapswipe_imgs, precision, recall, accuracy'
     x = np.arange(0, 0.51, 0.05)
-    m = NN_Model.Model(img_X, Y, model_name)
     for x0 in x:
-        scores, labels = m.predict()
-        ms_index = np.where((scores >= x0) & (scores <= 1.0 - x0))
-        for i in ms_index[0]:
-            labels[i] = mapswipe_label(img_files[i], ms_p_imgs)
-        ms_n = ms_index[0].shape[0]
-        precision, recall, accuracy = my_eva(img_files, labels, imgs_p, imgs_n)
+        ms_n = 0
+        for i, img in enumerate(imgs):
+            score = scores[i]
+            if 0.5 - x0 <= score <= 0.5 + x0:
+                labels[i] = mapswipe_label(img, ms_p_imgs)
+                ms_n += 1
+
+        precision, recall, accuracy = my_eva(imgs, labels, imgs_p, imgs_n)
         print '%f, %d, %f, %f, %f' % (x0, ms_n, precision, recall, accuracy)
