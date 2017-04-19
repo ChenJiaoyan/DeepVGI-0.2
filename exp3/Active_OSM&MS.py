@@ -156,7 +156,7 @@ if __name__ == '__main__':
         #        print '--------------- M0: Evaluation on Training Samples ---------------'
         #        m0.evaluate()
 
-        img_Xa, Ya = active_sampling(m0, ms_n_imgs, act_n, p_imgs)
+        img_Xa, Ya = active_sampling(m0, ms_p_imgs, act_n, p_imgs)
         img_X = np.concatenate((img_X, img_Xa), axis=0)
         Y = np.concatenate((Y, Ya), axis=0)
         index = range(img_X.shape[0])
