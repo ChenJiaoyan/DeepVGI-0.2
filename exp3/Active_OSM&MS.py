@@ -152,7 +152,7 @@ if __name__ == '__main__':
         img_Xa, Ya = active_sampling(m0, ms_n_imgs, act_n, p_imgs)
         img_X = np.concatenate((img_X, img_Xa), axis=0)
         Y = np.concatenate((Y, Ya), axis=0)
-        index = img_X.shape[0]
+        index = range(img_X.shape[0])
         random.shuffle(index)
         img_X = img_X[index]
         Y = Y[index]
