@@ -95,38 +95,45 @@ def read_train_sample(n1, n0, train_imgs, ms_n_imgs):
 
 
 def active_sampling(m0, ms_p_imgs, act_n, p_imgs):
-    img_Xa = np.zeros((act_n, 256, 256, 3))
-    label = np.zeros((act_n, 2))
-    label[:, 1] = 1
-
-    ms_n = 10 * act_n
-    ms_imgs = random.sample(ms_p_imgs, ms_n)
-    ms_X = np.zeros((ms_n, 256, 256, 3))
+    ms_p_n = 10 * act_n
+    ms_p_imgs = random.sample(ms_p_imgs, ms_p_n)
+    ms_X = np.zeros((ms_p_n, 256, 256, 3))
+    ms_img = []
     img_dir = '../data/image_project_922/'
     i = 0
-    for [task_x, task_y] in ms_imgs:
+    for [task_x, task_y] in ms_p_imgs:
         img = '%s-%s.jpeg' % (task_x, task_y)
         img_f = os.path.join(img_dir, img)
         if os.path.exists(img_f) and img not in p_imgs:
             ms_X[i] = misc.imread(img_f)
+            ms_img.append(img)
             i += 1
+    print '%d MS image candidates for prediction' % i
+
     X = ms_X[0:i]
+    ms_img = ms_img[0:i]
     m0.set_prediction_input(X)
     scores, _ = m0.predict()
+
+    img_Xa = np.zeros((act_n, 256, 256, 3))
+    label = np.zeros((act_n, 2))
+    label[:, 1] = 1
+
     j = 0
     for k, score in enumerate(scores):
+        print '%s: %f' % (ms_img[k], score)
         if score < 0.5:
             img_Xa[j] = X[k]
             j += 1
         if j >= act_n:
             break
 
-    print 'real active sampled images: %d ' % j
+    print '%d eventually actively sampled images' % j
     return img_Xa[0:j], label[0:j]
 
 
 if __name__ == '__main__':
-    evaluate_only, external_test, tr_n1, tr_n0, tr_b, tr_e, tr_t, cv_i, te_n, nn,  act_n = Parameters.deal_args(
+    evaluate_only, external_test, tr_n1, tr_n0, tr_b, tr_e, tr_t, cv_i, te_n, nn, act_n = Parameters.deal_args(
         sys.argv[1:])
     cv_n = 4
 
@@ -142,12 +149,12 @@ if __name__ == '__main__':
     if not evaluate_only:
         print '--------------- M0: Training on OSM Labels---------------'
         m0 = NN_Model.Model(img_X, Y, nn + '_JY_M0')
-#        m0.set_batch_size(tr_b)
-#        m0.set_epoch_num(tr_e)
-#        m0.set_thread_num(tr_t)
-#        m0.train(nn)
-#        print '--------------- M0: Evaluation on Training Samples ---------------'
-#        m0.evaluate()
+        #        m0.set_batch_size(tr_b)
+        #        m0.set_epoch_num(tr_e)
+        #        m0.set_thread_num(tr_t)
+        #        m0.train(nn)
+        #        print '--------------- M0: Evaluation on Training Samples ---------------'
+        #        m0.evaluate()
 
         img_Xa, Ya = active_sampling(m0, ms_n_imgs, act_n, p_imgs)
         img_X = np.concatenate((img_X, img_Xa), axis=0)
