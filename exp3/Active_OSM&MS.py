@@ -148,7 +148,7 @@ def active_sampling(m0, train_imgs, ms_p_imgs, ms_n_imgs, act_n, p_imgs, n_imgs)
     label_an = np.zeros((real_act_n2, 2))
     label_an[:, 0] = 1
 
-    return np.concatenate((img_X_ap, img_X_an), axis=0), np.concatenate((label_ap, label_an), axis=0),
+    return np.concatenate((img_X_ap, img_X_an)), np.concatenate((label_ap, label_an))
 
 
 if __name__ == '__main__':
@@ -177,8 +177,8 @@ if __name__ == '__main__':
 
         print '--------------- Ma: Actively Sampling ---------------'
         img_Xa, Ya = active_sampling(m0, train_imgs, ms_p_imgs, ms_n_imgs, act_n, p_imgs, n_imgs)
-        img_X = np.concatenate((img_X, img_Xa), axis=0)
-        Y = np.concatenate((Y, Ya), axis=0)
+        img_X = np.concatenate((img_X, img_Xa))
+        Y = np.concatenate((Y, Ya))
         index = range(img_X.shape[0])
         random.shuffle(index)
         img_X = img_X[index]
