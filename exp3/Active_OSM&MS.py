@@ -94,42 +94,61 @@ def read_train_sample(n1, n0, train_imgs, ms_n_imgs):
     return X[j], label[j], p_imgs, n_imgs
 
 
-def active_sampling(m0, ms_p_imgs, act_n, p_imgs):
-    ms_p_n = 10 * act_n
+def active_sampling(m0, train_imgs, ms_p_imgs, ms_n_imgs, act_n, p_imgs, n_imgs):
+    ms_p_n = 20 * act_n
     ms_p_imgs = random.sample(ms_p_imgs, ms_p_n)
     ms_X = np.zeros((ms_p_n, 256, 256, 3))
     ms_img = []
-    img_dir = '../data/image_project_922/'
+    img_dir1 = '../data/image_project_922/'
     i = 0
     for [task_x, task_y] in ms_p_imgs:
         img = '%s-%s.jpeg' % (task_x, task_y)
-        img_f = os.path.join(img_dir, img)
-        if os.path.exists(img_f) and img not in p_imgs:
+        img_f = os.path.join(img_dir1, img)
+        if os.path.exists(img_f) and img in train_imgs and img not in p_imgs:
             ms_X[i] = misc.imread(img_f)
             ms_img.append(img)
             i += 1
-    print '%d MS image candidates for prediction' % i
+    print '%d MapSwipe positive image candidates for prediction' % i
 
     X = ms_X[0:i]
     ms_img = ms_img[0:i]
     m0.set_prediction_input(X)
     scores, _ = m0.predict()
 
-    img_Xa = np.zeros((act_n, 256, 256, 3))
-    label = np.zeros((act_n, 2))
-    label[:, 1] = 1
-
+    img_X = np.zeros((act_n, 256, 256, 3))
     j = 0
+    print 'MapSwipe positive images: score predicted by M0'
     for k, score in enumerate(scores):
-        print '%s: %f' % (ms_img[k], score)
-        if score < 0.5:
-            img_Xa[j] = X[k]
+        if 0.5 > score:
+            print '%s: %f' % (ms_img[k], score)
+            img_X[j] = X[k]
             j += 1
         if j >= act_n:
             break
+    real_act_n = j
+    print '%d actively sampled positive images' % real_act_n
+    img_X_ap = img_X[0:real_act_n]
+    label_ap = np.zeros((real_act_n, 2))
+    label_ap[:, 1] = 1
 
-    print '%d eventually actively sampled images' % j
-    return img_Xa[0:j], label[0:j]
+    img_X = np.zeros((real_act_n, 256, 256, 3))
+    j = 0
+    img_dir2 = '../data/image_project_922_negative/'
+    for [task_x, task_y] in ms_n_imgs:
+        img = '%s-%s.jpeg' % (task_x, task_y)
+        img_f = os.path.join(img_dir2, img)
+        if img in train_imgs and img not in n_imgs:
+            img_X[j] = misc.imread(img_f)
+            j += 1
+            if j >= real_act_n:
+                break
+    real_act_n2 = j
+    print '%d actively sampled negative images' % real_act_n2
+    img_X_an = img_X[0:real_act_n2]
+    label_an = np.zeros((real_act_n2, 2))
+    label_an[:, 0] = 1
+
+    return np.concatenate((img_X_ap, img_X_an), axis=0), np.concatenate((label_ap, label_an), axis=0),
 
 
 if __name__ == '__main__':
@@ -149,25 +168,29 @@ if __name__ == '__main__':
     if not evaluate_only:
         print '--------------- M0: Training on OSM Labels---------------'
         m0 = NN_Model.Model(img_X, Y, nn + '_JY_M0')
-        #        m0.set_batch_size(tr_b)
-        #        m0.set_epoch_num(tr_e)
-        #        m0.set_thread_num(tr_t)
-        #        m0.train(nn)
-        #        print '--------------- M0: Evaluation on Training Samples ---------------'
-        #        m0.evaluate()
+        m0.set_batch_size(tr_b)
+        m0.set_epoch_num(tr_e)
+        m0.set_thread_num(tr_t)
+        m0.train(nn)
+        print '--------------- M0: Evaluation on Training Samples ---------------'
+        m0.evaluate()
 
-        img_Xa, Ya = active_sampling(m0, ms_p_imgs, act_n, p_imgs)
+        print '--------------- Ma: Actively Sampling ---------------'
+        img_Xa, Ya = active_sampling(m0, train_imgs, ms_p_imgs, ms_n_imgs, act_n, p_imgs, n_imgs)
         img_X = np.concatenate((img_X, img_Xa), axis=0)
         Y = np.concatenate((Y, Ya), axis=0)
         index = range(img_X.shape[0])
         random.shuffle(index)
         img_X = img_X[index]
         Y = Y[index]
+
+        print '--------------- Ma: Training ---------------'
         ma = NN_Model.Model(img_X, Y, nn + '_JY_Ma')
         ma.set_batch_size(tr_b)
         ma.set_epoch_num(tr_e)
         ma.set_thread_num(tr_t)
         ma.train(nn)
+
         print '--------------- Ma: Evaluation on Training Samples ---------------'
         ma.evaluate()
     else:
