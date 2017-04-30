@@ -185,32 +185,6 @@ class Model(object):
 
         self.learn(saver, x_image, y_, keep_prob, train_step, y_conv)
 
-        ## for debug
-
-    #        print '#################  start learning  ####################'
-    #        with tf.Session(config=tf.ConfigProto(intra_op_parallelism_threads=self.thread_num)) as sess:
-    #            sess.run(tf.global_variables_initializer())
-    #            sess.run(tf.local_variables_initializer())
-    #            for i in range(self.epoch_num):
-    #                ran = self.__get_batch(self.sample_size, i, self.batch_size)
-    #
-    #                prob_r, y_conv_r = sess.run([prob, y_conv],
-    #                                            feed_dict={x_image: self.X_imgs[ran], y_: self.Y_labels[ran],
-    #                                                       keep_prob: 1.0})
-    #                print prob_r
-    #                print y_conv_r
-    #
-    #                train_step.run(session=sess,
-    #                               feed_dict={x_image: self.X_imgs[ran, :], y_: self.Y_labels[ran], keep_prob: 0.5})
-    #                if i % 100 == 0:
-    #                    train_accuracy = accuracy.eval(session=sess,
-    #                                                   feed_dict={x_image: self.X_imgs[ran], y_: self.Y_labels[ran],
-    #                                                              keep_prob: 1.0})
-    #
-    #                    print("epoch %d, training accuracy %f \n" % (i, train_accuracy))
-    #            saver.save(sess, '../data/model/%s.ckpt' % self.name)
-    #        print '#################  end learning  ####################'
-    ## for debug
 
     def train_alexnet(self):
         ## input
@@ -281,32 +255,6 @@ class Model(object):
 
         self.learn(saver, x_image, y_, keep_prob, train_step, y_conv)
 
-        ## for debug
-
-    #        print '#################  start learning  ####################'
-    #        with tf.Session(config=tf.ConfigProto(intra_op_parallelism_threads=self.thread_num)) as sess:
-    #            sess.run(tf.global_variables_initializer())
-    #            sess.run(tf.local_variables_initializer())
-    #            for i in range(self.epoch_num):
-    #                ran = self.__get_batch(self.sample_size, i, self.batch_size)
-    #
-    #                prob_r, y_conv_r = sess.run([prob, y_conv],
-    #                                            feed_dict={x_image: self.X_imgs[ran], y_: self.Y_labels[ran],
-    #                                                       keep_prob: 1.0})
-    #                print prob_r
-    #                print y_conv_r
-    #
-    #                train_step.run(session=sess,
-    #                               feed_dict={x_image: self.X_imgs[ran, :], y_: self.Y_labels[ran], keep_prob: 0.5})
-    #                if i % 100 == 0:
-    #                    train_accuracy = accuracy.eval(session=sess,
-    #                                                   feed_dict={x_image: self.X_imgs[ran], y_: self.Y_labels[ran],
-    #                                                              keep_prob: 1.0})
-    #
-    #                    print("epoch %d, training accuracy %f \n" % (i, train_accuracy))
-    #            saver.save(sess, '../data/model/%s.ckpt' % self.name)
-    #        print '#################  end learning  ####################'
-    ## for debug
 
     def train_lenet(self):
         ## input
