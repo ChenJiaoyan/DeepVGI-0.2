@@ -24,6 +24,10 @@ class Model(object):
         self.cols = imgs.shape[2]
         self.bands = imgs.shape[3]
 
+
+    def set_XY(self, imgs, labels):
+        self.set_evaluation_input(imgs, labels)
+
     def set_evaluation_input(self, imgs, labels):
         self.X_imgs = imgs
         self.Y_labels = labels
