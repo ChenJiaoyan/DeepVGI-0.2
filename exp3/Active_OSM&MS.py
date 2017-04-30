@@ -167,16 +167,16 @@ if __name__ == '__main__':
 
     if not evaluate_only:
         print '--------------- M0: Training on OSM Labels---------------'
-        m0 = NN_Model.Model(img_X, Y, nn + '_JY_M0')
-        m0.set_batch_size(tr_b)
-        m0.set_epoch_num(tr_e)
-        m0.set_thread_num(tr_t)
-        m0.train(nn)
+        m = NN_Model.Model(img_X, Y, nn + '_active_jy')
+        m.set_batch_size(tr_b)
+        m.set_epoch_num(tr_e)
+        m.set_thread_num(tr_t)
+        m.train(nn)
         print '--------------- M0: Evaluation on Training Samples ---------------'
-        m0.evaluate()
+        m.evaluate()
 
         print '--------------- Ma: Actively Sampling ---------------'
-        img_Xa, Ya = active_sampling(m0, train_imgs, ms_p_imgs, ms_n_imgs, act_n, p_imgs, n_imgs)
+        img_Xa, Ya = active_sampling(m, train_imgs, ms_p_imgs, ms_n_imgs, act_n, p_imgs, n_imgs)
         img_X = np.concatenate((img_X, img_Xa))
         Y = np.concatenate((Y, Ya))
         index = range(img_X.shape[0])
@@ -184,32 +184,28 @@ if __name__ == '__main__':
         img_X = img_X[index]
         Y = Y[index]
 
-        print '--------------- Ma: Training ---------------'
-        ma = NN_Model.Model(img_X, Y, nn + '_JY_Ma')
-        ma.set_batch_size(tr_b)
-        ma.set_epoch_num(tr_e)
-        ma.set_thread_num(tr_t)
-        ma.train(nn)
-
+        print '--------------- Ma: Re-Training ---------------'
+        m.set_XY(img_X, Y)
+        m.re_learn()
         print '--------------- Ma: Evaluation on Training Samples ---------------'
-        ma.evaluate()
+        m.evaluate()
     else:
-        ma = NN_Model.Model(img_X, Y, nn + '_JY_Ma')
+        m = NN_Model.Model(img_X, Y, nn + '_active_jy')
 
     del img_X, Y, train_imgs, p_imgs, n_imgs
     gc.collect()
 
     print '--------------- Ma: Evaluation on MapSwipe Samples ---------------'
     img_X2, Y2 = read_test_sample(te_n, test_imgs, ms_p_imgs, ms_n_imgs)
-    ma.set_evaluation_input(img_X2, Y2)
-    ma.evaluate()
+    m.set_evaluation_input(img_X2, Y2)
+    m.evaluate()
     del img_X2, Y2
     gc.collect()
 
     if external_test:
         print '--------------- Ma: Evaluation on Expert  Labeled Samples ---------------'
         img_X3, Y3, _ = FileIO.read_external_test_sample()
-        ma.set_evaluation_input(img_X3, Y3)
-        ma.evaluate(True)
+        m.set_evaluation_input(img_X3, Y3)
+        m.evaluate(True)
         del img_X3, Y3
         gc.collect()
