@@ -81,3 +81,14 @@ def read_external_test_sample():
     n_n = i - n_p
     print 'negative external testing samples: %d \n' % n_n
     return img_X[0:i], label[0:i], img_files
+
+
+def osm_building_weight():
+    task_w = {}
+    osm_buildings = FileIO.csv_reader("../data/buildings.csv")
+    for row in osm_buildings:
+        task_x = row['task_x']
+        task_y = row['task_y']
+        k = '%s-%s' % (task_x, task_y)
+        task_w[k] = 1
+    return task_w

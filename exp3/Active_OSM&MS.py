@@ -14,17 +14,6 @@ import MapSwipe
 import Parameters
 
 
-def osm_building_weight():
-    task_w = {}
-    osm_buildings = FileIO.csv_reader("../data/buildings.csv")
-    for row in osm_buildings:
-        task_x = row['task_x']
-        task_y = row['task_y']
-        k = '%s-%s' % (task_x, task_y)
-        task_w[k] = 1
-    return task_w
-
-
 def read_test_sample(n, test_imgs, ms_p_imgs, ms_n_imgs):
     img_X = np.zeros((n, 256, 256, 3))
     label = np.zeros((n, 2))
@@ -59,7 +48,7 @@ def read_train_sample(n1, n0, train_imgs, ms_n_imgs):
     img_X1, img_X0 = np.zeros((n1, 256, 256, 3)), np.zeros((n0, 256, 256, 3))
     label = np.zeros((n1 + n0, 2))
 
-    task_w = osm_building_weight();
+    task_w = FileIO.osm_building_weight();
     img_dir1 = '../data/image_project_922/'
     img_dir2 = '../data/image_project_922_negative/'
     p_imgs, n_imgs = [], []
