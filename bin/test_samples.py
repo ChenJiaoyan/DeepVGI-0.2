@@ -19,13 +19,15 @@ if __name__ == '__main__':
     for img in p_imgs:
         if img in imagery:
             shutil.copyfile(os.path.join('../data/imagery', img),
-                            os.path.join('../samples0/test/Positive/', img.replace('_18.', '.').replace('_', '-')))
+                            os.path.join('../samples0/test/Positive/',
+                                         img.strip().replace('_18.', '.').replace('_', '-')))
         else:
             print '%s does NOT have image file' % img
 
     for img in n_imgs:
         if img in imagery:
             shutil.copy(os.path.join('../data/imagery', img),
-                        os.path.join('../samples0/test/Negative/', img.replace('_18.', '.').replace('_', '-')))
+                        os.path.join('../samples0/test/Negative/',
+                                     img.strip().replace('_18.', '.').replace('_', '-')))
         else:
             print '%s does NOT have image file' % img
