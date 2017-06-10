@@ -17,7 +17,7 @@ if __name__ == '__main__':
 
     print 'moving file for test/Positive'
     for img in p_imgs:
-        if img in imagery:
+        if img.strip() in imagery:
             shutil.copyfile(os.path.join('../data/imagery', img),
                             os.path.join('../samples0/test/Positive/',
                                          img.strip().replace('_18.', '.').replace('_', '-')))
@@ -25,7 +25,7 @@ if __name__ == '__main__':
             print '%s does NOT have image file' % img
 
     for img in n_imgs:
-        if img in imagery:
+        if img.strip() in imagery:
             shutil.copy(os.path.join('../data/imagery', img),
                         os.path.join('../samples0/test/Negative/',
                                      img.strip().replace('_18.', '.').replace('_', '-')))
