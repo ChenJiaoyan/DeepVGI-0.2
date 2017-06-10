@@ -30,9 +30,8 @@ if __name__ == '__main__':
     negative_dir = '../data/image_project_922_negative/'
     MS_records = os.listdir(record_dir)
     MS_negative = os.listdir(negative_dir)
-    e_imgs = FileIO.read_lines("../data/test_imgs.csv", 0)
-    for e_img in e_imgs:
-        e_img = e_img.strip().replace("_18.", ".").replace("_", "-")
+    test_imgs = os.listdir('../samples0/test/Positive') + os.listdir('../samples0/test/Negative')
+    for e_img in test_imgs:
         if e_img in MS_records:
             MS_records.remove(e_img)
         if e_img in MS_negative:
