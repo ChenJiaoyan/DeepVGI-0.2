@@ -13,9 +13,10 @@ if __name__ == '__main__':
     p_imgs = FileIO.read_lines("../data/test_positive_imgs.csv", 0)
     n_imgs = list(set(a_imgs).difference(set(p_imgs)))
 
-    p_imgs = [img.replace('-18.', '.') for img in p_imgs]
-    n_imgs = [img.replace('-18.', '.') for img in n_imgs]
+    p_imgs = [img.replace('_18.', '.').replace('_', '-') for img in p_imgs]
+    n_imgs = [img.replace('_18.', '.').replace('_', '-') for img in n_imgs]
 
+    #    imagery = os.listdir('../data/imagery')
     record = os.listdir('../data/image_project_922')
     negative = os.listdir('../data/image_project_922_negative')
 
