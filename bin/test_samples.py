@@ -13,26 +13,19 @@ if __name__ == '__main__':
     p_imgs = FileIO.read_lines("../data/test_positive_imgs.csv", 0)
     n_imgs = list(set(a_imgs).difference(set(p_imgs)))
 
-    p_imgs = [img.replace('_18.', '.').replace('_', '-') for img in p_imgs]
-    n_imgs = [img.replace('_18.', '.').replace('_', '-') for img in n_imgs]
-
-    #    imagery = os.listdir('../data/imagery')
-    record = os.listdir('../data/image_project_922')
-    negative = os.listdir('../data/image_project_922_negative')
+    imagery = os.listdir('../data/imagery')
 
     print 'moving file for test/Positive'
     for img in p_imgs:
-        if img in record:
-            shutil.copy(os.path.join('../data/image_project_922', img), '../samples0/test/Positive/')
-        elif img in negative:
-            shutil.copy(os.path.join('../data/image_project_922_negative', img), '../samples0/test/Positive/')
+        if img in imagery:
+            shutil.copyfile(os.path.join('../data/imagery', img),
+                            os.path.join('../samples0/test/Positive/', img.replace('_18.', '.').replace('_', '-')))
         else:
             print '%s does NOT have image file' % img
 
     for img in n_imgs:
-        if img in record:
-            shutil.copy(os.path.join('../data/image_project_922', img), '../samples0/test/Negative/')
-        elif img in negative:
-            shutil.copy(os.path.join('../data/image_project_922_negative', img), '../samples0/test/Negative/')
+        if img in imagery:
+            shutil.copy(os.path.join('../data/imagery', img),
+                        os.path.join('../samples0/test/Negative/', img.replace('_18.', '.').replace('_', '-')))
         else:
             print '%s does NOT have image file' % img
