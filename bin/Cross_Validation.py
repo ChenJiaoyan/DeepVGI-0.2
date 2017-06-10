@@ -37,14 +37,18 @@ if __name__ == '__main__':
     MS_records_train, MS_records_valid = cv(MS_records)
     MS_negative_train, MS_negative_valid = cv(MS_negative)
 
+    print 'moving file for train/MS_record'
     for img in MS_records_train:
         shutil.copy(os.path.join(record_dir, img), '../samples0/train/MS_record/')
 
+    print 'moving file for train/MS_negative'
     for img in MS_negative_train:
-        shutil.copy(os.path.join(record_dir, img), '../samples0/train/MS_negative/')
+        shutil.copy(os.path.join(negative_dir, img), '../samples0/train/MS_negative/')
 
+    print 'moving file for valid/MS_record'
     for img in MS_records_valid:
         shutil.copy(os.path.join(record_dir, img), '../samples0/valid/MS_record/')
 
+    print 'moving file for valid/MS_negative'
     for img in MS_negative_valid:
-        shutil.copy(os.path.join(record_dir, img), '../samples0/valid/MS_negative/')
+        shutil.copy(os.path.join(negative_dir, img), '../samples0/valid/MS_negative/')
