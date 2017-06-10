@@ -24,7 +24,7 @@ def read_test_sample(n):
     print 'MS_valid_p: %d \n' % len(MS_valid_p)
     print 'MS_valid_n: %d \n' % len(MS_valid_n)
 
-    if len(MS_valid_p) <= n/2 or len(MS_valid_p) <= n/2:
+    if len(MS_valid_p) < n/2 or len(MS_valid_p) < n/2:
         print 'n is set too large; use all the samples for testing'
         n = len(MS_valid_p) * 2
 
@@ -55,11 +55,11 @@ def read_train_sample(n1, n0):
     print 'MS_train_p: %d \n' % len(MS_train_p)
     print 'MS_train_n: %d \n' % len(MS_train_n)
 
-    if len(MS_train_p) <= n1:
+    if len(MS_train_p) < n1:
         print 'n1 is set too large'
         sys.exit()
 
-    if len(MS_train_n) <= n0:
+    if len(MS_train_n) < n0:
         print 'n0 is set too large'
         sys.exit()
 
