@@ -50,37 +50,23 @@ def read_external_test_img():
 
 
 def read_external_test_sample():
-    lines = read_lines("../data/test_imgs.csv", 0)
-    lines_p = read_lines("../data/test_positive_imgs.csv", 0)
-    imgs_p, imgs_n = [], []
-    for line in lines_p:
-        imgs_p.append(line.strip())
-    for line in lines:
-        if line.strip() not in imgs_p:
-            imgs_n.append(line.strip())
-    n = len(imgs_p) + len(imgs_n)
-    img_X = np.zeros((n, 256, 256, 3))
-    label = np.zeros((n, 2))
-    dir1 = '../data/imagery/'
-    i = 0
-    img_files = []
-    for img in imgs_p:
-        if os.path.exists(os.path.join(dir1, img)):
-            img_X[i] = misc.imread(os.path.join(dir1, img))
-            label[i, 1] = 1
-            img_files.append(img)
-            i += 1
-    n_p = i
-    print 'positive external testing samples: %d \n' % n_p
-    for img in imgs_n:
-        if os.path.exists(os.path.join(dir1, img)):
-            img_X[i] = misc.imread(os.path.join(dir1, img))
-            label[i, 0] = 1
-            img_files.append(img)
-            i += 1
-    n_n = i - n_p
-    print 'negative external testing samples: %d \n' % n_n
-    return img_X[0:i], label[0:i], img_files
+    p_imgs = os.listdir('../samples0/test/Positive')
+    pn = len(p_imgs)
+    n_imgs = os.listdir('../samples0/test/Negative')
+    nn = len(n_imgs)
+
+    img_X = np.zeros((pn + nn, 256, 256, 3))
+    label = np.zeros((pn + nn, 2))
+
+    for i, img in enumerate(p_imgs):
+        img_X[i] = misc.imread(os.path.join('../samples0/test/Positive/', img))
+        label[i, 1] = 1
+
+    for i, img in enumerate(n_imgs):
+        img_X[i+pn] = misc.imread(os.path.join('../samples0/test/Negative/', img))
+        label[i+pn, 0] = 1
+
+    return img_X, label
 
 
 def osm_building_weight():

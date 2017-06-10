@@ -16,7 +16,7 @@ import Parameters
 sample_dir = '../samples0/'
 
 
-def read_test_sample(n):
+def read_valid_sample(n):
     client = MapSwipe.MSClient()
     MS_valid_p = client.MS_valid_positive()
     MS_valid_n = client.MS_valid_negative()
@@ -104,6 +104,16 @@ if __name__ == '__main__':
     gc.collect()
 
     print '--------------- Evaluation on Validation Samples ---------------'
-    img_X2, Y2 = read_test_sample(te_n)
+    img_X2, Y2 = read_valid_sample(te_n)
     m.set_evaluation_input(img_X2, Y2)
     m.evaluate()
+    del img_X2, Y2
+    gc.collect()
+
+    if external_test:
+        print '--------------- Evaluation on External Test Samples ---------------'
+        img_X3, Y3, _ = FileIO.read_external_test_sample()
+        m.set_evaluation_input(img_X3, Y3)
+        m.evaluate()
+        del img_X3, Y3
+        gc.collect()
