@@ -10,10 +10,11 @@ import shutil
 
 CV_i = 0
 CV_n = 4
-N = 40000
+Record_N = 40000
+Negative_N = 20000
 
 
-def cv(imgs):
+def cv(imgs, N):
     random.shuffle(imgs)
     imgs = imgs[0:N/2]
     l = len(imgs)
@@ -34,8 +35,8 @@ if __name__ == '__main__':
             MS_records.remove(e_img)
         if e_img in MS_negative:
             MS_records.remove(e_img)
-    MS_records_train, MS_records_valid = cv(MS_records)
-    MS_negative_train, MS_negative_valid = cv(MS_negative)
+    MS_records_train, MS_records_valid = cv(MS_records, Record_N)
+    MS_negative_train, MS_negative_valid = cv(MS_negative, Negative_N)
 
     print 'moving file for train/MS_record'
     for img in MS_records_train:
