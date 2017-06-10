@@ -14,6 +14,9 @@ if __name__ == '__main__':
     a_imgs = [img.strip() for img in a_imgs]
     p_imgs = [img.strip() for img in p_imgs]
 
+    print list(set(p_imgs).difference(set(a_imgs)))
+    sys.exit()
+
     n_imgs = list(set(a_imgs).difference(set(p_imgs)))
 
     imagery = os.listdir('../data/imagery')
