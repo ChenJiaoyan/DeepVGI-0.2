@@ -39,29 +39,38 @@ def cal_pixel(lat, lon):
 
 
 class MSClient:
-    def __init__(self, project_id=922, name='Malawi'):
-        self.project_id = project_id
-        self.name = name
+    def __init__(self):
+        self.sample_dir = '../samples0/'
 
-    def read_p_images(self):
-        ms_file = '../data/project_' + str(self.project_id) + '.csv'
+    def MS_train_record(self):
+        return os.listdir(os.path.join(self.sample_dir, 'train/MS_record'))
+
+    def MS_train_negative(self):
+        return os.listdir(os.path.join(self.sample_dir, 'train/MS_negative'))
+
+    def MS_valid_record(self):
+        return os.listdir(os.path.join(self.sample_dir, 'valid/MS_record'))
+
+    def MS_valid_negative(self):
+        return os.listdir(os.path.join(self.sample_dir, 'valid/MS_negative'))
+
+    def MS_positive(self):
+        imgs = []
+        ms_file = '../data/project_922.csv'
         lines = FileIO.read_lines(ms_file, 1)
-        p_imgs = []
         for line in lines:
             tmp = line.strip().split(',')
             x, y = int(tmp[4]), int(tmp[5])
+            img = '%d-%d.jpeg' % (x, y)
             yes_count, maybe_count, bad_img_count = int(tmp[8]), int(tmp[9]), int(tmp[10])
             if bad_img_count == 0 and (yes_count >= 2 or (maybe_count + yes_count) >= 3):
-                p_imgs.append([x, y])
-        return p_imgs
+                imgs.append(img)
+        return imgs
 
-    def read_n_images(self):
-        img_dir = '../data/image_project_' + str(self.project_id) + '_negative/'
-        imgs = os.listdir(img_dir)
-        n_imgs = []
-        for img in imgs:
-            i1, i2 = img.index('-'), img.index('.')
-            task_x, task_y = int(img[0:i1]), int(img[(i1 + 1):i2])
-            n_imgs.append([int(task_x), int(task_y)])
-        return n_imgs
+    def MS_train_positive(self):
+        record = os.listdir(os.path.join(self.sample_dir, 'train/MS_record'))
+        return list(set(record).intersection(set(self.MS_positive())))
 
+    def MS_valid_positive(self):
+        record = os.listdir(os.path.join(self.sample_dir, 'valid/MS_record'))
+        return list(set(record).intersection(set(self.MS_positive())))
