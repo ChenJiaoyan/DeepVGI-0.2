@@ -31,7 +31,7 @@ def read_test_sample(n):
     img_X1, img_X0 = np.zeros((n/2, 256, 256, 3)), np.zeros((n/2, 256, 256, 3))
     MS_valid_p = random.sample(MS_valid_p, n/2)
     for i, img in enumerate(MS_valid_p):
-        img_X1[i] = misc.imread(os.path.join(sample_dir, 'valid/MS_positive/', img))
+        img_X1[i] = misc.imread(os.path.join(sample_dir, 'valid/MS_record/', img))
 
     MS_valid_n = random.sample(MS_valid_n, n/2)
     for i, img in enumerate(MS_valid_n):
@@ -67,7 +67,7 @@ def read_train_sample(n1, n0):
 
     MS_train_p = random.sample(MS_train_p, n1)
     for i, img in enumerate(MS_train_p):
-        img_X1[i] = misc.imread(os.path.join(sample_dir, 'train/MS_positive/', img))
+        img_X1[i] = misc.imread(os.path.join(sample_dir, 'train/MS_record/', img))
 
     MS_train_n = random.sample(MS_train_n, n0)
     for i, img in enumerate(MS_train_n):
