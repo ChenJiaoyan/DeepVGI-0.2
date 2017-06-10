@@ -16,7 +16,7 @@ Negative_N = 20000
 
 def cv(imgs, N):
     random.shuffle(imgs)
-    imgs = imgs[0:N/2]
+    imgs = imgs[0:N]
     l = len(imgs)
     b = l / CV_n
     valid = imgs[CV_i * b: (CV_i + 1) * b]
