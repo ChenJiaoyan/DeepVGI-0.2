@@ -1,6 +1,7 @@
 #! /usr/bin/python
 
 import sys
+
 sys.path.append("../lib")
 import FileIO
 
@@ -23,6 +24,7 @@ def cv(imgs, N):
     train = imgs[0:CV_i * b] + imgs[(CV_i + 1) * b: l]
     return train, valid
 
+
 if __name__ == '__main__':
     record_dir = '../data/image_project_922/'
     negative_dir = '../data/image_project_922_negative/'
@@ -30,7 +32,7 @@ if __name__ == '__main__':
     MS_negative = os.listdir(negative_dir)
     e_imgs = FileIO.read_lines("../data/test_imgs.csv", 0)
     for e_img in e_imgs:
-        e_img = e_img.strip().replace("_18.", ".")
+        e_img = e_img.strip().replace("_18.", ".").replace("_", "-")
         if e_img in MS_records:
             MS_records.remove(e_img)
         if e_img in MS_negative:
