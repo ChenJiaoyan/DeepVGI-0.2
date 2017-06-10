@@ -1,6 +1,9 @@
 #! /usr/bin/python
 
-import lib.FileIO
+import sys
+sys.path.append("../lib")
+import FileIO
+
 import os
 import random
 import shutil
@@ -24,7 +27,7 @@ if __name__ == '__main__':
     negative_dir = '../data/image_project_922_negative/'
     MS_records = os.listdir(record_dir)
     MS_negative = os.listdir(negative_dir)
-    e_imgs = lib.FileIO.read_lines("../data/test_imgs.csv", 0)
+    e_imgs = FileIO.read_lines("../data/test_imgs.csv", 0)
     for e_img in e_imgs:
         e_img = e_img.strip().replace("_18.", ".")
         if e_img in MS_records:
