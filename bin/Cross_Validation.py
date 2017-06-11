@@ -3,7 +3,6 @@
 import sys
 
 sys.path.append("../lib")
-import FileIO
 
 import os
 import random
