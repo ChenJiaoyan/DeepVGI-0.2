@@ -67,7 +67,8 @@ if __name__ == '__main__':
     print '--------------- Read Samples ---------------'
     img_X, Y = read_train_sample(tr_n1, tr_n0)
 
-    m = NN_Model.Model(img_X, Y, nn + '_DL_OSMMS')
+#    m = NN_Model.Model(img_X, Y, nn + '_DL_OSMMS')
+    m = NN_Model.Model(img_X, Y, nn + '_ZY')
     if not evaluate_only:
         print '--------------- Training on OSM Labels---------------'
         m.set_batch_size(tr_b)
