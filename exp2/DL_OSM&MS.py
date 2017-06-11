@@ -5,7 +5,6 @@ import os
 import sys
 import random
 import gc
-import time
 import numpy as np
 from scipy import misc
 
@@ -15,68 +14,49 @@ import FileIO
 import MapSwipe
 import Parameters
 
-
-def read_test_sample(n, test_imgs, ms_p_imgs, ms_n_imgs):
-    img_X = np.zeros((n, 256, 256, 3))
-    label = np.zeros((n, 2))
-    img_dir1 = '../data/image_project_922/'
-    img_dir2 = '../data/image_project_922_negative/'
-    random.shuffle(test_imgs)
-    i = 0
-    te_p, te_n = 0, 0
-    for img in test_imgs:
-        if i >= n:
-            break
-        if os.path.exists(os.path.join(img_dir1, img)):
-            img_X[i] = misc.imread(os.path.join(img_dir1, img))
-        else:
-            img_X[i] = misc.imread(os.path.join(img_dir2, img))
-        i1, i2 = img.index('-'), img.index('.')
-        task_x, task_y = img[0:i1], img[(i1 + 1):i2]
-        if [int(task_x), int(task_y)] in ms_p_imgs:
-            label[i, 1] = 1
-            i += 1
-            te_p += 1
-        elif [int(task_x), int(task_y)] in ms_n_imgs:
-            label[i, 0] = 1
-            i += 1
-            te_n += 1
-    print 'positive testing samples: %d \n ' % te_p
-    print 'negative testing samples: %d \n ' % te_n
-    return img_X, label
+sample_dir = '../samples0/'
 
 
-def read_train_sample(n1, n0, train_imgs, ms_n_imgs):
-    img_X1, img_X0 = np.zeros((n1, 256, 256, 3)), np.zeros((n0, 256, 256, 3))
-    label = np.zeros((n1 + n0, 2))
+def read_train_sample(n1, n0):
+    client = MapSwipe.MSClient()
+    MS_train_n = client.MS_train_negative()
+    MS_train_r = client.MS_train_record()
+    MS_train = MS_train_r + MS_train_n
 
+    OSM_train_p = []
     task_w = FileIO.osm_building_weight();
-    img_dir1 = '../data/image_project_922/'
-    img_dir2 = '../data/image_project_922_negative/'
-    p_imgs, n_imgs = [], []
-    for img in train_imgs:
-        i1, i2 = img.index('-'), img.index('.')
-        task_x, task_y = img[0:i1], img[(i1 + 1):i2]
-        k = '%s-%s' % (task_x, task_y)
-        if task_w.has_key(k):
-            p_imgs.append(img)
-        elif [int(task_x), int(task_y)] in ms_n_imgs:
-            n_imgs.append(img)
 
-    print 'p_imgs labeled by OSM: %d \n' % len(p_imgs)
-    print 'n_imgs labeled by MS: %d \n' % len(n_imgs)
+    for img in MS_train:
+        if task_w.has_key(img.strip(".jpeg", "")):
+            OSM_train_p.append(img)
+            if img in MS_train_n:
+                MS_train_n.remove(img)
 
-    p_imgs = random.sample(p_imgs, n1)
-    for i, img in enumerate(p_imgs):
-        if os.path.exists(os.path.join(img_dir1, img)):
-            img_X1[i] = misc.imread(os.path.join(img_dir1, img))
+    print 'OSM_train_p: %d \n' % len(OSM_train_p)
+    print 'MS_train_n: %d \n' % len(MS_train_n)
+
+    if len(OSM_train_p) < n1:
+        print 'n1 is set too large'
+        sys.exit()
+
+    if len(MS_train_n) < n0:
+        print 'n0 is set too large'
+        sys.exit()
+
+    img_X1, img_X0 = np.zeros((n1, 256, 256, 3)), np.zeros((n0, 256, 256, 3))
+    OSM_train_p = random.sample(OSM_train_p, n1)
+    for i, img in enumerate(OSM_train_p):
+        if img in MS_train_r:
+            img_X1[i] = misc.imread(os.path.join(sample_dir, 'train/MS_record/', img))
         else:
-            img_X1[i] = misc.imread(os.path.join(img_dir2, img))
-    label[0:n1, 1] = 1
+            img_X1[i] = misc.imread(os.path.join(sample_dir, 'train/MS_negative/', img))
 
-    n_imgs = random.sample(n_imgs, n0)
-    for i, img in enumerate(n_imgs):
-        img_X0[i] = misc.imread(os.path.join(img_dir2, img))
+    MS_train_n = random.sample(MS_train_n, n0)
+    for i, img in enumerate(MS_train_n):
+        img_X0[i] = misc.imread(os.path.join(sample_dir, 'train/MS_negative/', img))
+
+    label = np.zeros((n1 + n0, 2))
+    label[0:n1, 1] = 1
     label[n1:(n1 + n0), 0] = 1
 
     j = range(n1 + n0)
@@ -86,20 +66,13 @@ def read_train_sample(n1, n0, train_imgs, ms_n_imgs):
 
 
 if __name__ == '__main__':
-    evaluate_only, external_test, tr_n1, tr_n0, tr_b, tr_e, tr_t, cv_i, te_n, nn, act_n = Parameters.deal_args(
+    evaluate_only, external_test, tr_n1, tr_n0, tr_b, tr_e, tr_t, te_n, nn, act_n = Parameters.deal_args(
         sys.argv[1:])
-    cv_n = 4
 
     print '--------------- Read Samples ---------------'
-    start_time = time.time()
-    client = MapSwipe.MSClient()
-    ms_p_imgs = client.read_p_images()
-    ms_n_imgs = client.read_n_images()
-    train_imgs, test_imgs = client.imgs_cross_validation(cv_i, cv_n)
-    img_X, Y = read_train_sample(tr_n1, tr_n0, train_imgs, ms_n_imgs)
-    print "time spent for reading samples: %s seconds\n" % (time.time() - start_time)
-    m = NN_Model.Model(img_X, Y, nn + '_DL_OSMMS')
+    img_X, Y = read_train_sample(tr_n1, tr_n0)
 
+    m = NN_Model.Model(img_X, Y, nn + '_DL_OSMMS')
     if not evaluate_only:
         print '--------------- Training on OSM Labels---------------'
         m.set_batch_size(tr_b)
@@ -108,11 +81,11 @@ if __name__ == '__main__':
         m.train(nn)
         print '--------------- Evaluation on Training Samples ---------------'
         m.evaluate()
-    del img_X, Y, train_imgs
+    del img_X, Y
     gc.collect()
 
     print '--------------- Evaluation on MapSwipe Samples ---------------'
-    img_X2, Y2 = read_test_sample(te_n, test_imgs, ms_p_imgs, ms_n_imgs)
+    img_X2, Y2 = FileIO.read_valid_sample(te_n)
     m.set_evaluation_input(img_X2, Y2)
     m.evaluate()
     del img_X2, Y2
