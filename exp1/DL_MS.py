@@ -17,36 +17,6 @@ import FileIO
 sample_dir = '../samples0/'
 
 
-def read_valid_sample(n):
-    client = MapSwipe.MSClient()
-    MS_valid_p = client.MS_valid_positive()
-    MS_valid_n = client.MS_valid_negative()
-
-    print 'MS_valid_p: %d \n' % len(MS_valid_p)
-    print 'MS_valid_n: %d \n' % len(MS_valid_n)
-
-    if len(MS_valid_p) < n/2 or len(MS_valid_p) < n/2:
-        print 'n is set too large; use all the samples for testing'
-        n = len(MS_valid_p) * 2
-
-    img_X1, img_X0 = np.zeros((n/2, 256, 256, 3)), np.zeros((n/2, 256, 256, 3))
-    MS_valid_p = random.sample(MS_valid_p, n/2)
-    for i, img in enumerate(MS_valid_p):
-        img_X1[i] = misc.imread(os.path.join(sample_dir, 'valid/MS_record/', img))
-
-    MS_valid_n = random.sample(MS_valid_n, n/2)
-    for i, img in enumerate(MS_valid_n):
-        img_X1[i] = misc.imread(os.path.join(sample_dir, 'valid/MS_negative/', img))
-
-    X = np.concatenate((img_X1[0:n/2], img_X0[0:n/2]))
-
-    label = np.zeros((n, 2))
-    label[0:n/2, 1] = 1
-    label[n/2:n, 0] = 1
-
-    return X, label
-
-
 ## Positive: MapSwipe,  Negative: MapSwipe
 def read_train_sample(n1, n0):
     client = MapSwipe.MSClient()
@@ -105,7 +75,7 @@ if __name__ == '__main__':
     gc.collect()
 
     print '--------------- Evaluation on Validation Samples ---------------'
-    img_X2, Y2 = read_valid_sample(te_n)
+    img_X2, Y2 = FileIO.read_valid_sample(te_n)
     m.set_evaluation_input(img_X2, Y2)
     m.evaluate()
     del img_X2, Y2
@@ -113,7 +83,7 @@ if __name__ == '__main__':
 
     if external_test:
         print '--------------- Evaluation on External Test Samples ---------------'
-        img_X3, Y3, _ = FileIO.read_external_test_sample()
+        img_X3, Y3 = FileIO.read_external_test_sample()
         m.set_evaluation_input(img_X3, Y3)
         m.evaluate()
         del img_X3, Y3
