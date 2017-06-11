@@ -45,6 +45,7 @@ def read_train_sample(n1, n0):
             img_X1[i] = misc.imread(os.path.join(sample_dir, 'train/MS_record/', img))
         else:
             img_X1[i] = misc.imread(os.path.join(sample_dir, 'train/MS_negative/', img))
+            print img
 
     MS_train_n = random.sample(MS_train_n, n0)
     for i, img in enumerate(MS_train_n):
