@@ -107,6 +107,6 @@ def osm_building_weight():
     for row in osm_buildings:
         task_x = row['task_x']
         task_y = row['task_y']
-        k = '%s-%s' % (task_x, task_y)
+        k = '%s-%s.jpeg' % (task_x, task_y)
         task_w[k] = 1
     return task_w

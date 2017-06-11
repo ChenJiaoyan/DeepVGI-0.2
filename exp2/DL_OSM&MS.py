@@ -27,7 +27,7 @@ def read_train_sample(n1, n0):
     task_w = FileIO.osm_building_weight();
 
     for img in MS_train:
-        if task_w.has_key(img.strip(".jpeg", "")):
+        if task_w.has_key(img):
             OSM_train_p.append(img)
             if img in MS_train_n:
                 MS_train_n.remove(img)
