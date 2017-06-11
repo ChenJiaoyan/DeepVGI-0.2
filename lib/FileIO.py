@@ -103,7 +103,7 @@ def read_valid_sample(n):
 
 def osm_building_weight():
     task_w = {}
-    osm_buildings = FileIO.csv_reader("../data/buildings.csv")
+    osm_buildings = csv_reader("../data/buildings.csv")
     for row in osm_buildings:
         task_x = row['task_x']
         task_y = row['task_y']
