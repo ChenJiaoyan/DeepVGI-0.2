@@ -5,6 +5,7 @@ import os
 from scipy import misc
 import numpy as np
 import random
+import MapSwipe
 
 
 def csv_reader(file_name):
