@@ -82,7 +82,7 @@ if __name__ == '__main__':
     print '--------------- Evaluation on Validation Samples ---------------'
     img_X2, Y2 = FileIO.read_valid_sample(te_n)
     m.set_evaluation_input(img_X2, Y2)
-    m.evaluate(True)
+    m.evaluate()
     del img_X2, Y2
     gc.collect()
 
