@@ -90,7 +90,7 @@ def read_valid_sample(n):
 
     MS_valid_n = random.sample(MS_valid_n, n/2)
     for i, img in enumerate(MS_valid_n):
-        img_X1[i] = misc.imread(os.path.join('../samples0/valid/MS_negative/', img))
+        img_X0[i] = misc.imread(os.path.join('../samples0/valid/MS_negative/', img))
 
     X = np.concatenate((img_X1[0:n/2], img_X0[0:n/2]))
 
