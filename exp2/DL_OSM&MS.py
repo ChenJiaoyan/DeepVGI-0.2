@@ -23,14 +23,9 @@ def read_train_sample(n1, n0):
     MS_train_r = client.MS_train_record()
     MS_train = MS_train_r + MS_train_n
 
-    OSM_train_p = []
     task_w = FileIO.osm_building_weight();
-
-    for img in MS_train:
-        if task_w.has_key(img):
-            OSM_train_p.append(img)
-            if img in MS_train_n:
-                MS_train_n.remove(img)
+    OSM_train_p = list(set(task_w.keys()).intersection(set(MS_train)))
+    MS_train_n = list(set(MS_train_n).difference(set(OSM_train_p)))
 
     print 'OSM_train_p: %d \n' % len(OSM_train_p)
     print 'MS_train_n: %d \n' % len(MS_train_n)
