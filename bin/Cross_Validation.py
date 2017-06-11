@@ -11,7 +11,7 @@ import shutil
 
 CV_i = 0
 CV_n = 4
-Record_N = 40000
+Record_N = 160000
 Negative_N = 20000
 
 
