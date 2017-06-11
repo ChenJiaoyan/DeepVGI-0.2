@@ -12,6 +12,7 @@ sys.path.append("../lib")
 import NN_Model
 import MapSwipe
 import Parameters
+import FileIO
 
 sample_dir = '../samples0/'
 
