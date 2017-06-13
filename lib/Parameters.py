@@ -48,7 +48,7 @@ def deal_args_active(my_argv):
     v, d, n1, n0, b, e, t, z, a, t_up, t_low = False, False, 200, 200, 30, 1000, 8, 1000, 50, 0.55, 0.45
     m = 'lenet'
     try:
-        opts, args = getopt.getopt(my_argv, "vdhy:n:b:e:t:z:m:a:u:l",
+        opts, args = getopt.getopt(my_argv, "vdhy:n:b:e:t:z:m:a:u:l:",
                                    ["p_sample_size=", "n_sample_size=", "batch_size=", "epoch_num=", "thread_num=",
                                     'test_size=', 'network_model=', 'active_size=', 'threshold_up=', 'threshold_low='])
     except getopt.GetoptError:
