@@ -71,7 +71,7 @@ def active_sampling(m0, act_n, t_up, t_low, active_cache):
     MS_diff_OSM_train_n = list(set(MS_train_n).difference(set(task_w.keys())))
     if len(MS_diff_OSM_train_n) < act_n / 2:
         print 'act_n/2 is larger than MS_train_n size '
-        print 'act_n is set to %d' % len(MS_diff_OSM_train_n) * 2
+        print 'act_n is set to %d' % (len(MS_diff_OSM_train_n) * 2)
         act_n = len(MS_diff_OSM_train_n) * 2
     negative_img_X = np.zeros((act_n / 2, 256, 256, 3))
     for i, img in enumerate(MS_diff_OSM_train_n[-act_n / 2:]):
@@ -94,7 +94,7 @@ def active_sampling(m0, act_n, t_up, t_low, active_cache):
     indexes = np.where((scores < t_up) & (scores > t_low))[0]
     if indexes.shape[0] < act_n / 2:
         print 'act_n/2 is larger than uncertain samples'
-        print 'act_n is set to %d' % indexes.shape[0] * 2
+        print 'act_n is set to %d' % (indexes.shape[0] * 2)
         act_n = indexes.shape[0] * 2
     uncertain_img_X = img_X[indexes]
     j = range(indexes.shape[0])
