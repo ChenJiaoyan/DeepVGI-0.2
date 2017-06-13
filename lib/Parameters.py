@@ -84,6 +84,7 @@ def deal_args_active(my_argv):
         elif opt in ("-u", "--threshold_up"):
             u = float(arg)
         elif opt in ("-l", "--threshold_low"):
+            print arg
             l = float(arg)
     print 'settings: v=%s, d=%s, n1=%d, n0=%d, b=%d, e=%d, t=%d, z=%d, m=%s, a=%d, u=%f, l=%f' % (
         v, d, n1, n0, b, e, t, z, m, a, u, l)
