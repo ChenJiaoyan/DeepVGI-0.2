@@ -17,6 +17,7 @@ import MapSwipe
 import Parameters
 
 sample_dir = '../samples0/'
+active_cache = 10000
 
 
 def read_train_sample(n1, n0):
@@ -81,6 +82,8 @@ def active_sampling(m0, act_n, t_up, t_low):
 
     MS_diff_OSM_train_p = list(set(MS_train_p).difference(set(task_w.keys())))
     print 'MS_diff_OSM_train_p: %d' % len(MS_diff_OSM_train_p)
+    MS_diff_OSM_train_p = random.sample(MS_diff_OSM_train_p, active_cache)
+    print 'active_cache: %d' % active_cache
 
     img_X = np.zeros((len(MS_diff_OSM_train_p), 256, 256, 3))
     for i, img in enumerate(MS_diff_OSM_train_p):
