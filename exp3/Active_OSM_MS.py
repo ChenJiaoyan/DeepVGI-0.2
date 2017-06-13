@@ -22,19 +22,19 @@ import DL_OSM_MS
 sample_dir = '../samples0/'
 
 
-def active_sampling(m0, act_n):
+def active_sampling(m0, act_n, t_up, t_low):
     client = MapSwipe.MSClient()
     MS_train_p = client.MS_train_positive()
     MS_train_n = client.MS_train_negative()
-    task_w = FileIO.osm_building_weight();
+    task_w = FileIO.osm_building_weight()
 
-    MS_train_n = list(set(MS_train_n).difference(set(task_w.keys())))
-    if len(MS_train_n) < act_n / 2:
+    MS_diff_OSM_train_n = list(set(MS_train_n).difference(set(task_w.keys())))
+    if len(MS_diff_OSM_train_n) < act_n / 2:
         print 'act_n/2 is larger than MS_train_n size '
-        print 'act_n is set to %d' % len(MS_train_n) * 2
-        act_n = len(MS_train_n) * 2
+        print 'act_n is set to %d' % len(MS_diff_OSM_train_n) * 2
+        act_n = len(MS_diff_OSM_train_n) * 2
     negative_img_X = np.zeros((act_n / 2, 256, 256, 3))
-    for i, img in enumerate(MS_train_n[-act_n/2:]):
+    for i, img in enumerate(MS_diff_OSM_train_n[-act_n / 2:]):
         negative_img_X[i] = misc.imread(os.path.join(sample_dir, 'train/MS_record/', img))
     label_n = np.zeros((act_n / 2, 2))
     label_n[:, 0] = 1
@@ -49,7 +49,7 @@ def active_sampling(m0, act_n):
     m0.set_prediction_input(img_X)
     scores, _ = m0.predict()
 
-    indexes = np.where((scores < 0.6) & (scores > 0.4))[0]
+    indexes = np.where((scores < t_up) & (scores > t_low))[0]
     if indexes.shape[0] < act_n / 2:
         print 'act_n/2 is larger than uncertain samples'
         print 'act_n is set to %d' % indexes.shape[0] * 2
@@ -62,13 +62,12 @@ def active_sampling(m0, act_n):
     label_p = np.zeros((act_n / 2, 2))
     label_p[:, 1] = 1
 
-
     return np.concatenate((negative_img_X, positive_img_X)), np.concatenate((label_n, label_p))
 
 
 if __name__ == '__main__':
-    evaluate_only, external_test, tr_n1, tr_n0, tr_b, tr_e, tr_t, te_n, nn, act_n = Parameters.deal_args(
-        sys.argv[1:])
+    evaluate_only, external_test, tr_n1, tr_n0, tr_b, tr_e, tr_t, te_n, nn, act_n, t_up, t_low = \
+        Parameters.deal_args_active(sys.argv[1:])
 
     print '--------------- Read Samples ---------------'
     img_X, Y = DL_OSM_MS.read_train_sample(tr_n1, tr_n0)
@@ -84,7 +83,7 @@ if __name__ == '__main__':
         m.evaluate()
 
         print '--------------- Ma: Actively Sampling ---------------'
-        img_Xa, Ya = active_sampling(m, act_n)
+        img_Xa, Ya = active_sampling(m, act_n, t_up, t_low)
         img_X = np.concatenate((img_X, img_Xa))
         Y = np.concatenate((Y, Ya))
         index = range(img_X.shape[0])
