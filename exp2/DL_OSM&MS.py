@@ -2,6 +2,9 @@
 
 # (1) train CNN with OSM labeled images; (2) evaluate the CNN with testing MapSwipe images
 import os
+if not os.getcwd().endswith('exp2'):
+    os.chdir('exp2')
+
 import sys
 import random
 import gc
