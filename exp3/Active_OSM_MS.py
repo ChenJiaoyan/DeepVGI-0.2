@@ -75,7 +75,7 @@ def active_sampling(m0, act_n, t_up, t_low):
         act_n = len(MS_diff_OSM_train_n) * 2
     negative_img_X = np.zeros((act_n / 2, 256, 256, 3))
     for i, img in enumerate(MS_diff_OSM_train_n[-act_n / 2:]):
-        negative_img_X[i] = misc.imread(os.path.join(sample_dir, 'train/MS_record/', img))
+        negative_img_X[i] = misc.imread(os.path.join(sample_dir, 'train/MS_negative/', img))
     label_n = np.zeros((act_n / 2, 2))
     label_n[:, 0] = 1
 
