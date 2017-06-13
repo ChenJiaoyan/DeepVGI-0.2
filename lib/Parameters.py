@@ -45,21 +45,22 @@ def deal_args(my_argv):
 
 
 def deal_args_active(my_argv):
-    v, d, n1, n0, b, e, t, z, a, t_up, t_low = False, False, 200, 200, 30, 1000, 8, 1000, 50, 0.55, 0.45
+    v, d, n1, n0, b, e, t, z, a, t_up, t_low, a_c = False, False, 200, 200, 30, 1000, 8, 1000, 50, 0.55, 0.45, 10000
     m = 'lenet'
     try:
-        opts, args = getopt.getopt(my_argv, "vdhy:n:b:e:t:z:m:a:u:l:",
+        opts, args = getopt.getopt(my_argv, "vdhy:n:b:e:t:z:m:a:u:l:c:",
                                    ["p_sample_size=", "n_sample_size=", "batch_size=", "epoch_num=", "thread_num=",
-                                    'test_size=', 'network_model=', 'active_size=', 'threshold_up=', 'threshold_low='])
+                                    'test_size=', 'network_model=', 'active_size=', 'threshold_up=', 'threshold_low=',
+                                    'active_cache='])
     except getopt.GetoptError:
         print 'DL_MS.py -v -d -y <p_sample_size> -n <n_sample_size> -b <batch_size> -e <epoch_num> -t <thread_num>, ' \
-              '-z <test_size>, -m <network_model>, -a <active_size>, -u <threshold_up>, -l <threshold_low>'
-        print 'default settings: v=%s, d=%s, n1=%d, n0=%d, b=%d, e=%d, t=%d, z=%d, m=%s, a=%d, u=%f, l=%f' % (
-            v, d, n1, n0, b, e, t, z, m, a, t_up, t_low)
+              '-z <test_size>, -m <network_model>, -a <active_size>, -u <threshold_up>, -l <threshold_low>, -c <active_cache>'
+        print 'default settings: v=%s, d=%s, n1=%d, n0=%d, b=%d, e=%d, t=%d, z=%d, m=%s, a=%d, u=%f, l=%f, c=%d' % (
+            v, d, n1, n0, b, e, t, z, m, a, t_up, t_low, a_c)
     for opt, arg in opts:
         if opt == '-h':
             print 'DL_MS.py -v -d -y <p_sample_size> -n <n_sample_size> -b <batch_size> -e <epoch_num> -t <thread_num>, ' \
-                  '-z <test_size>, -m <network_model>, -a <active_size>, -u <threshold_up>, -l <threshold_low>'
+                  '-z <test_size>, -m <network_model>, -a <active_size>, -u <threshold_up>, -l <threshold_low>, -c <active_cache>'
             sys.exit()
         elif opt == '-d':
             d = True
@@ -85,6 +86,8 @@ def deal_args_active(my_argv):
             u = float(arg)
         elif opt in ("-l", "--threshold_low"):
             l = float(arg)
-    print 'settings: v=%s, d=%s, n1=%d, n0=%d, b=%d, e=%d, t=%d, z=%d, m=%s, a=%d, u=%f, l=%f' % (
-        v, d, n1, n0, b, e, t, z, m, a, u, l)
-    return v, d, n1, n0, b, e, t, z, m, a, u, l
+        elif opt in ("-c", "--active_cache"):
+            a_c = int(arg)
+    print 'settings: v=%s, d=%s, n1=%d, n0=%d, b=%d, e=%d, t=%d, z=%d, m=%s, a=%d, u=%f, l=%f, c=%d' % (
+        v, d, n1, n0, b, e, t, z, m, a, u, l, a_c)
+    return v, d, n1, n0, b, e, t, z, m, a, u, l, a_c

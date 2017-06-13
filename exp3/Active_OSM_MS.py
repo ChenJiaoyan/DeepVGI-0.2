@@ -17,7 +17,6 @@ import MapSwipe
 import Parameters
 
 sample_dir = '../samples0/'
-active_cache = 10000
 
 
 def read_train_sample(n1, n0):
@@ -63,7 +62,7 @@ def read_train_sample(n1, n0):
     return X[j], label[j]
 
 
-def active_sampling(m0, act_n, t_up, t_low):
+def active_sampling(m0, act_n, t_up, t_low, active_cache):
     client = MapSwipe.MSClient()
     MS_train_p = client.MS_train_positive()
     MS_train_n = client.MS_train_negative()
@@ -109,7 +108,7 @@ def active_sampling(m0, act_n, t_up, t_low):
 
 
 if __name__ == '__main__':
-    evaluate_only, external_test, tr_n1, tr_n0, tr_b, tr_e, tr_t, te_n, nn, act_n, t_up, t_low = \
+    evaluate_only, external_test, tr_n1, tr_n0, tr_b, tr_e, tr_t, te_n, nn, act_n, t_up, t_low, a_c = \
         Parameters.deal_args_active(sys.argv[1:])
 
     print '--------------- Read Samples ---------------'
@@ -126,7 +125,7 @@ if __name__ == '__main__':
         m.evaluate()
 
         print '--------------- Ma: Actively Sampling ---------------'
-        img_Xa, Ya = active_sampling(m, act_n, t_up, t_low)
+        img_Xa, Ya = active_sampling(m, act_n, t_up, t_low, a_c)
         img_X = np.concatenate((img_X, img_Xa))
         Y = np.concatenate((Y, Ya))
         index = range(img_X.shape[0])
@@ -156,6 +155,6 @@ if __name__ == '__main__':
         print '--------------- Ma: Evaluation on Expert  Labeled Samples ---------------'
         img_X3, Y3 = FileIO.read_external_test_sample()
         m.set_evaluation_input(img_X3, Y3)
-        m.evaluate(True)
+        m.evaluate()
         del img_X3, Y3
         gc.collect()
