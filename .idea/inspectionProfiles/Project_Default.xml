@@ -30,6 +30,8 @@
           <option value="FileIO" />
           <option value="NN_Model" />
           <option value="Parameters" />
+          <option value="DL_OSM" />
+          <option value="DL_OSM_MS" />
         </list>
       </option>
     </inspection_tool>

@@ -2,6 +2,9 @@
 
 # (1) train CNN with MapSwipe labeled images; (2) evaluate the CNN with testing MapSwipe images
 import os
+if not os.getcwd().endswith('exp1'):
+    os.chdir('exp1')
+
 import sys
 import random
 import gc
@@ -56,8 +59,7 @@ def read_train_sample(n1, n0):
 
 
 if __name__ == '__main__':
-    evaluate_only, external_test, tr_n1, tr_n0, tr_b, tr_e, tr_t, te_n, nn, act_n = Parameters.deal_args(
-        sys.argv[1:])
+    evaluate_only, external_test, tr_n1, tr_n0, tr_b, tr_e, tr_t, te_n, nn = Parameters.deal_args(sys.argv[1:])
 
     print '--------------- Read Samples ---------------'
     img_X, Y = read_train_sample(tr_n1, tr_n0)
