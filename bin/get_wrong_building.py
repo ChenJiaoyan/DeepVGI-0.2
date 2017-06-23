@@ -9,7 +9,7 @@ import FileIO
 img_dir1 = '../data/image_project_922/'
 img_dir2 = '../data/image_project_922_negative/'
 outdir = '../../zhou/wrong_building_imgs/'
-log_file = '../data/result_check_building.log'
+log_file = 'result_check_building.log'
 building = '../data/buildings.csv'
 buildings = FileIO.read_lines(building, 0)
 
