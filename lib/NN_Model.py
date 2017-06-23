@@ -177,6 +177,7 @@ class Model(object):
         correct_prediction = tf.equal(tf.argmax(y_conv, 1), tf.argmax(y_, 1))
         accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 
+        tf.add_to_collection("train_step", train_step)
         tf.add_to_collection("accuracy", accuracy)
         tf.add_to_collection("x_image", x_image)
         tf.add_to_collection("y_", y_)
@@ -246,6 +247,7 @@ class Model(object):
         correct_prediction = tf.equal(tf.argmax(y_conv, 1), tf.argmax(y_, 1))
         accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 
+        tf.add_to_collection("train_step", train_step)
         tf.add_to_collection("accuracy", accuracy)
         tf.add_to_collection("x_image", x_image)
         tf.add_to_collection("y_", y_)
