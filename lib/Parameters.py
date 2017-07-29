@@ -12,13 +12,13 @@ def deal_args(my_argv):
                                    ["p_sample_size=", "n_sample_size=", "batch_size=", "epoch_num=", "thread_num=",
                                     'test_size=', 'network_model='])
     except getopt.GetoptError:
-        print 'DL_MS.py -v -d -y <p_sample_size> -n <n_sample_size> -b <batch_size> -e <epoch_num> -t <thread_num>, ' \
+        print 'command -v -d -y <p_sample_size> -n <n_sample_size> -b <batch_size> -e <epoch_num> -t <thread_num>, ' \
               '-z <test_size>, -m <network_model>'
         print 'default settings: v=%s, d=%s, n1=%d, n0=%d, b=%d, e=%d, t=%d, z=%d, m=%s' % (
             v, d, n1, n0, b, e, t, z, m)
     for opt, arg in opts:
         if opt == '-h':
-            print 'DL_MS.py -v -d -y <p_sample_size> -n <n_sample_size> -b <batch_size> -e <epoch_num> -t <thread_num>, ' \
+            print 'command -v -d -y <p_sample_size> -n <n_sample_size> -b <batch_size> -e <epoch_num> -t <thread_num>, ' \
                   '-z <test_size>, -m <network_model>'
             sys.exit()
         elif opt == '-d':
@@ -53,13 +53,13 @@ def deal_args_active(my_argv):
                                     'test_size=', 'network_model=', 'active_size=', 'threshold_up=', 'threshold_low=',
                                     'active_cache='])
     except getopt.GetoptError:
-        print 'DL_MS.py -v -d -y <p_sample_size> -n <n_sample_size> -b <batch_size> -e <epoch_num> -t <thread_num>, ' \
+        print 'command -v -d -y <p_sample_size> -n <n_sample_size> -b <batch_size> -e <epoch_num> -t <thread_num>, ' \
               '-z <test_size>, -m <network_model>, -a <active_size>, -u <threshold_up>, -l <threshold_low>, -c <active_cache>'
         print 'default settings: v=%s, d=%s, n1=%d, n0=%d, b=%d, e=%d, t=%d, z=%d, m=%s, a=%d, u=%f, l=%f, c=%d' % (
             v, d, n1, n0, b, e, t, z, m, a, t_up, t_low, a_c)
     for opt, arg in opts:
         if opt == '-h':
-            print 'DL_MS.py -v -d -y <p_sample_size> -n <n_sample_size> -b <batch_size> -e <epoch_num> -t <thread_num>, ' \
+            print 'command -v -d -y <p_sample_size> -n <n_sample_size> -b <batch_size> -e <epoch_num> -t <thread_num>, ' \
                   '-z <test_size>, -m <network_model>, -a <active_size>, -u <threshold_up>, -l <threshold_low>, -c <active_cache>'
             sys.exit()
         elif opt == '-d':
