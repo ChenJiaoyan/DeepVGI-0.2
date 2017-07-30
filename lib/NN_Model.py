@@ -78,12 +78,12 @@ class Model(object):
         h_conv1_1 = tf.nn.relu(self.__conv2d(x_image, W_conv1_1) + b_conv1_1)
 
         ## Conv1_2
-        W_conv1_2 = self.__weight_variable([3, 3, 64, 64])
-        b_conv1_2 = self.__bias_variable([64])
-        h_conv1_2 = tf.nn.relu(self.__conv2d(h_conv1_1, W_conv1_2) + b_conv1_2)
+        # W_conv1_2 = self.__weight_variable([3, 3, 64, 64])
+        # b_conv1_2 = self.__bias_variable([64])
+        # h_conv1_2 = tf.nn.relu(self.__conv2d(h_conv1_1, W_conv1_2) + b_conv1_2)
 
         ## Pool1
-        h_pool1 = self.__max_pool_2x2(h_conv1_2)
+        h_pool1 = self.__max_pool_2x2(h_conv1_1)
 
         ## Conv2_1
         W_conv2_1 = self.__weight_variable([3, 3, 64, 128])
@@ -91,12 +91,12 @@ class Model(object):
         h_conv2_1 = tf.nn.relu(self.__conv2d(h_pool1, W_conv2_1) + b_conv2_1)
 
         ## Conv2_2
-        W_conv2_2 = self.__weight_variable([3, 3, 128, 128])
-        b_conv2_2 = self.__bias_variable([128])
-        h_conv2_2 = tf.nn.relu(self.__conv2d(h_conv2_1, W_conv2_2) + b_conv2_2)
+        # W_conv2_2 = self.__weight_variable([3, 3, 128, 128])
+        # b_conv2_2 = self.__bias_variable([128])
+        # h_conv2_2 = tf.nn.relu(self.__conv2d(h_conv2_1, W_conv2_2) + b_conv2_2)
 
         ## Pool2
-        h_pool2 = self.__max_pool_2x2(h_conv2_2)
+        h_pool2 = self.__max_pool_2x2(h_conv2_1)
 
         ## Conv3_1
         W_conv3_1 = self.__weight_variable([3, 3, 128, 256])
@@ -109,12 +109,12 @@ class Model(object):
         h_conv3_2 = tf.nn.relu(self.__conv2d(h_conv3_1, W_conv3_2) + b_conv3_2)
 
         ## Conv3_3
-        W_conv3_3 = self.__weight_variable([3, 3, 256, 256])
-        b_conv3_3 = self.__bias_variable([256])
-        h_conv3_3 = tf.nn.relu(self.__conv2d(h_conv3_2, W_conv3_3) + b_conv3_3)
+        # W_conv3_3 = self.__weight_variable([3, 3, 256, 256])
+        # b_conv3_3 = self.__bias_variable([256])
+        # h_conv3_3 = tf.nn.relu(self.__conv2d(h_conv3_2, W_conv3_3) + b_conv3_3)
 
         ## Pool3
-        h_pool3 = self.__max_pool_2x2(h_conv3_3)
+        h_pool3 = self.__max_pool_2x2(h_conv3_2)
 
         ## Conv4_1
         W_conv4_1 = self.__weight_variable([3, 3, 256, 512])
@@ -127,12 +127,12 @@ class Model(object):
         h_conv4_2 = tf.nn.relu(self.__conv2d(h_conv4_1, W_conv4_2) + b_conv4_2)
 
         ## Conv4_3
-        W_conv4_3 = self.__weight_variable([3, 3, 512, 512])
-        b_conv4_3 = self.__bias_variable([512])
-        h_conv4_3 = tf.nn.relu(self.__conv2d(h_conv4_2, W_conv4_3) + b_conv4_3)
+        # W_conv4_3 = self.__weight_variable([3, 3, 512, 512])
+        # b_conv4_3 = self.__bias_variable([512])
+        # h_conv4_3 = tf.nn.relu(self.__conv2d(h_conv4_2, W_conv4_3) + b_conv4_3)
 
         ## Pool4
-        h_pool4 = self.__max_pool_2x2(h_conv4_3)
+        h_pool4 = self.__max_pool_2x2(h_conv4_2)
 
         ## Conv5_1
         W_conv5_1 = self.__weight_variable([3, 3, 512, 512])
@@ -145,29 +145,29 @@ class Model(object):
         h_conv5_2 = tf.nn.relu(self.__conv2d(h_conv5_1, W_conv5_2) + b_conv5_2)
 
         ## Conv5_3
-        W_conv5_3 = self.__weight_variable([3, 3, 512, 512])
-        b_conv5_3 = self.__bias_variable([512])
-        h_conv5_3 = tf.nn.relu(self.__conv2d(h_conv5_2, W_conv5_3) + b_conv5_3)
+        # W_conv5_3 = self.__weight_variable([3, 3, 512, 512])
+        # b_conv5_3 = self.__bias_variable([512])
+        # h_conv5_3 = tf.nn.relu(self.__conv2d(h_conv5_2, W_conv5_3) + b_conv5_3)
 
         ## Pool5
-        h_pool5 = self.__max_pool_2x2(h_conv5_3)
+        h_pool5 = self.__max_pool_2x2(h_conv5_2)
 
         ## FC 6
         shape_n = int(np.prod(h_pool5.get_shape()[1:]))
-        W_fc6 = self.__weight_variable([shape_n, 4096])
-        b_fc6 = self.__bias_variable([4096])
+        W_fc6 = self.__weight_variable([shape_n, 1024])
+        b_fc6 = self.__bias_variable([1024])
         h_fc6 = tf.nn.relu_layer(tf.reshape(h_pool5, [-1, shape_n]), W_fc6, b_fc6)
         keep_prob = tf.placeholder(tf.float32)
         h_fc6_drop = tf.nn.dropout(h_fc6, keep_prob)
 
         ## FC 7
-        W_fc7 = self.__weight_variable([4096, 4096])
-        b_fc7 = self.__bias_variable([4096])
+        W_fc7 = self.__weight_variable([1024, 1024])
+        b_fc7 = self.__bias_variable([1024])
         h_fc7 = tf.nn.relu(tf.nn.xw_plus_b(h_fc6_drop, W_fc7, b_fc7))
         h_fc7_drop = tf.nn.dropout(h_fc7, keep_prob)
 
         ## FC 8 (Readout Layer)
-        W_fc8 = self.__weight_variable([4096, 2])
+        W_fc8 = self.__weight_variable([1024, 2])
         b_fc8 = self.__bias_variable([2])
         y_conv = tf.nn.xw_plus_b(h_fc7_drop, W_fc8, b_fc8)
         prob = tf.nn.softmax(y_conv)
