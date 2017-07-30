@@ -45,7 +45,7 @@ def deal_args(my_argv):
 
 
 def deal_args_active(my_argv):
-    v, d, n1, n0, b, e, t, z, a, t_up, t_low, a_c = False, False, 200, 200, 30, 1000, 8, 1000, 50, 0.55, 0.45, 10000
+    v, d, n1, n0, b, e, t, z, a, u, l, a_c = False, False, 200, 200, 30, 1000, 8, 1000, 50, 0.55, 0.45, 10000
     m = 'lenet'
     try:
         opts, args = getopt.getopt(my_argv, "vdhy:n:b:e:t:z:m:a:u:l:c:",
@@ -56,7 +56,7 @@ def deal_args_active(my_argv):
         print 'DL_MS.py -v -d -y <p_sample_size> -n <n_sample_size> -b <batch_size> -e <epoch_num> -t <thread_num>, ' \
               '-z <test_size>, -m <network_model>, -a <active_size>, -u <threshold_up>, -l <threshold_low>, -c <active_cache>'
         print 'default settings: v=%s, d=%s, n1=%d, n0=%d, b=%d, e=%d, t=%d, z=%d, m=%s, a=%d, u=%f, l=%f, c=%d' % (
-            v, d, n1, n0, b, e, t, z, m, a, t_up, t_low, a_c)
+            v, d, n1, n0, b, e, t, z, m, a, u, l, a_c)
     for opt, arg in opts:
         if opt == '-h':
             print 'DL_MS.py -v -d -y <p_sample_size> -n <n_sample_size> -b <batch_size> -e <epoch_num> -t <thread_num>, ' \
