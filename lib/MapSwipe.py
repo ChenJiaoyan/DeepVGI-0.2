@@ -74,3 +74,26 @@ class MSClient:
     def MS_valid_positive(self):
         record = os.listdir(os.path.join(self.sample_dir, 'valid/MS_record'))
         return list(set(record).intersection(set(self.MS_positive())))
+
+class Urban_client():     # only valid images
+    def __init__(self):
+        self.sample_dir = '../samples0/'
+
+    def valid_negative(self):
+        return os.listdir(os.path.join(self.sample_dir, 'valid/MS_negative'))
+
+    def urban_positive(self):
+        urban_file = '../data/malawi_urban_extent.csv'
+        lines = FileIO.csv_reader(urban_file)
+        p_imgs_raw = []
+        for line in lines:
+            task_x = line['task_x']
+            task_y = line['task_y']
+            img = '%s-%s.jpeg' % (task_x, task_y)
+            p_imgs_raw.append(img)
+        p_imgs = list(set(p_imgs_raw))
+        return p_imgs
+
+    def valid_positive(self):
+        record = os.listdir(os.path.join(self.sample_dir, 'valid/MS_record'))
+        return list(set(record).intersection(set(self.urban_positive())))

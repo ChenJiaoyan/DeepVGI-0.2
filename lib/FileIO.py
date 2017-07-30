@@ -110,3 +110,32 @@ def osm_building_weight():
         k = '%s-%s.jpeg' % (task_x, task_y)
         task_w[k] = 1
     return task_w
+
+def read_urban_valid_sample(n):
+    client = MapSwipe.Urban_client()
+    urban_valid_p = client.valid_positive()
+    urban_valid_n = client.valid_negative()
+
+    print 'urban_valid_p: %d \n' % len(urban_valid_p)
+    print 'urban_valid_n: %d \n' % len(urban_valid_n)
+
+    if len(urban_valid_p) < n / 2 or len(urban_valid_n) < n / 2:
+        print 'n is set too large; use all the samples for testing'
+        n = len(urban_valid_p) * 2 if len(urban_valid_p) < len(urban_valid_n) else len(urban_valid_n) * 2
+
+    img_X1, img_X0 = np.zeros((n / 2, 256, 256, 3)), np.zeros((n / 2, 256, 256, 3))
+    urban_valid_p = random.sample(urban_valid_p, n / 2)
+    for i, img in enumerate(urban_valid_p):
+        img_X1[i] = misc.imread(os.path.join('../samples0/valid/MS_record/', img))
+
+    urban_valid_n = random.sample(urban_valid_n, n / 2)
+    for i, img in enumerate(urban_valid_n):
+        img_X0[i] = misc.imread(os.path.join('../samples0/valid/MS_negative/', img))
+
+    X = np.concatenate((img_X1[0:n / 2], img_X0[0:n / 2]))
+
+    label = np.zeros((n, 2))
+    label[0:n / 2, 1] = 1
+    label[n / 2:n, 0] = 1
+
+    return X, label
