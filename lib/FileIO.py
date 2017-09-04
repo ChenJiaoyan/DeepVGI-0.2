@@ -111,8 +111,8 @@ def osm_building_weight():
         task_w[k] = 1
     return task_w
 
-def read_urban_valid_sample(n):
-    client = MapSwipe.Urban_client()
+def read_urban_ms_valid(n):
+    client = MapSwipe.Urban_ms_client()
     urban_valid_p = client.valid_positive()
     urban_valid_n = client.valid_negative()
 
@@ -130,6 +130,39 @@ def read_urban_valid_sample(n):
 
     urban_valid_n = random.sample(urban_valid_n, n / 2)
     for i, img in enumerate(urban_valid_n):
+        img_X0[i] = misc.imread(os.path.join('../samples0/valid/MS_negative/', img))
+
+    X = np.concatenate((img_X1[0:n / 2], img_X0[0:n / 2]))
+
+    label = np.zeros((n, 2))
+    label[0:n / 2, 1] = 1
+    label[n / 2:n, 0] = 1
+
+    return X, label
+
+def read_urban_osm_valid(n):
+    client = MapSwipe.Urban_ms_client()
+    urban_valid_n = client.valid_negative()
+    urban_valid_p = client.urban_positive()
+
+    task_w = osm_building_weight()
+    urban_osm_p = list(set(task_w.keys()).intersection(set(urban_valid_p)))
+    urban_osm_n = list(set(urban_valid_n).difference(set(urban_osm_p)))
+
+    print 'urban_valid_p: %d \n' % len(urban_osm_p)
+    print 'urban_valid_n: %d \n' % len(urban_osm_n)
+
+    if len(urban_osm_p) < n / 2 or len(urban_osm_n) < n / 2:
+        print 'n is set too large; use all the samples for testing'
+        n = len(urban_osm_p) * 2 if len(urban_osm_p) < len(urban_osm_n) else len(urban_osm_n) * 2
+
+    img_X1, img_X0 = np.zeros((n / 2, 256, 256, 3)), np.zeros((n / 2, 256, 256, 3))
+    urban_osm_p = random.sample(urban_osm_p, n / 2)
+    for i, img in enumerate(urban_osm_p):
+        img_X1[i] = misc.imread(os.path.join('../samples0/valid/MS_record/', img))
+
+    urban_osm_n = random.sample(urban_osm_n, n / 2)
+    for i, img in enumerate(urban_osm_n):
         img_X0[i] = misc.imread(os.path.join('../samples0/valid/MS_negative/', img))
 
     X = np.concatenate((img_X1[0:n / 2], img_X0[0:n / 2]))
