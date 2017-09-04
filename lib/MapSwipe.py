@@ -89,11 +89,14 @@ class Urban_client():     # only valid images
         for line in lines:
             task_x = line['task_x']
             task_y = line['task_y']
-            img = '%s-%s.jpeg' % (task_x, task_y)
-            p_imgs_raw.append(img)
+            c = line['classification']
+            if c == 'urban_extent':
+                img = '%s-%s.jpeg' % (task_x, task_y)
+                p_imgs_raw.append(img)
         p_imgs = list(set(p_imgs_raw))
         return p_imgs
 
     def valid_positive(self):
-        record = os.listdir(os.path.join(self.sample_dir, 'valid/MS_record'))
-        return list(set(record).intersection(set(self.urban_positive())))
+        ms = MSClient()
+        ms_p = ms.MS_valid_positive()
+        return list(set(ms_p).intersection(set(self.urban_positive())))
