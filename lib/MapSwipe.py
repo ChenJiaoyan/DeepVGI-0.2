@@ -75,7 +75,7 @@ class MSClient:
         record = os.listdir(os.path.join(self.sample_dir, 'valid/MS_record'))
         return list(set(record).intersection(set(self.MS_positive())))
 
-class Urban_client():     # only valid images, ms positive + urban extent
+class Urban_ms_client():     # only valid images, ms positive + urban extent
     def __init__(self):
         self.sample_dir = '../samples0/'
 
