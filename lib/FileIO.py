@@ -143,7 +143,7 @@ def read_urban_ms_valid(n):
 def read_urban_osm_valid(n):
     client = MapSwipe.Urban_ms_client()
     urban_valid_n = client.valid_negative()
-    urban_valid_p = client.urban_positive()
+    urban_valid_p = client.valid_positive()
 
     task_w = osm_building_weight()
     urban_osm_p = list(set(task_w.keys()).intersection(set(urban_valid_p)))
