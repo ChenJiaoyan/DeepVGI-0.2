@@ -77,26 +77,26 @@ class Model(object):
         b_conv1_1 = self.__bias_variable([64])
         h_conv1_1 = tf.nn.relu(self.__conv2d(x_image, W_conv1_1) + b_conv1_1)
 
-        # Conv1_2
-        W_conv1_2 = self.__weight_variable([3, 3, 64, 64])
-        b_conv1_2 = self.__bias_variable([64])
-        h_conv1_2 = tf.nn.relu(self.__conv2d(h_conv1_1, W_conv1_2) + b_conv1_2)
+        # # Conv1_2
+        # W_conv1_2 = self.__weight_variable([3, 3, 64, 64])
+        # b_conv1_2 = self.__bias_variable([64])
+        # h_conv1_2 = tf.nn.relu(self.__conv2d(h_conv1_1, W_conv1_2) + b_conv1_2)
 
         ## Pool1
-        h_pool1 = self.__max_pool_2x2(h_conv1_2)
+        h_pool1 = self.__max_pool_2x2(h_conv1_1)
 
         ## Conv2_1
         W_conv2_1 = self.__weight_variable([3, 3, 64, 128])
         b_conv2_1 = self.__bias_variable([128])
         h_conv2_1 = tf.nn.relu(self.__conv2d(h_pool1, W_conv2_1) + b_conv2_1)
 
-        # Conv2_2
-        W_conv2_2 = self.__weight_variable([3, 3, 128, 128])
-        b_conv2_2 = self.__bias_variable([128])
-        h_conv2_2 = tf.nn.relu(self.__conv2d(h_conv2_1, W_conv2_2) + b_conv2_2)
+        # # Conv2_2
+        # W_conv2_2 = self.__weight_variable([3, 3, 128, 128])
+        # b_conv2_2 = self.__bias_variable([128])
+        # h_conv2_2 = tf.nn.relu(self.__conv2d(h_conv2_1, W_conv2_2) + b_conv2_2)
 
         ## Pool2
-        h_pool2 = self.__max_pool_2x2(h_conv2_2)
+        h_pool2 = self.__max_pool_2x2(h_conv2_1)
 
         ## Conv3_1
         W_conv3_1 = self.__weight_variable([3, 3, 128, 256])
